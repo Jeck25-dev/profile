@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<!-- saved from url=(0036)http://127.0.0.1:8000/auth/register/ -->
+<html lang="id"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Masuk | SMA Khadijah</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link href="./Masuk _ SMA Khadijah_files/css2" rel="stylesheet">
+<link rel="stylesheet" href="./Masuk _ SMA Khadijah_files/all.min.css">
+<link rel="stylesheet" href="./Masuk _ SMA Khadijah_files/style.css">
+
+</head>
+<body>
+
+<div style="min-height:100vh;display:flex;">
+  <!-- LEFT -->
+  <div style="flex:1;background:linear-gradient(135deg,#0d1526,#1a1040);display:flex;flex-direction:column;justify-content:center;padding:60px;position:relative;overflow:hidden;">
+    <div style="position:absolute;width:500px;height:500px;background:radial-gradient(circle,rgba(124,58,237,.15),transparent 70%);top:-100px;right:-100px;pointer-events:none;"></div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:52px;position:relative;">
+      <div class="logo-icon"><i class="fas fa-microchip"></i></div>
+      <div><div class="logo-text" style="font-size:1.2rem;">AI-Library</div><div class="logo-sub">SMA Khadijah · Tim GCC</div></div>
+    </div>
+    <h1 style="font-size:clamp(2rem,4vw,3rem);font-weight:800;line-height:1.15;margin-bottom:16px;position:relative;">
+      Perpustakaan<br><span style="background:linear-gradient(135deg,#a78bfa,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Masa Depan</span>
+    </h1>
+    <p style="color:var(--tx-2);font-size:.95rem;line-height:1.7;max-width:380px;margin-bottom:44px;position:relative;">Platform perpustakaan digital SMA Khadijah berbasis kecerdasan buatan untuk pengalaman belajar yang lebih baik.</p>
+    <div style="display:flex;flex-direction:column;gap:14px;position:relative;">
+      <div style="display:flex;align-items:center;gap:12px;color:var(--tx-2);font-size:.88rem;"><div style="width:32px;height:32px;background:rgba(124,58,237,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--c-primary-l);flex-shrink:0;"><i class="fas fa-robot"></i></div>Rekomendasi buku personal dengan AI</div>
+      <div style="display:flex;align-items:center;gap:12px;color:var(--tx-2);font-size:.88rem;"><div style="width:32px;height:32px;background:rgba(16,185,129,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#34d399;flex-shrink:0;"><i class="fas fa-chart-line"></i></div>Analitik peminjaman real-time</div>
+      <div style="display:flex;align-items:center;gap:12px;color:var(--tx-2);font-size:.88rem;"><div style="width:32px;height:32px;background:rgba(14,165,233,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#38bdf8;flex-shrink:0;"><i class="fas fa-tablet-alt"></i></div>Baca e-book online kapan saja</div>
+      <div style="display:flex;align-items:center;gap:12px;color:var(--tx-2);font-size:.88rem;"><div style="width:32px;height:32px;background:rgba(245,158,11,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fbbf24;flex-shrink:0;"><i class="fas fa-bell"></i></div>Notifikasi otomatis jatuh tempo</div>
+    </div>
+  </div>
+  <!-- RIGHT -->
+  <div style="width:460px;flex-shrink:0;background:var(--bg-card);display:flex;align-items:center;justify-content:center;padding:48px 44px;">
+    <div style="width:100%;">
+      <div style="display:flex;background:var(--bg-input);border-radius:var(--r-sm);padding:4px;margin-bottom:28px;">
+        <div id="tabLogin" onclick="switchTab(&#39;login&#39;)" style="flex: 1 1 0%; padding: 8px; text-align: center; font-size: 0.86rem; font-weight: 600; border-radius: 6px; cursor: pointer; transition: var(--tx-ease); background: var(--bg-card); color: var(--tx);">Masuk</div>
+        <div id="tabReg" onclick="switchTab(&#39;register&#39;)" style="flex: 1 1 0%; padding: 8px; text-align: center; font-size: 0.86rem; font-weight: 600; border-radius: 6px; cursor: pointer; transition: var(--tx-ease); color: var(--tx-2); background: transparent;">Daftar</div>
+      </div>
+      
+      <!-- LOGIN -->
+      <div id="panelLogin" style="">
+        <h2 style="font-size:1.5rem;font-weight:700;margin-bottom:5px;">Selamat Datang 👋</h2>
+        <p style="font-size:.84rem;color:var(--tx-2);margin-bottom:22px;">Masuk ke sistem AI-Library SMA Khadijah</p>
+        <form method="post" action="http://127.0.0.1:8000/auth/login/"><input type="hidden" name="csrfmiddlewaretoken" value="mIcOZxGeOTI6REnUd9q6T1hg0pTNOtOPmR0ITtN2bN1xkefwz2hEeEbpJHEXfzbl">
+          <div class="form-group"><label class="form-label">Email / Username</label><input type="text" name="username" class="form-control" placeholder="Email atau username" required=""></div>
+          <div class="form-group"><label class="form-label">Password</label><input type="password" name="password" class="form-control" placeholder="••••••••" required=""></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:18px;font-size:.8rem;"><label style="display:flex;align-items:center;gap:6px;color:var(--tx-2);cursor:pointer;"><input type="checkbox" name="remember"> Ingat saya</label><a href="http://127.0.0.1:8000/auth/register/#" style="color:var(--c-primary-l);">Lupa password?</a></div>
+          <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-sign-in-alt"></i> Masuk</button>
+        </form>
+        <div style="margin-top:22px;padding-top:18px;border-top:1px solid var(--bd);">
+          <p style="font-size:.7rem;color:var(--tx-3);margin-bottom:8px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;">Demo Cepat</p>
+          <div style="display:flex;gap:8px;">
+            <a href="http://127.0.0.1:8000/admin/dashboard/" style="flex:1;padding:10px 8px;background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.2);border-radius:var(--r-sm);text-align:center;font-size:.76rem;font-weight:700;color:var(--c-primary-l);"><i class="fas fa-shield-alt" style="display:block;font-size:1.1rem;margin-bottom:3px;"></i>Admin</a>
+            <a href="http://127.0.0.1:8000/dashboard/" style="flex:1;padding:10px 8px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.2);border-radius:var(--r-sm);text-align:center;font-size:.76rem;font-weight:700;color:#34d399;"><i class="fas fa-user" style="display:block;font-size:1.1rem;margin-bottom:3px;"></i>Anggota</a>
+            <a href="http://127.0.0.1:8000/catalog/" style="flex:1;padding:10px 8px;background:rgba(14,165,233,.1);border:1px solid rgba(14,165,233,.2);border-radius:var(--r-sm);text-align:center;font-size:.76rem;font-weight:700;color:#38bdf8;"><i class="fas fa-book" style="display:block;font-size:1.1rem;margin-bottom:3px;"></i>Katalog</a>
+          </div>
+        </div>
+      </div>
+      <!-- REGISTER -->
+      <div id="panelReg" style="display: none;">
+        <h2 style="font-size:1.5rem;font-weight:700;margin-bottom:5px;">Buat Akun ✨</h2>
+        <p style="font-size:.84rem;color:var(--tx-2);margin-bottom:22px;">Daftar sebagai anggota perpustakaan baru</p>
+        <form method="post" action="http://127.0.0.1:8000/auth/register/"><input type="hidden" name="csrfmiddlewaretoken" value="mIcOZxGeOTI6REnUd9q6T1hg0pTNOtOPmR0ITtN2bN1xkefwz2hEeEbpJHEXfzbl">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div class="form-group"><label class="form-label">Nama Depan *</label><input type="text" name="first_name" class="form-control" required=""></div>
+            <div class="form-group"><label class="form-label">Nama Belakang</label><input type="text" name="last_name" class="form-control"></div>
+          </div>
+          <div class="form-group"><label class="form-label">Email *</label><input type="email" name="email" class="form-control" required=""></div>
+          <div class="form-group"><label class="form-label">No. Telepon</label><input type="tel" name="phone" class="form-control"></div>
+          <div class="form-group"><label class="form-label">Password *</label><input type="password" name="password" class="form-control" required=""></div>
+          <div class="form-group"><label class="form-label">Konfirmasi Password *</label><input type="password" name="password2" class="form-control" required=""></div>
+          <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-user-plus"></i> Daftar Sekarang</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function switchTab(t){
+  const isL=t==='login';
+  document.getElementById('panelLogin').style.display=isL?'':'none';
+  document.getElementById('panelReg').style.display=isL?'none':'';
+  document.getElementById('tabLogin').style.cssText+= isL?'background:var(--bg-card);color:var(--tx);':'color:var(--tx-2);background:transparent;';
+  document.getElementById('tabReg').style.cssText  += isL?'color:var(--tx-2);background:transparent;':'background:var(--bg-card);color:var(--tx);';
+}
+</script>
+
+<script src="./Masuk _ SMA Khadijah_files/app.js.download"></script>
+
+
+
+</body></html>

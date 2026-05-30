@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kontak - Jeck</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+
+        <!-- Cursor -->
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-circle" id="cursorCircle"></div>
+
+<!-- Navbar -->
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+
+        <a href="index.html" class="nav-brand nav-brand-logo">
+            <span class="logo-box">J</span>
+            <span class="logo-text">JECK<span class="brand-accent">.</span></span>
+        </a>
+
+        <ul class="nav-menu" id="navMenu">
+            <li><a href="index.html" class="nav-link">Beranda</a></li>
+            <li><a href="tentang.html" class="nav-link">Tentang</a></li>
+            <li><a href="artikel.html" class="nav-link">Artikel</a></li>
+            <li><a href="kontak.html" class="btn-gold nav-cta">Hubungi Saya</a></li>
+        </ul>
+
+        <button class="nav-burger" id="navBurger">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</nav>
+
+    <!-- PAGE HERO -->
+    <section class="page-hero">
+        <div class="container">
+            <span class="section-tag">✦ Mari Terhubung</span>
+            <h1 class="page-title">Hubungi Saya</h1>
+        </div>
+    </section>
+
+    <!-- KONTAK -->
+    <section class="section">
+        <div class="container">
+
+            <div class="kontak-grid">
+                <!-- Informasi Kontak -->
+                <div class="kontak-info reveal">
+                    <h2 class="kontak-heading">
+                        Ada yang bisa saya bantu?
+                    </h2>
+                    <p class="kontak-sub">
+                        Saya terbuka untuk diskusi, konsultasi, kerja sama bisnis,
+                        pelatihan, seminar, maupun kegiatan pendidikan lainnya.
+                        Jangan ragu untuk menghubungi saya melalui kontak berikut.
+                    </p>
+                    <div class="kontak-items">
+                        <div class="kontak-item">
+                            <div class="kontak-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div>
+                                <span class="kontak-label">Email</span>
+                                <a href="mailto:azzakkyabdullah@gmail.com" class="kontak-val">
+                                    azzakkyabdullah@gmail.com
+                                </a>
+                            </div>
+                        </div>
+                        <div class="kontak-item">
+                            <div class="kontak-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div>
+                                <span class="kontak-label">Telepon</span>
+                                <a href="tel:+6287859562635" class="kontak-val">
+                                    +62 878-5956-26350
+                                </a>
+                            </div>
+                        </div>
+                        <div class="kontak-item">
+                            <div class="kontak-icon">
+                                <i class="fab fa-whatsapp"></i>
+                            </div>
+                            <div>
+                                <span class="kontak-label">WhatsApp</span>
+                                <a href="https://wa.me/62878595626350"
+                                   target="_blank"
+                                   class="kontak-val">
+                                    Chat Sekarang
+                                </a>
+                            </div>
+                        </div>
+                        <div class="kontak-item">
+                            <div class="kontak-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div>
+                                <span class="kontak-label">Lokasi</span>
+                                <span class="kontak-val">
+                                    Surabaya, Jawa Timur, Indonesia
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Social Media -->
+                    <div class="kontak-socials">
+                        <a href="https://www.instagram.com/azzakkyabdullah"
+                           target="_blank"
+                           class="social-icon">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://github.com/Jeck25-dev"
+                           target="_blank"
+                           class="social-icon">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="https://www.youtube.com/@jeck2584"
+                           target="_blank"
+                           class="social-icon">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Form Kontak -->
+                <div class="kontak-form-wrap reveal">
+                    <div class="form-card">
+                        <h3 class="form-title">
+                            Kirim Pesan
+                        </h3>
+                        <form class="kontak-form">
+                            <div class="form-row-2">
+                                <div class="form-group">
+                                    <label>Nama Lengkap</label>
+                                    <input
+                                        type="text"
+                                        placeholder="Masukkan nama Anda"
+                                        required
+                                    >
+                                </div>
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input
+                                        type="email"
+                                        placeholder="nama@email.com"
+                                        required
+                                    >
+                                </div>
+                            </div>
+                            <div class="form-row-2">
+                                <div class="form-group">
+                                    <label>Nomor Telepon</label>
+                                    <input
+                                        type="tel"
+                                        placeholder="+62"
+                                    >
+                                </div>
+                                <div class="form-group">
+                                    <label>Keperluan</label>
+
+                                    <select required>
+                                        <option value="">
+                                            Pilih Keperluan
+                                        </option>
+                                        <option>Konsultasi Bisnis</option>
+                                        <option>Pelatihan</option>
+                                        <option>Seminar</option>
+                                        <option>Kerja Sama</option>
+                                        <option>Lainnya</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Pesan</label>
+                                <textarea
+                                    rows="6"
+                                    placeholder="Tuliskan pesan Anda di sini..."
+                                    required
+                                ></textarea>
+                            </div>
+                            <button type="submit" class="btn-gold btn-full">
+                                <i class="fas fa-paper-plane"></i>
+                                Kirim Pesan
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+
+        <div class="footer-top">
+
+            <div class="footer-brand">
+                <h3 class="footer-name">Jeck</h3>
+
+                <p class="footer-role">
+                    Entrepreneur & Educator
+                </p>
+
+                <p class="footer-tagline">
+                    Mendidik Generasi, Membangun Bisnis —
+                    Satu Langkah di Satu Waktu.
+                </p>
+            </div>
+
+            <div class="footer-nav">
+                <h4>Navigasi</h4>
+
+                <ul>
+                    <li><a href="index.html">Beranda</a></li>
+                    <li><a href="tentang.html">Tentang</a></li>
+                    <li><a href="artikel.html">Artikel</a></li>
+                    <li><a href="kontak.html">Kontak</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-contact">
+
+                <h4>Kontak</h4>
+
+                <p>
+                    <i class="fas fa-envelope"></i>
+                    azzakkyabdullah@gmail.com
+                </p>
+
+                <p>
+                    <i class="fas fa-phone"></i>
+                    +62 878-5956-2635
+                </p>
+
+                <p>
+                    <i class="fas fa-map-marker-alt"></i>
+                    Lamongan, Jawa Timur, Indonesia
+                </p>
+
+                <div class="footer-socials">
+
+                    <a href="https://www.instagram.com/azzakkyabdullah"
+                       target="_blank">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+
+                    <a href="https://github.com/Jeck25-dev"
+                       target="_blank">
+                        <i class="fab fa-github"></i>
+                    </a>
+
+                    <a href="https://www.youtube.com/@jeck2584"
+                       target="_blank">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 Jeck. Seluruh hak dilindungi.</p>
+
+            <p>
+                Didukung oleh
+                <a href="https://wabstd.com/" target="_blank">
+                    Wabstd
+                </a>
+            </p>
+        </div>
+
+    </footer>
+
+    <!-- JS -->
+    <script src="static/js/main.js"></script>
+
+</body>
+</html>

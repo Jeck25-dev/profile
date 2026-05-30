@@ -1,0 +1,45 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+{% block title %}{{ artikel.judul }} — {% if profil %}{{ profil.nama }}{% endif %}{% endblock %}
+{% block content %}
+<section class="page-hero">
+    <div class="container">
+        {% if artikel.kategori %}<span class="section-tag">✦ {{ artikel.kategori }}</span>{% endif %}
+        <h1 class="page-title" style="font-size:clamp(1.8rem,3.5vw,3rem);">{{ artikel.judul }}</h1>
+        <p class="page-sub">{{ artikel.tanggal|date:"d F Y" }}</p>
+    </div>
+</section>
+<section class="section">
+    <div class="container">
+        <div class="artikel-detail-wrap">
+            <div class="artikel-detail-content reveal">
+                {% if artikel.gambar %}
+                <img src="{{ artikel.gambar.url }}" alt="{{ artikel.judul }}" class="artikel-detail-img">
+                {% endif %}
+                <div class="artikel-isi">{{ artikel.isi|linebreaks }}</div>
+            </div>
+            <aside class="artikel-sidebar reveal">
+                <div class="sidebar-card">
+                    <h4>Tentang Penulis</h4>
+                    {% if profil and profil.foto %}
+                    <img src="{{ profil.foto.url }}" alt="{{ profil.nama }}" class="sidebar-foto">
+                    {% endif %}
+                    <p class="sidebar-nama">{% if profil %}{{ profil.nama }}{% endif %}</p>
+                    <p class="sidebar-role gold-text">{% if profil %}{{ profil.peran_utama }}{% endif %}</p>
+                    <a href="{% url 'tentang' %}" class="btn-outline-gold" style="margin-top:1rem;display:inline-block;">Pelajari Lebih Lanjut</a>
+                </div>
+                {% if artikel_lain %}
+                <div class="sidebar-card">
+                    <h4>Artikel Lainnya</h4>
+                    {% for a in artikel_lain %}
+                    <a href="{% url 'artikel_detail' a.slug %}" class="sidebar-artikel-link">
+                        <i class="fas fa-angle-right gold-text"></i> {{ a.judul }}
+                    </a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </aside>
+        </div>
+    </div>
+</section>
+{% endblock %}

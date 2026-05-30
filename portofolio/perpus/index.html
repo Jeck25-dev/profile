@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Beranda | AI-Library | SMA Khadijah</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<div class="app-wrap">
+  
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon"><i class="fas fa-microchip"></i></div>
+      <div>
+        <div class="logo-text">AI-Library</div>
+        <div class="logo-sub">Portal Anggota</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Menu</div>
+      <ul>
+        <li class="nav-item active">
+          <a href="index.html"><i class="fas fa-home"></i> Beranda</a>
+        </li>
+        <li class="nav-item">
+          <a href="catalog.html"><i class="fas fa-book"></i> Katalog Buku</a>
+        </li>
+        <li class="nav-item nav-ai">
+          <a href="ai_chat.html">
+            <i class="fas fa-robot"></i> Asisten AI 
+            <span style="margin-left:auto;font-size:.6rem;font-weight:700;background:linear-gradient(135deg,#7c3aed,#ec4899);color:#fff;padding:2px 7px;border-radius:100px;">NEW</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="history.html"><i class="fas fa-history"></i> Riwayat Pinjam</a>
+        </li>
+        <li class="nav-item">
+          <a href="notifications.html">
+            <i class="fas fa-bell"></i> Notifikasi
+            <span class="nav-badge">3</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="profile.html"><i class="fas fa-user"></i> Profil Saya</a>
+        </li>
+        <li class="nav-item">
+          <a href="#" id="logoutMenuLink" style="color:#f87171"><i class="fas fa-sign-out-alt"></i> Keluar</a>
+        </li>
+      </ul>
+    </nav>
+    <div class="sidebar-user">
+      <img src="https://ui-avatars.com/api/?name=Siswa+Khadijah&background=7c3aed&color=fff" class="s-avatar" alt="Avatar Pengguna"/>
+      <div>
+        <div class="s-name">Muhammad Fauzan</div>
+        <div class="s-role">Anggota</div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main-wrap">
+    
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
+        <div class="topbar-search">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Cari buku, artikel, atau penulis..." />
+          <div class="ai-badge"><i class="fas fa-sparkles"></i> AI</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div id="topbarDate" style="font-size: 0.84rem; color: var(--tx-2); margin-right: 10px;">Sabtu, 30 Mei 2026</div>
+        <button class="icon-btn">
+          <i class="fas fa-bell"></i>
+          <span class="dot"></span>
+        </button>
+      </div>
+    </header>
+
+    <div class="msg-wrap">
+      <div class="msg-item success">
+        <i class="fas fa-check-circle"></i> Selamat datang kembali di sistem AI-Library SMA Khadijah!
+      </div>
+    </div>
+
+    <main class="page-body">
+      
+      <div style="background:linear-gradient(135deg,#1a1040 0%,#0d1a2e 50%,#0a1628 100%); border:1px solid rgba(124,58,237,.2); border-radius:var(--r-xl); padding:48px 52px; display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; position:relative; overflow:hidden;">
+        <div style="position:absolute; width:400px; height:400px; background:radial-gradient(circle,rgba(124,58,237,.12),transparent 70%); top:-100px; right:100px; pointer-events:none;"></div>
+        <div style="position:relative; z-index:1; max-width:560px;">
+          <div style="display:inline-flex; align-items:center; gap:6px; padding:5px 14px; background:rgba(124,58,237,.15); border:1px solid rgba(124,58,237,.3); border-radius:100px; font-size:.72rem; font-weight:700; color:var(--c-primary-l); letter-spacing:.04em; margin-bottom:18px;">
+            <i class="fas fa-robot"></i> Perpustakaan Berbasis AI
+          </div>
+          <h1 style="font-size:clamp(1.8rem,4vw,2.8rem); font-weight:800; line-height:1.15; margin-bottom:14px;">
+            Temukan Buku Favoritmu<br>
+            <span style="background:linear-gradient(135deg,#a78bfa,#ec4899); -webkit-background-clip:text;-webkit-text-fill-color:transparent;">dengan Kecerdasan Buatan</span>
+          </h1>
+          <p style="color:var(--tx-2); font-size:.95rem; line-height:1.7; margin-bottom:28px;">
+            Akses 1,250+ koleksi buku, pinjam online, baca e-book, dan dapatkan rekomendasi AI yang personal untuk pengalaman belajar terbaik.
+          </p>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <a href="catalog.html" class="btn btn-primary btn-lg"><i class="fas fa-search"></i> Jelajahi Katalog</a>
+          </div>
+        </div>
+        <div style="font-size:8rem; color:rgba(124,58,237,.1); flex-shrink:0; line-height:1; position:relative; z-index:1;">
+          <i class="fas fa-brain"></i>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:28px;">
+        <div style="background:var(--bg-card); border:1px solid var(--bd); border-radius:var(--r-md); padding:16px; text-align:center;">
+          <div style="font-size:1.6rem; font-weight:800; background:var(--g-primary); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">1,250+</div>
+          <div style="font-size:.76rem; color:var(--tx-2);">Koleksi Buku</div>
+        </div>
+        <div style="background:var(--bg-card); border:1px solid var(--bd); border-radius:var(--r-md); padding:16px; text-align:center;">
+          <div style="font-size:1.6rem; font-weight:800; background:var(--g-accent); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">450+</div>
+          <div style="font-size:.76rem; color:var(--tx-2);">Anggota Aktif</div>
+        </div>
+        <div style="background:var(--bg-card); border:1px solid var(--bd); border-radius:var(--r-md); padding:16px; text-align:center;">
+          <div style="font-size:1.6rem; font-weight:800; background:var(--g-sky); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">3,800+</div>
+          <div style="font-size:.76rem; color:var(--tx-2);">Total Peminjaman</div>
+        </div>
+        <div style="background:var(--bg-card); border:1px solid var(--bd); border-radius:var(--r-md); padding:16px; text-align:center;">
+          <div style="font-size:1.6rem; font-weight:800; background:var(--g-ai); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">24/7</div>
+          <div style="font-size:.76rem; color:var(--tx-2);">Akses Online</div>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+        <h2 style="font-size:1rem; font-weight:700; display:flex; align-items:center; gap:8px;">
+          <i class="fas fa-star" style="color:var(--c-primary-l);"></i> Koleksi Unggulan
+        </h2>
+        <a href="catalog.html" class="btn btn-ghost btn-sm">Lihat Semua <i class="fas fa-arrow-right"></i></a>
+      </div>
+      
+      <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(165px,1fr)); gap:14px; margin-bottom:32px;">
+        
+        <a href="book_detail.html" style="display:block; background:var(--bg-card); border:1px solid var(--bd); border-radius:var(--r-lg); overflow:hidden; transition:var(--tx-ease);" 
+           onmouseover="this.style.borderColor='rgba(124,58,237,.4)'; this.style.transform='translateY(-4px)'; this.style.boxShadow='0 16px 40px rgba(0,0,0,.4)'" 
+           onmouseout="this.style.borderColor='var(--bd)'; this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+          <div style="height:130px; display:flex; align-items:center; justify-content:center; font-size:3rem; color:#fff; position:relative; background:var(--g-primary);">
+            I
+            <span style="position:absolute; top:7px; right:7px; font-size:.6rem; font-weight:700; padding:2px 7px; border-radius:100px; background:rgba(16,185,129,.85); color:#fff;">Tersedia</span>
+          </div>
+          <div style="padding:12px;">
+            <div style="font-size:.84rem; font-weight:700; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Informatika Kelas XI</div>
+            <div style="font-size:.72rem; color:var(--tx-2); margin-bottom:7px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Kementerian Pendidikan</div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:.64rem; font-weight:700; padding:2px 7px; border-radius:100px; background:rgba(124,58,237,.12); color:var(--c-primary-l);">Eksakta</span>
+              <span style="font-size:.68rem; color:var(--c-primary-l);"><i class="fas fa-bolt"></i> 9.8</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="book_detail.html" style="display:block; background:var(--bg-card); border:1px solid var(--bd); border-radius:var(--r-lg); overflow:hidden; transition:var(--tx-ease);" 
+           onmouseover="this.style.borderColor='rgba(124,58,237,.4)'; this.style.transform='translateY(-4px)'; this.style.boxShadow='0 16px 40px rgba(0,0,0,.4)'" 
+           onmouseout="this.style.borderColor='var(--bd)'; this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+          <div style="height:130px; display:flex; align-items:center; justify-content:center; font-size:3rem; color:#fff; position:relative; background:var(--g-sky);">
+            P
+            <span style="position:absolute; top:7px; right:7px; font-size:.6rem; font-weight:700; padding:2px 7px; border-radius:100px; background:rgba(245,158,11,.85); color:#fff;">Terbatas</span>
+          </div>
+          <div style="padding:12px;">
+            <div style="font-size:.84rem; font-weight:700; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Pemrograman Python</div>
+            <div style="font-size:.72rem; color:var(--tx-2); margin-bottom:7px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Yudi Purwanto</div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:.64rem; font-weight:700; padding:2px 7px; border-radius:100px; background:rgba(124,58,237,.12); color:var(--c-primary-l);">Teknologi</span>
+              <span style="font-size:.68rem; color:var(--c-primary-l);"><i class="fas fa-bolt"></i> 9.5</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="book_detail.html" style="display:block; background:var(--bg-card); border:1px solid var(--bd); border-radius:var(--r-lg); overflow:hidden; transition:var(--tx-ease);" 
+           onmouseover="this.style.borderColor='rgba(124,58,237,.4)'; this.style.transform='translateY(-4px)'; this.style.boxShadow='0 16px 40px rgba(0,0,0,.4)'" 
+           onmouseout="this.style.borderColor='var(--bd)'; this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+          <div style="height:130px; display:flex; align-items:center; justify-content:center; font-size:3rem; color:#fff; position:relative; background:var(--g-accent);">
+            H
+            <span style="position:absolute; top:7px; right:7px; font-size:.6rem; font-weight:700; padding:2px 7px; border-radius:100px; background:rgba(16,185,129,.85); color:#fff;">Tersedia</span>
+          </div>
+          <div style="padding:12px;">
+            <div style="font-size:.84rem; font-weight:700; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Hujan Bulan Juni</div>
+            <div style="font-size:.72rem; color:var(--tx-2); margin-bottom:7px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Sapardi Djoko Damono</div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:.64rem; font-weight:700; padding:2px 7px; border-radius:100px; background:rgba(124,58,237,.12); color:var(--c-primary-l);">Sastra</span>
+              <span style="font-size:.68rem; color:var(--c-primary-l);"><i class="fas fa-bolt"></i> 9.0</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="book_detail.html" style="display:block; background:var(--bg-card); border:1px solid var(--bd); border-radius:var(--r-lg); overflow:hidden; transition:var(--tx-ease);" 
+           onmouseover="this.style.borderColor='rgba(124,58,237,.4)'; this.style.transform='translateY(-4px)'; this.style.boxShadow='0 16px 40px rgba(0,0,0,.4)'" 
+           onmouseout="this.style.borderColor='var(--bd)'; this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+          <div style="height:130px; display:flex; align-items:center; justify-content:center; font-size:3rem; color:#fff; position:relative; background:var(--g-amber);">
+            S
+            <span style="position:absolute; top:7px; right:7px; font-size:.6rem; font-weight:700; padding:2px 7px; border-radius:100px; background:rgba(239,68,68,.85); color:#fff;">Dipinjam</span>
+          </div>
+          <div style="padding:12px;">
+            <div style="font-size:.84rem; font-weight:700; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Sejarah Nusantara</div>
+            <div style="font-size:.72rem; color:var(--tx-2); margin-bottom:7px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Jonathan Black</div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:.64rem; font-weight:700; padding:2px 7px; border-radius:100px; background:rgba(124,58,237,.12); color:var(--c-primary-l);">Sejarah</span>
+              <span style="font-size:.68rem; color:var(--c-primary-l);"><i class="fas fa-bolt"></i> 9.2</span>
+            </div>
+          </div>
+        </a>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<div id="sideOverlay" style="position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:299; display:none;"></div>
+
+<div class="logout-confirm" id="logoutConfirm">
+  <div class="logout-card">
+    <div class="logout-icon"><i class="fas fa-sign-out-alt"></i></div>
+    <div class="logout-title">Keluar dari AI-Library?</div>
+    <div class="logout-sub">
+      Anda akan mengakhiri sesi login sebagai<br>
+      <strong style="color:var(--c-primary-l);">Muhammad Fauzan</strong>.
+    </div>
+    <div class="logout-btns">
+      <button class="btn btn-ghost" id="cancelLogoutBtn"><i class="fas fa-times"></i> Batal</button>
+      <a href="login.html" class="btn btn-danger"><i class="fas fa-sign-out-alt"></i> Ya, Keluar</a>
+    </div>
+  </div>
+</div>
+
+<a href="ai_chat.html" class="ai-fab" title="Asisten AI">
+  <i class="fas fa-comment-dots"></i>
+  <div class="ai-pulse"></div>
+</a>
+
+<script>
+  // Kontrol buka/tutup Sidebar pada Mobile
+  const menuBtn  = document.getElementById('menuBtn');
+  const sidebar  = document.getElementById('sidebar');
+  const sideOver = document.getElementById('sideOverlay');
+  
+  menuBtn?.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    sideOver.style.display = sidebar.classList.contains('open') ? 'block' : 'none';
+  });
+
+  sideOver?.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    sideOver.style.display = 'none';
+  });
+
+  // Kontrol Modal Konfirmasi Logout Statis
+  const logoutMenuLink = document.getElementById('logoutMenuLink');
+  const logoutConfirm  = document.getElementById('logoutConfirm');
+  const cancelLogoutBtn = document.getElementById('cancelLogoutBtn');
+
+  logoutMenuLink?.addEventListener('click', (e) => {
+    e.preventDefault();
+    logoutConfirm.classList.add('on');
+  });
+
+  cancelLogoutBtn?.addEventListener('click', () => {
+    logoutConfirm.classList.remove('on');
+  });
+
+  // Ambil dan pasang Tanggal Hari Ini Secara Otomatis
+  const dateEl = document.getElementById('topbarDate');
+  if (dateEl) {
+    dateEl.textContent = new Date().toLocaleDateString('id-ID', {
+      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+    });
+  }
+
+  // Auto-dismiss pesan flash dalam 4.5 detik
+  document.querySelectorAll('.msg-item').forEach(el => {
+    setTimeout(() => { 
+      el.style.opacity = '0'; 
+      setTimeout(() => el.remove(), 400); 
+    }, 4500);
+  });
+</script>
+</body>
+</html>
