@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Pendaftar — EduGate Admin</title>
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/dashboard-siswa.css">
+  <link rel="stylesheet" href="css/dashboard-admin.css">
+  <link rel="stylesheet" href="css/admin-data-pendaftar.css">
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- SIDEBAR ADMIN -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">E</div>
+      <div class="sidebar-brand">
+        <span class="name">EduGate</span>
+        <span class="sub">Panel Admin</span>
+      </div>
+    </div>
+    <div class="sidebar-user">
+      <div class="user-avatar" style="background:linear-gradient(135deg,#c0392b,#e74c3c);">AD</div>
+      <div class="user-info">
+        <span class="user-name">Administrator</span>
+        <span class="user-role">Super Admin</span>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Dashboard</div>
+      <a href="dashboard-admin.html" class="nav-item">
+        <span class="nav-icon">📊</span> Ringkasan
+      </a>
+      <div class="nav-section-title">Manajemen PPDB</div>
+      <a href="admin-data-pendaftar.html" class="nav-item active">
+        <span class="nav-icon">👥</span> Data Pendaftar
+        <span class="nav-badge">12</span>
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">✅</span> Verifikasi Berkas
+        <span class="nav-badge">8</span>
+      </a>
+      <a href="#" class="nav-item"><span class="nav-icon">🏆</span> Hasil Seleksi</a>
+      <a href="#" class="nav-item"><span class="nav-icon">🔄</span> Daftar Ulang</a>
+      <div class="nav-section-title">Konfigurasi</div>
+      <a href="#" class="nav-item"><span class="nav-icon">🏫</span> Pengaturan Sekolah</a>
+      <a href="#" class="nav-item"><span class="nav-icon">📅</span> Jadwal PPDB</a>
+      <a href="#" class="nav-item"><span class="nav-icon">🚪</span> Manajemen Jalur</a>
+      <a href="#" class="nav-item"><span class="nav-icon">👤</span> Kelola Pengguna</a>
+      <div class="nav-section-title">Laporan</div>
+      <a href="#" class="nav-item"><span class="nav-icon">📈</span> Statistik & Laporan</a>
+      <a href="#" class="nav-item"><span class="nav-icon">🖨️</span> Ekspor Data</a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="index.html" class="nav-item"><span class="nav-icon">🏫</span> Ke Halaman Publik</a>
+      <a href="login.html" class="nav-item"><span class="nav-icon">🚪</span> Keluar</a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <div class="topbar">
+      <div class="topbar-left">
+        <span class="page-title">Data Pendaftar</span>
+        <span class="breadcrumb">Admin › Data Pendaftar</span>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-icon-btn">🔔<span class="notif-dot"></span></div>
+        <button class="btn btn-outline btn-sm" onclick="exportData()">⬇ Ekspor Excel</button>
+        <button class="btn btn-primary btn-sm" onclick="openAddModal()">+ Tambah Manual</button>
+        <div class="user-avatar" style="background:linear-gradient(135deg,#c0392b,#e74c3c);cursor:pointer;">AD</div>
+      </div>
+    </div>
+
+    <div class="page-body">
+
+      <!-- PAGE HEADER -->
+      <div class="page-header">
+        <div class="page-header-left">
+          <h2>Kelola Data Pendaftar</h2>
+          <p>Total 1.247 pendaftar terdaftar untuk PPDB Tahun Ajaran 2025/2026</p>
+        </div>
+      </div>
+
+      <!-- MINI STAT ROW -->
+      <div class="mini-stat-row">
+        <div class="mini-stat active-filter" onclick="filterByStatus('semua', this)">
+          <span class="ms-icon">📋</span>
+          <div><span class="ms-num">1.247</span><span class="ms-label">Total</span></div>
+        </div>
+        <div class="mini-stat" onclick="filterByStatus('lengkap', this)">
+          <span class="ms-icon">✅</span>
+          <div><span class="ms-num">836</span><span class="ms-label">Berkas Lengkap</span></div>
+        </div>
+        <div class="mini-stat" onclick="filterByStatus('verifikasi', this)">
+          <span class="ms-icon">⏳</span>
+          <div><span class="ms-num">289</span><span class="ms-label">Menunggu Verifikasi</span></div>
+        </div>
+        <div class="mini-stat" onclick="filterByStatus('kurang', this)">
+          <span class="ms-icon">⚠️</span>
+          <div><span class="ms-num">122</span><span class="ms-label">Berkas Kurang</span></div>
+        </div>
+        <div class="mini-stat" onclick="filterByStatus('ditolak', this)">
+          <span class="ms-icon">❌</span>
+          <div><span class="ms-num">0</span><span class="ms-label">Ditolak</span></div>
+        </div>
+      </div>
+
+      <!-- FILTER BAR -->
+      <div class="filter-bar">
+        <div class="search-wrap" style="min-width:240px;">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="form-control" placeholder="Cari nama, NISN, no. pendaftaran..." oninput="searchTable(this.value)">
+        </div>
+        <div class="filter-divider"></div>
+        <span class="filter-label">Jalur:</span>
+        <select class="form-control" style="max-width:140px;padding:8px 12px;font-size:13px;" onchange="filterTable()">
+          <option value="">Semua Jalur</option>
+          <option value="Prestasi">Prestasi</option>
+          <option value="Zonasi">Zonasi</option>
+          <option value="Afirmasi">Afirmasi</option>
+          <option value="Mutasi">Mutasi</option>
+        </select>
+        <select class="form-control" style="max-width:160px;padding:8px 12px;font-size:13px;" onchange="filterTable()">
+          <option value="">Semua Status</option>
+          <option value="Disetujui">Disetujui</option>
+          <option value="Verifikasi">Verifikasi</option>
+          <option value="Tidak Lengkap">Tidak Lengkap</option>
+          <option value="Ditolak">Ditolak</option>
+        </select>
+        <select class="form-control" style="max-width:140px;padding:8px 12px;font-size:13px;">
+          <option>Semua Gender</option>
+          <option>Laki-laki</option>
+          <option>Perempuan</option>
+        </select>
+        <button class="btn btn-outline btn-sm" onclick="resetFilter()">↺ Reset</button>
+      </div>
+
+      <!-- DATA TABLE -->
+      <div class="data-table-wrap">
+        <div class="dt-header">
+          <span class="dt-title">Daftar Pendaftar</span>
+          <div class="dt-actions">
+            <button class="btn btn-outline btn-sm" onclick="toggleColumns()">⚙ Kolom</button>
+            <button class="btn btn-outline btn-sm" onclick="printTable()">🖨️ Cetak</button>
+          </div>
+        </div>
+
+        <!-- Bulk Bar -->
+        <div class="bulk-bar" id="bulk-bar">
+          <span class="bulk-text" id="bulk-text">0 data dipilih</span>
+          <div class="bulk-actions">
+            <button class="btn btn-ghost btn-sm" onclick="bulkSetujui()">✓ Setujui Semua</button>
+            <button class="btn btn-ghost btn-sm" onclick="bulkNotifikasi()">🔔 Kirim Notifikasi</button>
+            <button class="btn btn-ghost btn-sm" style="background:rgba(192,57,43,0.3);" onclick="bulkTolak()">✕ Tolak Semua</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table id="pendaftar-table">
+            <thead>
+              <tr>
+                <th class="checkbox-cell">
+                  <input type="checkbox" class="row-check" id="check-all" onchange="toggleAllCheck(this)">
+                </th>
+                <th class="sortable sorted" onclick="sortTable(0)">No. Daftar <span class="sort-icon">↑</span></th>
+                <th class="sortable" onclick="sortTable(1)">Nama Siswa <span class="sort-icon">↕</span></th>
+                <th>Jalur</th>
+                <th class="sortable" onclick="sortTable(3)">Asal Sekolah <span class="sort-icon">↕</span></th>
+                <th>Gender</th>
+                <th>Dokumen</th>
+                <th>Nilai</th>
+                <th class="sortable" onclick="sortTable(7)">Tgl Daftar <span class="sort-icon">↕</span></th>
+                <th>Status</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="table-body">
+              <!-- Row 1 -->
+              <tr>
+                <td class="checkbox-cell"><input type="checkbox" class="row-check" onchange="updateBulk()"></td>
+                <td style="font-weight:700;color:var(--primary);font-size:13px;">2025-0001</td>
+                <td>
+                  <div class="student-cell">
+                    <div class="student-avatar">AF</div>
+                    <div>
+                      <span class="student-name">Ahmad Farid R.</span>
+                      <span class="student-nisn">0057891234</span>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="badge badge-info">Prestasi</span></td>
+                <td style="font-size:13px;">SMP Negeri 3 Surabaya</td>
+                <td style="font-size:13px;color:var(--text-mid);">L</td>
+                <td>
+                  <div class="doc-progress">
+                    <div class="dp-bar-wrap"><div class="dp-bar" style="width:100%;background:var(--success);"></div></div>
+                    <span class="dp-text" style="color:var(--success);">6/6</span>
+                  </div>
+                </td>
+                <td style="font-size:13px;font-weight:700;color:var(--primary);">91.2</td>
+                <td style="font-size:12px;color:var(--text-light);">1 Jan 2026</td>
+                <td><span class="badge badge-success">✓ Disetujui</span></td>
+                <td>
+                  <div class="action-btns">
+                    <button class="act-btn view" onclick="openDetail('2025-0001','Ahmad Farid R.','Prestasi','SMP Negeri 3','Disetujui')" title="Detail">👁</button>
+                    <button class="act-btn" title="Edit" onclick="editRow(this)">✏️</button>
+                    <button class="act-btn reject" title="Hapus" onclick="hapusRow(this)">🗑</button>
+                  </div>
+                </td>
+              </tr>
+              <!-- Row 2 -->
+              <tr>
+                <td class="checkbox-cell"><input type="checkbox" class="row-check" onchange="updateBulk()"></td>
+                <td style="font-weight:700;color:var(--primary);font-size:13px;">2025-0015</td>
+                <td>
+                  <div class="student-cell">
+                    <div class="student-avatar" style="background:linear-gradient(135deg,#c0392b,#e74c3c);">SD</div>
+                    <div>
+                      <span class="student-name">Sari Dewi N.</span>
+                      <span class="student-nisn">0056783219</span>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="badge badge-neutral">Zonasi</span></td>
+                <td style="font-size:13px;">SMP Negeri 7 Surabaya</td>
+                <td style="font-size:13px;color:var(--text-mid);">P</td>
+                <td>
+                  <div class="doc-progress">
+                    <div class="dp-bar-wrap"><div class="dp-bar" style="width:100%;background:var(--success);"></div></div>
+                    <span class="dp-text" style="color:var(--success);">6/6</span>
+                  </div>
+                </td>
+                <td style="font-size:13px;font-weight:700;color:var(--primary);">88.5</td>
+                <td style="font-size:12px;color:var(--text-light);">1 Jan 2026</td>
+                <td><span class="badge badge-success">✓ Disetujui</span></td>
+                <td>
+                  <div class="action-btns">
+                    <button class="act-btn view" onclick="openDetail('2025-0015','Sari Dewi N.','Zonasi','SMP Negeri 7','Disetujui')" title="Detail">👁</button>
+                    <button class="act-btn" title="Edit">✏️</button>
+                    <button class="act-btn reject" title="Hapus" onclick="hapusRow(this)">🗑</button>
+                  </div>
+                </td>
+              </tr>
+              <!-- Row 3 -->
+              <tr>
+                <td class="checkbox-cell"><input type="checkbox" class="row-check" onchange="updateBulk()"></td>
+                <td style="font-weight:700;color:var(--primary);font-size:13px;">2025-0022</td>
+                <td>
+                  <div class="student-cell">
+                    <div class="student-avatar" style="background:linear-gradient(135deg,#27ae60,#2ecc71);">RP</div>
+                    <div>
+                      <span class="student-name">Rio Pratama</span>
+                      <span class="student-nisn">0051234098</span>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="badge badge-info">Prestasi</span></td>
+                <td style="font-size:13px;">SMP Al-Irsyad Surabaya</td>
+                <td style="font-size:13px;color:var(--text-mid);">L</td>
+                <td>
+                  <div class="doc-progress">
+                    <div class="dp-bar-wrap"><div class="dp-bar" style="width:66%;background:var(--warning);"></div></div>
+                    <span class="dp-text" style="color:var(--warning);">4/6</span>
+                  </div>
+                </td>
+                <td style="font-size:13px;font-weight:700;color:var(--primary);">85.0</td>
+                <td style="font-size:12px;color:var(--text-light);">2 Jan 2026</td>
+                <td><span class="badge badge-warning">⏳ Verifikasi</span></td>
+                <td>
+                  <div class="action-btns">
+                    <button class="act-btn view" onclick="openDetail('2025-0022','Rio Pratama','Prestasi','SMP Al-Irsyad','Verifikasi')" title="Detail">👁</button>
+                    <button class="act-btn approve" onclick="approveSingle(this)" title="Setujui">✓</button>
+                    <button class="act-btn reject" title="Tolak" onclick="rejectSingle(this)">✕</button>
+                  </div>
+                </td>
+              </tr>
+              <!-- Row 4 -->
+              <tr>
+                <td class="checkbox-cell"><input type="checkbox" class="row-check" onchange="updateBulk()"></td>
+                <td style="font-weight:700;color:var(--primary);font-size:13px;">2025-0033</td>
+                <td>
+                  <div class="student-cell">
+                    <div class="student-avatar" style="background:linear-gradient(135deg,#8e44ad,#9b59b6);">LA</div>
+                    <div>
+                      <span class="student-name">Laila Azzahra</span>
+                      <span class="student-nisn">0055432187</span>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="badge badge-neutral">Afirmasi</span></td>
+                <td style="font-size:13px;">MTs Negeri 1 Surabaya</td>
+                <td style="font-size:13px;color:var(--text-mid);">P</td>
+                <td>
+                  <div class="doc-progress">
+                    <div class="dp-bar-wrap"><div class="dp-bar" style="width:100%;background:var(--success);"></div></div>
+                    <span class="dp-text" style="color:var(--success);">6/6</span>
+                  </div>
+                </td>
+                <td style="font-size:13px;font-weight:700;color:var(--primary);">87.8</td>
+                <td style="font-size:12px;color:var(--text-light);">2 Jan 2026</td>
+                <td><span class="badge badge-success">✓ Disetujui</span></td>
+                <td>
+                  <div class="action-btns">
+                    <button class="act-btn view" onclick="openDetail('2025-0033','Laila Azzahra','Afirmasi','MTs Negeri 1','Disetujui')" title="Detail">👁</button>
+                    <button class="act-btn" title="Edit">✏️</button>
+                    <button class="act-btn reject" title="Hapus" onclick="hapusRow(this)">🗑</button>
+                  </div>
+                </td>
+              </tr>
+              <!-- Row 5 -->
+              <tr>
+                <td class="checkbox-cell"><input type="checkbox" class="row-check" onchange="updateBulk()"></td>
+                <td style="font-weight:700;color:var(--primary);font-size:13px;">2025-0047</td>
+                <td>
+                  <div class="student-cell">
+                    <div class="student-avatar" style="background:linear-gradient(135deg,#e67e22,#f39c12);">BS</div>
+                    <div>
+                      <span class="student-name">Budi Santoso</span>
+                      <span class="student-nisn">0051234567</span>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="badge badge-info">Prestasi</span></td>
+                <td style="font-size:13px;">SMP Negeri 5 Surabaya</td>
+                <td style="font-size:13px;color:var(--text-mid);">L</td>
+                <td>
+                  <div class="doc-progress">
+                    <div class="dp-bar-wrap"><div class="dp-bar" style="width:66%;background:var(--warning);"></div></div>
+                    <span class="dp-text" style="color:var(--warning);">4/6</span>
+                  </div>
+                </td>
+                <td style="font-size:13px;font-weight:700;color:var(--primary);">88.4</td>
+                <td style="font-size:12px;color:var(--text-light);">2 Jan 2026</td>
+                <td><span class="badge badge-warning">⏳ Verifikasi</span></td>
+                <td>
+                  <div class="action-btns">
+                    <button class="act-btn view" onclick="openDetail('2025-0047','Budi Santoso','Prestasi','SMP Negeri 5','Verifikasi')" title="Detail">👁</button>
+                    <button class="act-btn approve" onclick="approveSingle(this)" title="Setujui">✓</button>
+                    <button class="act-btn reject" title="Tolak" onclick="rejectSingle(this)">✕</button>
+                  </div>
+                </td>
+              </tr>
+              <!-- Row 6 -->
+              <tr>
+                <td class="checkbox-cell"><input type="checkbox" class="row-check" onchange="updateBulk()"></td>
+                <td style="font-weight:700;color:var(--primary);font-size:13px;">2025-0058</td>
+                <td>
+                  <div class="student-cell">
+                    <div class="student-avatar" style="background:linear-gradient(135deg,#16a085,#1abc9c);">NH</div>
+                    <div>
+                      <span class="student-name">Nadia Hapsari</span>
+                      <span class="student-nisn">0059871200</span>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="badge badge-neutral">Zonasi</span></td>
+                <td style="font-size:13px;">SMP Negeri 2 Surabaya</td>
+                <td style="font-size:13px;color:var(--text-mid);">P</td>
+                <td>
+                  <div class="doc-progress">
+                    <div class="dp-bar-wrap"><div class="dp-bar" style="width:33%;background:var(--danger);"></div></div>
+                    <span class="dp-text" style="color:var(--danger);">2/6</span>
+                  </div>
+                </td>
+                <td style="font-size:13px;font-weight:700;color:var(--text-light);">—</td>
+                <td style="font-size:12px;color:var(--text-light);">3 Jan 2026</td>
+                <td><span class="badge badge-danger">✕ Tidak Lengkap</span></td>
+                <td>
+                  <div class="action-btns">
+                    <button class="act-btn view" onclick="openDetail('2025-0058','Nadia Hapsari','Zonasi','SMP Negeri 2','Tidak Lengkap')" title="Detail">👁</button>
+                    <button class="act-btn" title="Kirim reminder" onclick="kirimReminder(this)">📨</button>
+                    <button class="act-btn reject" title="Hapus" onclick="hapusRow(this)">🗑</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+          <span class="pag-info">Menampilkan 1–6 dari 1.247 pendaftar</span>
+          <div class="pag-pages">
+            <button class="pag-btn" disabled>‹</button>
+            <button class="pag-btn active">1</button>
+            <button class="pag-btn" onclick="changePage(this)">2</button>
+            <button class="pag-btn" onclick="changePage(this)">3</button>
+            <button class="pag-btn">…</button>
+            <button class="pag-btn" onclick="changePage(this)">208</button>
+            <button class="pag-btn" onclick="changePage(this)">›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="detail-modal-overlay" id="detail-modal" onclick="closeModal(event)">
+  <div class="detail-modal">
+    <div class="dm-header">
+      <div>
+        <div class="dm-title" id="dm-title">Detail Pendaftar</div>
+        <div style="font-size:12px;color:var(--text-light);margin-top:2px;" id="dm-subtitle">No. Pendaftaran: —</div>
+      </div>
+      <button class="dm-close" onclick="closeDetailModal()">✕</button>
+    </div>
+    <div class="dm-body">
+      <div class="dm-section-title">Informasi Pendaftaran</div>
+      <div class="dm-grid">
+        <div><div class="dm-field-label">No. Pendaftaran</div><div class="dm-field-value" id="dm-no">—</div></div>
+        <div><div class="dm-field-label">Status</div><div class="dm-field-value" id="dm-status">—</div></div>
+        <div><div class="dm-field-label">Jalur</div><div class="dm-field-value" id="dm-jalur">—</div></div>
+        <div><div class="dm-field-label">Tgl. Pendaftaran</div><div class="dm-field-value">2 Januari 2026</div></div>
+      </div>
+
+      <div class="dm-section-title">Data Siswa</div>
+      <div class="dm-grid">
+        <div><div class="dm-field-label">Nama Lengkap</div><div class="dm-field-value" id="dm-nama">—</div></div>
+        <div><div class="dm-field-label">NISN</div><div class="dm-field-value">0051234567</div></div>
+        <div><div class="dm-field-label">Tgl. Lahir</div><div class="dm-field-value">12 Maret 2009</div></div>
+        <div><div class="dm-field-label">Jenis Kelamin</div><div class="dm-field-value">Laki-laki</div></div>
+        <div><div class="dm-field-label">Asal Sekolah</div><div class="dm-field-value" id="dm-sekolah">—</div></div>
+        <div><div class="dm-field-label">Nilai Rata-rata</div><div class="dm-field-value" style="color:var(--primary);font-weight:700;">88.4</div></div>
+      </div>
+
+      <div class="dm-section-title">Status Dokumen</div>
+      <div class="doc-check-list">
+        <div class="dcl-item">
+          <span class="dcl-name">📄 Kartu Keluarga</span>
+          <div class="dcl-actions"><span class="badge badge-success">✓ Disetujui</span><button class="act-btn view" style="width:26px;height:26px;font-size:11px;">👁</button></div>
+        </div>
+        <div class="dcl-item">
+          <span class="dcl-name">📄 Akta Kelahiran</span>
+          <div class="dcl-actions"><span class="badge badge-success">✓ Disetujui</span><button class="act-btn view" style="width:26px;height:26px;font-size:11px;">👁</button></div>
+        </div>
+        <div class="dcl-item">
+          <span class="dcl-name">📄 Ijazah SMP</span>
+          <div class="dcl-actions"><span class="badge badge-warning">⏳ Menunggu</span><button class="act-btn view" style="width:26px;height:26px;font-size:11px;">👁</button></div>
+        </div>
+        <div class="dcl-item">
+          <span class="dcl-name">🖼️ Pas Foto</span>
+          <div class="dcl-actions"><span class="badge badge-success">✓ Disetujui</span><button class="act-btn view" style="width:26px;height:26px;font-size:11px;">👁</button></div>
+        </div>
+        <div class="dcl-item" style="background:var(--danger-bg);">
+          <span class="dcl-name">🏆 Sertifikat Prestasi</span>
+          <div class="dcl-actions"><span class="badge badge-danger">✕ Belum Upload</span></div>
+        </div>
+        <div class="dcl-item" style="background:var(--danger-bg);">
+          <span class="dcl-name">📊 Rapor Semester 1–5</span>
+          <div class="dcl-actions"><span class="badge badge-danger">✕ Belum Upload</span></div>
+        </div>
+      </div>
+
+      <div class="dm-section-title">Catatan Admin</div>
+      <textarea class="form-control" rows="3" placeholder="Tambah catatan untuk pendaftar ini..."></textarea>
+    </div>
+    <div class="dm-footer">
+      <button class="btn btn-outline btn-sm" onclick="closeDetailModal()">Tutup</button>
+      <button class="btn btn-outline btn-sm" onclick="kirimReminderModal()">📨 Kirim Reminder</button>
+      <button class="btn btn-danger btn-sm" style="background:var(--danger);color:#fff;border:none;" onclick="rejectFromModal()">✕ Tolak</button>
+      <button class="btn btn-primary btn-sm" onclick="approveFromModal()">✓ Setujui Pendaftaran</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Detail Modal
+  function openDetail(no, nama, jalur, sekolah, status) {
+    document.getElementById('dm-title').textContent = nama;
+    document.getElementById('dm-subtitle').textContent = 'No. Pendaftaran: ' + no;
+    document.getElementById('dm-no').textContent = no;
+    document.getElementById('dm-nama').textContent = nama;
+    document.getElementById('dm-jalur').textContent = jalur;
+    document.getElementById('dm-sekolah').textContent = sekolah;
+    const statusEl = document.getElementById('dm-status');
+    const cls = { 'Disetujui':'badge-success', 'Verifikasi':'badge-warning', 'Tidak Lengkap':'badge-danger' };
+    statusEl.innerHTML = `<span class="badge ${cls[status] || 'badge-neutral'}">${status}</span>`;
+    document.getElementById('detail-modal').classList.add('open');
+  }
+  function closeDetailModal() {
+    document.getElementById('detail-modal').classList.remove('open');
+  }
+  function closeModal(e) {
+    if (e.target === document.getElementById('detail-modal')) closeDetailModal();
+  }
+  function approveFromModal() {
+    alert('✅ Pendaftaran berhasil disetujui!');
+    closeDetailModal();
+  }
+  function rejectFromModal() {
+    if (confirm('Yakin ingin menolak pendaftaran ini?')) {
+      alert('Pendaftaran telah ditolak.');
+      closeDetailModal();
+    }
+  }
+
+  // Single row actions
+  function approveSingle(btn) {
+    const row = btn.closest('tr');
+    row.querySelector('td:nth-child(10)').innerHTML = '<span class="badge badge-success">✓ Disetujui</span>';
+  }
+  function rejectSingle(btn) {
+    if (confirm('Tolak pendaftaran ini?')) {
+      const row = btn.closest('tr');
+      row.querySelector('td:nth-child(10)').innerHTML = '<span class="badge badge-danger">✕ Ditolak</span>';
+    }
+  }
+  function hapusRow(btn) {
+    if (confirm('Hapus data pendaftar ini dari tabel?')) {
+      btn.closest('tr').remove();
+      updateBulk();
+    }
+  }
+  function kirimReminder(btn) {
+    alert('📨 Notifikasi pengingat kelengkapan berkas telah dikirimkan!');
+  }
+  function kirimReminderModal() {
+    alert('📨 Reminder berhasil dikirim ke email/WhatsApp pendaftar.');
+  }
+
+  // Bulk actions
+  function toggleAllCheck(master) {
+    document.querySelectorAll('.row-check:not(#check-all)').forEach(cb => cb.checked = master.checked);
+    updateBulk();
+  }
+  function updateBulk() {
+    const checked = document.querySelectorAll('.row-check:not(#check-all):checked').length;
+    const bar = document.getElementById('bulk-bar');
+    if (checked > 0) {
+      bar.classList.add('visible');
+      document.getElementById('bulk-text').textContent = checked + ' data dipilih';
+    } else {
+      bar.classList.remove('visible');
+    }
+  }
+  function bulkSetujui() { alert('✅ ' + document.querySelectorAll('.row-check:not(#check-all):checked').length + ' pendaftar disetujui.'); }
+  function bulkNotifikasi() { alert('📨 Notifikasi dikirim ke semua pendaftar yang dipilih.'); }
+  function bulkTolak() { if(confirm('Tolak semua yang dipilih?')) alert('Pendaftaran yang dipilih telah ditolak.'); }
+
+  // Filter
+  function filterByStatus(status, el) {
+    document.querySelectorAll('.mini-stat').forEach(m => m.classList.remove('active-filter'));
+    el.classList.add('active-filter');
+  }
+  function searchTable(q) {
+    const rows = document.querySelectorAll('#table-body tr');
+    rows.forEach(row => {
+      row.style.display = row.innerText.toLowerCase().includes(q.toLowerCase()) ? '' : 'none';
+    });
+  }
+  function filterTable() {}
+  function resetFilter() {
+    document.querySelectorAll('.filter-bar input, .filter-bar select').forEach(el => el.value = '');
+    document.querySelectorAll('#table-body tr').forEach(r => r.style.display = '');
+  }
+  function changePage(btn) {
+    document.querySelectorAll('.pag-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  function exportData() { alert('⬇️ Mengekspor data ke file Excel... (demo)'); }
+  function openAddModal() { alert('➕ Form tambah pendaftar manual (demo)'); }
+  function printTable() { window.print(); }
+  function toggleColumns() { alert('⚙ Kelola tampilan kolom (demo)'); }
+  function sortTable(col) {}
+</script>
+</body>
+</html>

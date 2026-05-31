@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — EduGate PPDB</title>
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/dashboard-siswa.css">
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">E</div>
+      <div class="sidebar-brand">
+        <span class="name">EduGate</span>
+        <span class="sub">PPDB Online</span>
+      </div>
+    </div>
+    <div class="sidebar-user">
+      <div class="user-avatar">BS</div>
+      <div class="user-info">
+        <span class="user-name">Budi Santoso</span>
+        <span class="user-role">Pendaftar · 2025-0047</span>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Menu Utama</div>
+      <a href="dashboard-siswa.html" class="nav-item active">
+        <span class="nav-icon">🏠</span> Beranda
+      </a>
+      <a href="form-pendaftaran.html" class="nav-item">
+        <span class="nav-icon">📝</span> Formulir Pendaftaran
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">📁</span> Upload Dokumen
+        <span class="nav-badge">2</span>
+      </a>
+      <a href="status-pendaftaran.html" class="nav-item">
+        <span class="nav-icon">🔍</span> Status Pendaftaran
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">🖨️</span> Cetak Kartu
+      </a>
+      <div class="nav-section-title">Lainnya</div>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">🔔</span> Notifikasi
+        <span class="nav-badge">3</span>
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">⚙️</span> Pengaturan Akun
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="index.html" class="nav-item">
+        <span class="nav-icon">🏫</span> Kembali ke Beranda
+      </a>
+      <a href="login.html" class="nav-item">
+        <span class="nav-icon">🚪</span> Keluar
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <div class="topbar">
+      <div class="topbar-left">
+        <span class="page-title">Selamat Datang, Budi 👋</span>
+        <span class="breadcrumb">Dashboard Pendaftar</span>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-icon-btn">
+          🔔
+          <span class="notif-dot"></span>
+        </div>
+        <div class="topbar-icon-btn">❓</div>
+        <div class="user-avatar" style="cursor:pointer;">BS</div>
+      </div>
+    </div>
+
+    <div class="page-body">
+
+      <!-- ANNOUNCEMENT -->
+      <div class="announcement-card">
+        <div class="ann-icon">📢</div>
+        <div>
+          <div class="ann-title">Pengumuman Penting</div>
+          <div class="ann-text">Batas akhir upload dokumen adalah <strong>15 Januari 2026</strong>. Segera lengkapi berkas Anda agar pendaftaran dapat diproses lebih lanjut. Masih ada <strong>2 dokumen</strong> yang belum diunggah.</div>
+        </div>
+      </div>
+
+      <!-- STATUS CARD -->
+      <div class="status-card-main">
+        <div class="scm-left">
+          <span class="scm-label">Nomor Pendaftaran</span>
+          <span class="scm-no">2025 — 0047</span>
+          <span class="badge badge-warning" style="font-size:13px;padding:6px 16px;">⏳ Menunggu Verifikasi Berkas</span>
+        </div>
+        <div class="scm-right">
+          <span class="status-icon">📋</span>
+          <div class="status-big">Tahap: Verifikasi</div>
+        </div>
+      </div>
+
+      <!-- PROGRESS STEPS -->
+      <div class="progress-steps">
+        <h3>Progres Pendaftaran</h3>
+        <div class="steps-row">
+          <div class="step done">
+            <div class="step-circle">✓</div>
+            <span class="step-label">Daftar Akun</span>
+          </div>
+          <div class="step done">
+            <div class="step-circle">✓</div>
+            <span class="step-label">Isi Formulir</span>
+          </div>
+          <div class="step active">
+            <div class="step-circle">3</div>
+            <span class="step-label">Upload Berkas</span>
+          </div>
+          <div class="step">
+            <div class="step-circle">4</div>
+            <span class="step-label">Verifikasi</span>
+          </div>
+          <div class="step">
+            <div class="step-circle">5</div>
+            <span class="step-label">Pengumuman</span>
+          </div>
+          <div class="step">
+            <div class="step-circle">6</div>
+            <span class="step-label">Daftar Ulang</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- INFO CARDS -->
+      <div class="info-cards">
+        <div class="info-card">
+          <span class="ic-label">Jalur Pilihan</span>
+          <span class="ic-value">Prestasi</span>
+          <p class="ic-sub">SMA Negeri 1 Surabaya</p>
+        </div>
+        <div class="info-card">
+          <span class="ic-label">Dokumen Terupload</span>
+          <span class="ic-value" style="color:var(--warning);">4 / 6</span>
+          <p class="ic-sub">2 dokumen belum diunggah</p>
+        </div>
+        <div class="info-card">
+          <span class="ic-label">Batas Upload</span>
+          <span class="ic-value" style="font-size:17px;">15 Jan 2026</span>
+          <p class="ic-sub">⏰ Sisa 14 hari</p>
+        </div>
+        <div class="info-card">
+          <span class="ic-label">Kelengkapan Data</span>
+          <span class="ic-value" style="color:var(--success);">85%</span>
+          <p class="ic-sub">Hampir lengkap!</p>
+        </div>
+      </div>
+
+      <!-- QUICK ACTIONS -->
+      <div class="quick-actions">
+        <a href="form-pendaftaran.html" class="qa-btn">
+          <span class="qa-icon">📝</span>
+          <span class="qa-label">Edit Formulir</span>
+        </a>
+        <a href="#" class="qa-btn">
+          <span class="qa-icon">📁</span>
+          <span class="qa-label">Upload Dokumen</span>
+        </a>
+        <a href="status-pendaftaran.html" class="qa-btn">
+          <span class="qa-icon">🔍</span>
+          <span class="qa-label">Cek Status</span>
+        </a>
+        <a href="#" class="qa-btn">
+          <span class="qa-icon">🖨️</span>
+          <span class="qa-label">Cetak Bukti</span>
+        </a>
+      </div>
+
+      <!-- TWO COLUMNS -->
+      <div class="two-col">
+        <!-- Dokumen -->
+        <div class="panel-box">
+          <div class="panel-box-header">
+            <span class="panel-box-title">📁 Status Dokumen</span>
+            <a href="#" class="btn btn-outline btn-sm">Upload</a>
+          </div>
+          <div class="doc-list">
+            <div class="doc-item">
+              <div class="doc-icon">🖼️</div>
+              <div class="doc-info">
+                <span class="doc-name">Kartu Keluarga</span>
+                <span class="doc-size">kk_budi.jpg · 1.2 MB</span>
+              </div>
+              <span class="badge badge-success">✓ Disetujui</span>
+            </div>
+            <div class="doc-item">
+              <div class="doc-icon">📄</div>
+              <div class="doc-info">
+                <span class="doc-name">Akta Kelahiran</span>
+                <span class="doc-size">akta_budi.pdf · 0.8 MB</span>
+              </div>
+              <span class="badge badge-success">✓ Disetujui</span>
+            </div>
+            <div class="doc-item">
+              <div class="doc-icon">📄</div>
+              <div class="doc-info">
+                <span class="doc-name">Ijazah SMP</span>
+                <span class="doc-size">ijazah.pdf · 1.5 MB</span>
+              </div>
+              <span class="badge badge-warning">⏳ Menunggu</span>
+            </div>
+            <div class="doc-item">
+              <div class="doc-icon">🖼️</div>
+              <div class="doc-info">
+                <span class="doc-name">Pas Foto</span>
+                <span class="doc-size">foto_4x6.jpg · 0.3 MB</span>
+              </div>
+              <span class="badge badge-success">✓ Disetujui</span>
+            </div>
+            <div class="doc-item" style="border-style:dashed;cursor:pointer;">
+              <div class="doc-icon">➕</div>
+              <div class="doc-info">
+                <span class="doc-name" style="color:var(--text-light);">Sertifikat Prestasi</span>
+                <span class="doc-size">Belum diunggah</span>
+              </div>
+              <span class="badge badge-neutral">Upload</span>
+            </div>
+            <div class="doc-item" style="border-style:dashed;cursor:pointer;">
+              <div class="doc-icon">➕</div>
+              <div class="doc-info">
+                <span class="doc-name" style="color:var(--text-light);">Rapor Semester 1-5</span>
+                <span class="doc-size">Belum diunggah</span>
+              </div>
+              <span class="badge badge-neutral">Upload</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Aktivitas -->
+        <div class="panel-box">
+          <div class="panel-box-header">
+            <span class="panel-box-title">🕐 Riwayat Aktivitas</span>
+          </div>
+          <div class="activity-feed">
+            <div class="activity-item">
+              <div class="act-dot success"></div>
+              <div class="act-text"><strong>Kartu Keluarga</strong> berhasil diverifikasi oleh operator.</div>
+              <span class="act-time">1 jam lalu</span>
+            </div>
+            <div class="activity-item">
+              <div class="act-dot info"></div>
+              <div class="act-text"><strong>Akta Kelahiran</strong> berhasil diupload.</div>
+              <span class="act-time">3 jam lalu</span>
+            </div>
+            <div class="activity-item">
+              <div class="act-dot warning"></div>
+              <div class="act-text">Formulir pendaftaran <strong>diperbarui</strong>. Data nilai rapor ditambahkan.</div>
+              <span class="act-time">Kemarin</span>
+            </div>
+            <div class="activity-item">
+              <div class="act-dot success"></div>
+              <div class="act-text"><strong>Kartu Keluarga</strong> berhasil diupload.</div>
+              <span class="act-time">2 hari lalu</span>
+            </div>
+            <div class="activity-item">
+              <div class="act-dot info"></div>
+              <div class="act-text"><strong>Formulir pendaftaran</strong> tersubmit. Nomor: 2025-0047.</div>
+              <span class="act-time">3 hari lalu</span>
+            </div>
+            <div class="activity-item">
+              <div class="act-dot success"></div>
+              <div class="act-text"><strong>Akun berhasil dibuat</strong>. Selamat datang di EduGate!</div>
+              <span class="act-time">3 hari lalu</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DATA PENDAFTARAN -->
+      <div class="panel-box" style="margin-bottom:24px;">
+        <div class="panel-box-header">
+          <span class="panel-box-title">👤 Data Pendaftaran</span>
+          <a href="form-pendaftaran.html" class="btn btn-outline btn-sm">Edit</a>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
+          <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-light);margin-bottom:5px;">Nama Lengkap</div>
+            <div style="font-size:14px;font-weight:600;color:var(--text-dark);">Budi Santoso</div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-light);margin-bottom:5px;">NISN</div>
+            <div style="font-size:14px;font-weight:600;color:var(--text-dark);">0051234567</div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-light);margin-bottom:5px;">Tgl Lahir</div>
+            <div style="font-size:14px;font-weight:600;color:var(--text-dark);">12 Maret 2009</div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-light);margin-bottom:5px;">Asal Sekolah</div>
+            <div style="font-size:14px;font-weight:600;color:var(--text-dark);">SMP Negeri 5 Surabaya</div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-light);margin-bottom:5px;">Pilihan Sekolah</div>
+            <div style="font-size:14px;font-weight:600;color:var(--text-dark);">SMA Negeri 1 Surabaya</div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-light);margin-bottom:5px;">Jalur</div>
+            <div style="font-size:14px;font-weight:600;color:var(--primary);">Jalur Prestasi</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>

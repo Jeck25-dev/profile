@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SiPiket — Demo Sistem Guru Piket</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.x/dist/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --green: #0F6E56; --green-l: #E1F5EE; --green-d: #085041;
+  --red: #E24B4A; --red-l: #FCEBEB;
+  --amber: #BA7517; --amber-l: #FAEEDA;
+  --blue: #185FA5; --blue-l: #E6F1FB;
+  --purple: #534AB7; --purple-l: #EEEDFE;
+  --gray: #5F5E5A; --gray-l: #F1EFE8; --gray-xl: #f7f6f3;
+  --border: rgba(0,0,0,.09);
+  --text: #1a1a18; --text-2: #5F5E5A; --text-3: #aaa;
+  --bg: #f5f4f0; --surface: #fff;
+  --sidebar-w: 240px;
+  --font: 'Plus Jakarta Sans', sans-serif;
+  --radius: 10px; --radius-lg: 14px;
+}
+
+body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; }
+
+/* ── LOGIN ── */
+.login-wrap {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #0a3d2e 0%, #0F6E56 50%, #1a7a5e 100%);
+  position: relative; overflow: hidden;
+}
+.login-wrap::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(circle at 20% 80%, rgba(255,255,255,.05) 0%, transparent 50%),
+              radial-gradient(circle at 80% 20%, rgba(255,255,255,.08) 0%, transparent 50%);
+}
+.login-deco {
+  position: absolute; font-family: 'DM Serif Display', serif;
+  color: rgba(255,255,255,.04); font-size: 240px; line-height: 1;
+  right: -20px; top: 50%; transform: translateY(-50%); user-select: none;
+}
+.login-card {
+  background: #fff; border-radius: 20px; padding: 44px 44px 40px;
+  width: 420px; position: relative; z-index: 1;
+  box-shadow: 0 32px 80px rgba(0,0,0,.25);
+}
+.login-logo {
+  width: 48px; height: 48px; background: var(--green); border-radius: 14px;
+  display: flex; align-items: center; justify-content: center; margin-bottom: 24px;
+}
+.login-logo i { color: #fff; font-size: 24px; }
+.login-title { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+.login-sub { color: var(--text-2); font-size: 13px; margin-bottom: 32px; }
+.form-label { font-size: 12px; font-weight: 600; color: var(--text-2); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 7px; display: block; }
+.form-input {
+  width: 100%; padding: 10px 14px; border: 1.5px solid var(--border);
+  border-radius: var(--radius); font-family: var(--font); font-size: 14px;
+  background: var(--gray-xl); color: var(--text); outline: none; transition: border-color .15s;
+}
+.form-input:focus { border-color: var(--green); background: #fff; }
+.form-group { margin-bottom: 18px; }
+.btn-login {
+  width: 100%; padding: 12px; background: var(--green); color: #fff;
+  border: none; border-radius: var(--radius); font-family: var(--font);
+  font-size: 14px; font-weight: 600; cursor: pointer; transition: background .15s;
+  display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px;
+}
+.btn-login:hover { background: var(--green-d); }
+.demo-creds {
+  margin-top: 24px; background: var(--gray-xl); border-radius: var(--radius);
+  padding: 14px 16px;
+}
+.demo-creds-title { font-size: 11px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 10px; }
+.demo-cred-item { display: flex; justify-content: space-between; font-size: 12px; padding: 4px 0; border-bottom: 0.5px solid var(--border); }
+.demo-cred-item:last-child { border-bottom: none; }
+.cred-role { color: var(--text-2); }
+.cred-val { font-family: monospace; color: var(--green-d); font-weight: 600; }
+.btn-demo { display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--green-l); border: none; border-radius: 6px; font-family: var(--font); font-size: 11px; font-weight: 600; color: var(--green-d); cursor: pointer; margin-top: 10px; transition: background .12s; }
+.btn-demo:hover { background: #c5eadc; }
+
+/* ── LAYOUT ── */
+.app { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w); background: var(--surface); border-right: 0.5px solid var(--border);
+  display: flex; flex-direction: column; position: fixed; left: 0; top: 0; bottom: 0;
+  z-index: 100; transition: transform .2s; overflow-y: auto;
+}
+.sb-brand { padding: 20px 18px 16px; display: flex; align-items: center; gap: 10px; border-bottom: 0.5px solid var(--border); }
+.sb-icon { width: 34px; height: 34px; background: var(--green); border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.sb-icon i { color: #fff; font-size: 18px; }
+.sb-name { font-weight: 600; font-size: 15px; }
+.sb-sub { font-size: 10px; color: var(--text-3); }
+.sb-nav { flex: 1; padding: 12px 10px; }
+.nav-section { margin-bottom: 8px; }
+.nav-label { font-size: 10px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: .07em; padding: 6px 8px 4px; display: block; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px;
+  color: var(--text-2); font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: background .12s, color .12s; text-decoration: none; margin-bottom: 2px;
+}
+.nav-item i { font-size: 18px; flex-shrink: 0; }
+.nav-item:hover { background: var(--gray-xl); color: var(--text); }
+.nav-item.active { background: var(--green-l); color: var(--green-d); }
+.nav-badge { margin-left: auto; background: var(--red); color: #fff; font-size: 10px; font-weight: 700; border-radius: 20px; padding: 1px 7px; }
+.sb-bottom { padding: 12px 10px; border-top: 0.5px solid var(--border); }
+.sb-user { display: flex; align-items: center; gap: 10px; padding: 8px 10px; }
+.av { width: 32px; height: 32px; border-radius: 50%; background: var(--green-l); color: var(--green-d); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+.av-red { background: var(--red-l); color: #791F1F; }
+.av-amber { background: var(--amber-l); color: #633806; }
+.sb-user-name { font-size: 13px; font-weight: 600; }
+.sb-user-role { font-size: 10px; color: var(--text-3); }
+
+/* ── MAIN ── */
+.main-wrap { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+.navbar {
+  background: var(--surface); border-bottom: 0.5px solid var(--border);
+  padding: 0 24px; height: 56px; display: flex; align-items: center; gap: 16px;
+  position: sticky; top: 0; z-index: 50;
+}
+.nb-toggle { background: none; border: none; cursor: pointer; padding: 6px; border-radius: 6px; color: var(--text-2); }
+.nb-toggle:hover { background: var(--gray-xl); }
+.nb-title { font-size: 15px; font-weight: 600; flex: 1; }
+.nb-time { font-size: 12px; color: var(--text-3); background: var(--gray-xl); padding: 4px 10px; border-radius: 20px; }
+.nb-user { display: flex; align-items: center; gap: 8px; }
+.nb-logout { background: none; border: 0.5px solid var(--border); padding: 6px 12px; border-radius: 8px; font-family: var(--font); font-size: 12px; color: var(--text-2); cursor: pointer; display: flex; align-items: center; gap: 5px; }
+.nb-logout:hover { background: var(--red-l); color: var(--red); border-color: #f7c1c1; }
+
+.page-content { padding: 24px; }
+.page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; gap: 12px; }
+.page-title { font-size: 20px; font-weight: 600; }
+.page-sub { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+
+/* ── CARDS ── */
+.card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 14px; }
+.card-head { padding: 14px 16px 0; display: flex; align-items: center; gap: 8px; }
+.card-head i { font-size: 18px; }
+.card-title { font-size: 13px; font-weight: 600; }
+.card-body { padding: 14px 16px; }
+
+/* ── KPI GRID ── */
+.kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 14px; }
+.kpi-card {
+  background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg);
+  padding: 14px; cursor: pointer; transition: box-shadow .15s;
+}
+.kpi-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.08); }
+.kpi-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.kpi-icon { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+.kpi-icon.g { background: var(--green-l); color: var(--green); }
+.kpi-icon.r { background: var(--red-l); color: var(--red); }
+.kpi-icon.a { background: var(--amber-l); color: var(--amber); }
+.kpi-icon.b { background: var(--blue-l); color: var(--blue); }
+.kpi-icon.p { background: var(--purple-l); color: var(--purple); }
+.kpi-tag { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 20px; }
+.kpi-tag.g { background: var(--green-l); color: var(--green-d); }
+.kpi-tag.r { background: var(--red-l); color: #791F1F; }
+.kpi-tag.a { background: var(--amber-l); color: #633806; }
+.kpi-tag.b { background: var(--blue-l); color: #0C447C; }
+.kpi-tag.p { background: var(--purple-l); color: #3C3489; }
+.kpi-num { font-size: 28px; font-weight: 600; line-height: 1; margin-bottom: 4px; }
+.kpi-label { font-size: 11px; color: var(--text-2); font-weight: 500; }
+.kpi-bar { height: 3px; background: var(--gray-l); border-radius: 2px; margin-top: 10px; }
+.kpi-fill { height: 100%; border-radius: 2px; }
+
+/* ── TABLES ── */
+.table-wrap { overflow-x: auto; }
+table.dt { width: 100%; border-collapse: collapse; font-size: 13px; }
+table.dt thead tr { border-bottom: 0.5px solid var(--border); }
+table.dt th { padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: .04em; }
+table.dt td { padding: 11px 14px; border-bottom: 0.5px solid var(--border); vertical-align: middle; }
+table.dt tr:last-child td { border-bottom: none; }
+table.dt tr:hover td { background: var(--gray-xl); }
+
+/* ── CHIPS ── */
+.chip { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; gap: 4px; }
+.chip.g { background: var(--green-l); color: var(--green-d); }
+.chip.r { background: var(--red-l); color: #791F1F; }
+.chip.a { background: var(--amber-l); color: #633806; }
+.chip.b { background: var(--blue-l); color: #0C447C; }
+.chip.gr { background: var(--gray-l); color: var(--gray); }
+.chip.p { background: var(--purple-l); color: #3C3489; }
+
+/* ── BUTTONS ── */
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: var(--radius); font-family: var(--font); font-size: 13px; font-weight: 600; cursor: pointer; transition: .12s; text-decoration: none; border: none; }
+.btn-primary { background: var(--green); color: #fff; }
+.btn-primary:hover { background: var(--green-d); }
+.btn-secondary { background: var(--surface); color: var(--text); border: 0.5px solid var(--border); }
+.btn-secondary:hover { background: var(--gray-xl); }
+.btn-danger { background: var(--red-l); color: #A32D2D; border: 0.5px solid #F09595; }
+.btn-sm { padding: 4px 10px; font-size: 11px; }
+.btn-icon { padding: 6px 8px; }
+
+/* ── FORM ── */
+.form-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 24px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group { margin-bottom: 0; }
+.form-group.full { grid-column: 1 / -1; }
+.f-label { font-size: 12px; font-weight: 600; color: var(--text-2); margin-bottom: 6px; display: block; }
+.f-input, .f-select, .f-textarea {
+  width: 100%; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: var(--radius);
+  font-family: var(--font); font-size: 13px; background: var(--gray-xl); color: var(--text); outline: none;
+}
+.f-input:focus, .f-select:focus, .f-textarea:focus { border-color: var(--green); background: #fff; }
+.f-textarea { resize: vertical; min-height: 80px; }
+.form-actions { display: flex; gap: 8px; margin-top: 20px; padding-top: 20px; border-top: 0.5px solid var(--border); }
+
+/* ── 2-COL LAYOUT ── */
+.row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.row-3 { display: grid; grid-template-columns: 2fr 1fr; gap: 14px; }
+.col-stack { display: flex; flex-direction: column; gap: 14px; }
+
+/* ── LIST ROWS ── */
+.list-row { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 0.5px solid var(--border); }
+.list-row:last-child { border-bottom: none; }
+.li-name { font-size: 13px; font-weight: 500; }
+.li-detail { font-size: 11px; color: var(--text-3); }
+
+/* ── TIMELINE ── */
+.timeline { padding: 8px 16px; }
+.tl-item { display: flex; gap: 12px; margin-bottom: 12px; }
+.tl-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 3px; }
+.tl-dot.g { background: var(--green); }
+.tl-dot.r { background: var(--red); }
+.tl-dot.a { background: var(--amber); }
+.tl-dot.b { background: var(--blue); }
+.tl-title { font-size: 12px; font-weight: 600; }
+.tl-sub { font-size: 11px; color: var(--text-3); }
+.tl-time { font-size: 10px; color: var(--text-3); }
+
+/* ── SISWA GRID ── */
+.siswa-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 5px; max-height: 280px; overflow-y: auto; border: 0.5px solid var(--border); border-radius: var(--radius); padding: 10px; }
+.siswa-item { display: flex; align-items: center; gap: 7px; padding: 7px 9px; border: 0.5px solid var(--border); border-radius: 7px; cursor: pointer; font-size: 12px; transition: .1s; }
+.siswa-item:hover { background: var(--green-l); border-color: #5DCAA5; }
+.siswa-item input[type=checkbox] { accent-color: var(--green); }
+.si-name { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.si-kelas { font-size: 10px; color: var(--text-3); }
+
+/* ── FILTER BAR ── */
+.filter-bar { display: flex; gap: 8px; align-items: center; padding: 12px 16px; border-bottom: 0.5px solid var(--border); flex-wrap: wrap; background: var(--gray-xl); border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+.filter-bar .f-input, .filter-bar .f-select { width: auto; background: #fff; padding: 6px 10px; font-size: 12px; }
+
+/* ── PROG BAR ── */
+.prog-track { height: 6px; background: var(--gray-l); border-radius: 3px; }
+.prog-fill-g { background: var(--green); height: 100%; border-radius: 3px; }
+.prog-fill-r { background: var(--red); height: 100%; border-radius: 3px; }
+
+/* ── EMPTY STATE ── */
+.empty-state { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 48px; color: var(--text-3); }
+.empty-state i { font-size: 40px; }
+.empty-state span { font-size: 13px; }
+
+/* ── ALERT ── */
+.alert { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-radius: var(--radius); font-size: 13px; margin-bottom: 12px; }
+.alert.s { background: var(--green-l); color: var(--green-d); }
+.alert.i { background: var(--blue-l); color: #0C447C; }
+
+/* ── BADGE PIKET ── */
+.piket-badge { background: var(--green-l); color: var(--green-d); padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; }
+
+/* ── PAGE VISIBILITY ── */
+.page { display: none; }
+.page.active { display: block; }
+#login-page.active { display: flex; }
+.app { display: none; }
+.app.active { display: flex; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     LOGIN PAGE
+═══════════════════════════════════════════════════ -->
+<div id="login-page" class="login-wrap active">
+  <div class="login-deco">SP</div>
+  <div class="login-card">
+    <div class="login-logo"><i class="ti ti-school"></i></div>
+    <div class="login-title">Selamat datang</div>
+    <div class="login-sub">Sistem Informasi Guru Piket — SiPiket</div>
+
+    <div class="form-group">
+      <label class="form-label">Username</label>
+      <input class="form-input" id="inp-user" type="text" placeholder="Masukkan username" value="gurupiket">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input class="form-input" id="inp-pass" type="password" placeholder="Masukkan password" value="demo1234">
+    </div>
+    <button class="btn-login" onclick="doLogin()">
+      <i class="ti ti-login"></i> Masuk ke sistem
+    </button>
+
+    <div class="demo-creds">
+      <div class="demo-creds-title">Akun Demo</div>
+      <div class="demo-cred-item">
+        <span class="cred-role">Admin</span>
+        <span class="cred-val">admin / admin1234</span>
+        <button class="btn-demo" onclick="setLogin('admin','admin1234')"><i class="ti ti-bolt"></i> Gunakan</button>
+      </div>
+      <div class="demo-cred-item" style="margin-top:6px">
+        <span class="cred-role">Guru Piket</span>
+        <span class="cred-val">gurupiket / demo1234</span>
+        <button class="btn-demo" onclick="setLogin('gurupiket','demo1234')"><i class="ti ti-bolt"></i> Gunakan</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     APP SHELL
+═══════════════════════════════════════════════════ -->
+<div class="app" id="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-brand">
+      <div class="sb-icon"><i class="ti ti-school"></i></div>
+      <div>
+        <div class="sb-name">SiPiket</div>
+        <div class="sb-sub">Guru Piket Digital</div>
+      </div>
+    </div>
+    <nav class="sb-nav" id="sidebar-nav"></nav>
+    <div class="sb-bottom">
+      <div class="nav-item" onclick="doLogout()" style="color:#A32D2D">
+        <i class="ti ti-logout"></i><span>Keluar</span>
+      </div>
+      <div class="sb-user">
+        <div class="av" id="sb-av">GP</div>
+        <div>
+          <div class="sb-user-name" id="sb-name">Guru Piket</div>
+          <div class="sb-user-role" id="sb-role">Guru Piket</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-wrap">
+    <header class="navbar">
+      <button class="nb-toggle" onclick="toggleSidebar()"><i class="ti ti-menu-2"></i></button>
+      <div class="nb-title" id="nb-title">Dashboard</div>
+      <div class="nb-time" id="nb-time">07:30 WIB</div>
+      <div class="nb-user">
+        <div class="av" id="nb-av">GP</div>
+        <button class="nb-logout" onclick="doLogout()"><i class="ti ti-logout"></i> Keluar</button>
+      </div>
+    </header>
+
+    <div class="page-content">
+
+      <!-- DASHBOARD USER -->
+      <div class="page" id="page-dashboard">
+        <div class="page-header">
+          <div>
+            <div class="page-title" id="greeting-title">Selamat pagi, Bu Sari!</div>
+            <div class="page-sub">Senin, 2 Juni 2025 · Semester Genap 2024/2025</div>
+          </div>
+        </div>
+
+        <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr)">
+          <div class="kpi-card">
+            <div class="kpi-head">
+              <div class="kpi-icon r"><i class="ti ti-user-exclamation"></i></div>
+              <span class="kpi-tag r">hari ini</span>
+            </div>
+            <div class="kpi-num">7</div>
+            <div class="kpi-label">Siswa terlambat</div>
+            <div class="kpi-bar"><div class="kpi-fill" style="width:47%;background:var(--red)"></div></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-head">
+              <div class="kpi-icon g"><i class="ti ti-login"></i></div>
+              <span class="kpi-tag g">hari ini</span>
+            </div>
+            <div class="kpi-num">7</div>
+            <div class="kpi-label">Izin masuk kelas</div>
+            <div class="kpi-bar"><div class="kpi-fill" style="width:47%;background:var(--green)"></div></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-head">
+              <div class="kpi-icon a"><i class="ti ti-clock-check"></i></div>
+              <span class="kpi-tag a">hari ini</span>
+            </div>
+            <div class="kpi-num">3</div>
+            <div class="kpi-label">Izin keluar KBM</div>
+            <div class="kpi-bar"><div class="kpi-fill" style="width:30%;background:var(--amber)"></div></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-head">
+              <div class="kpi-icon b"><i class="ti ti-file-check"></i></div>
+              <span class="kpi-tag b">hari ini</span>
+            </div>
+            <div class="kpi-num">2</div>
+            <div class="kpi-label">Surat pengganti</div>
+            <div class="kpi-bar"><div class="kpi-fill" style="width:25%;background:var(--blue)"></div></div>
+          </div>
+        </div>
+
+        <div class="row-3">
+          <div>
+            <div class="card">
+              <div class="card-head" style="padding-bottom:12px">
+                <i class="ti ti-users" style="color:var(--red)"></i>
+                <span class="card-title">Siswa terlambat hari ini</span>
+                <span class="chip r" style="margin-left:auto">7 siswa</span>
+              </div>
+              <div class="table-wrap">
+                <table class="dt">
+                  <thead><tr>
+                    <th>Siswa</th><th>Kelas</th><th>Jam tiba</th><th>Status</th>
+                  </tr></thead>
+                  <tbody>
+                    <tr><td><div style="font-weight:500">Ahmad Rizki</div><div style="font-size:10px;color:var(--text-3)">NIS: 2401001</div></td><td>XII IPA 1</td><td style="font-weight:600">07:34</td><td><span class="chip a">Diproses</span></td></tr>
+                    <tr><td><div style="font-weight:500">Bunga Lestari</div><div style="font-size:10px;color:var(--text-3)">NIS: 2401045</div></td><td>XI IPS 2</td><td style="font-weight:600">07:41</td><td><span class="chip g">Diberi izin</span></td></tr>
+                    <tr><td><div style="font-weight:500">Candra Wijaya</div><div style="font-size:10px;color:var(--text-3)">NIS: 2401023</div></td><td>X IPA 3</td><td style="font-weight:600">07:47</td><td><span class="chip a">Diproses</span></td></tr>
+                    <tr><td><div style="font-weight:500">Dewi Pratiwi</div><div style="font-size:10px;color:var(--text-3)">NIS: 2401067</div></td><td>XII IPS 1</td><td style="font-weight:600">07:52</td><td><span class="chip g">Diberi izin</span></td></tr>
+                    <tr><td><div style="font-weight:500">Eko Saputra</div><div style="font-size:10px;color:var(--text-3)">NIS: 2401089</div></td><td>XI IPA 2</td><td style="font-weight:600">07:55</td><td><span class="chip a">Diproses</span></td></tr>
+                    <tr><td><div style="font-weight:500">Fitri Nuraini</div><div style="font-size:10px;color:var(--text-3)">NIS: 2401034</div></td><td>X IPS 1</td><td style="font-weight:600">08:03</td><td><span class="chip r">Pembinaan</span></td></tr>
+                    <tr><td><div style="font-weight:500">Galih Permana</div><div style="font-size:10px;color:var(--text-3)">NIS: 2401056</div></td><td>XII IPA 2</td><td style="font-weight:600">08:11</td><td><span class="chip a">Diproses</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-stack">
+            <div class="card">
+              <div class="card-head" style="padding-bottom:10px">
+                <i class="ti ti-clipboard-check" style="color:var(--green)"></i>
+                <span class="card-title">Guru piket hari ini</span>
+              </div>
+              <div class="list-row">
+                <div class="av">SR</div>
+                <div style="flex:1"><div class="li-name">Bu Sari Rahayu</div><div class="li-detail">07:00 – 14:00</div></div>
+                <span class="chip g">Hadir</span>
+              </div>
+              <div class="list-row">
+                <div class="av" style="background:var(--blue-l);color:#0C447C">BH</div>
+                <div style="flex:1"><div class="li-name">Pak Budi Hartono</div><div class="li-detail">07:00 – 14:00</div></div>
+                <span class="chip g">Hadir</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-head" style="padding-bottom:10px">
+                <i class="ti ti-history" style="color:var(--text-3)"></i>
+                <span class="card-title">Aktivitas terkini</span>
+              </div>
+              <div class="timeline">
+                <div class="tl-item"><div class="tl-dot r"></div><div><div class="tl-title">Siswa terlambat dicatat</div><div class="tl-sub">Galih Permana · XII IPA 2</div><div class="tl-time">08:12</div></div></div>
+                <div class="tl-item"><div class="tl-dot g"></div><div><div class="tl-title">Izin masuk dibuat</div><div class="tl-sub">Fitri Nuraini · X IPS 1</div><div class="tl-time">08:05</div></div></div>
+                <div class="tl-item"><div class="tl-dot a"></div><div><div class="tl-title">Izin keluar disetujui</div><div class="tl-sub">Hendra Kusuma · XI IPA 3</div><div class="tl-time">07:58</div></div></div>
+                <div class="tl-item"><div class="tl-dot b"></div><div><div class="tl-title">Surat pengganti dibuat</div><div class="tl-sub">Bu Aminah → XII IPS 2</div><div class="tl-time">07:45</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TERLAMBAT LIST -->
+      <div class="page" id="page-terlambat">
+        <div class="page-header">
+          <div><div class="page-title">Siswa Terlambat</div><div class="page-sub">7 catatan ditemukan</div></div>
+          <button class="btn btn-primary" onclick="showPage('page-terlambat-form')"><i class="ti ti-plus"></i> Catat terlambat</button>
+        </div>
+        <div class="card">
+          <div class="filter-bar">
+            <input class="f-input" type="date" value="2025-06-02" style="width:150px">
+            <select class="f-select" style="width:150px"><option>Semua kelas</option><option>XII IPA 1</option><option>XI IPS 2</option><option>X IPA 3</option></select>
+            <select class="f-select" style="width:150px"><option>Semua status</option><option>Diproses</option><option>Diberi izin</option><option>Pembinaan</option></select>
+            <button class="btn btn-primary btn-sm"><i class="ti ti-search"></i> Filter</button>
+          </div>
+          <div class="table-wrap">
+            <table class="dt">
+              <thead><tr><th>No</th><th>Siswa</th><th>Kelas</th><th>Jam tiba</th><th>Terlambat</th><th>Alasan</th><th>Status</th><th>Aksi</th></tr></thead>
+              <tbody>
+                <tr><td style="color:var(--text-3)">1</td><td><div style="font-weight:500">Ahmad Rizki</div><div style="font-size:10px;color:var(--text-3)">2401001</div></td><td>XII IPA 1</td><td style="font-weight:600">07:34</td><td><span class="chip a">4 mnt</span></td><td style="color:var(--text-3);font-size:11px">Kesiangan</td><td><span class="chip a">Diproses</span></td><td><div style="display:flex;gap:4px"><button class="btn btn-secondary btn-sm btn-icon"><i class="ti ti-edit"></i></button></div></td></tr>
+                <tr><td style="color:var(--text-3)">2</td><td><div style="font-weight:500">Bunga Lestari</div><div style="font-size:10px;color:var(--text-3)">2401045</div></td><td>XI IPS 2</td><td style="font-weight:600">07:41</td><td><span class="chip a">11 mnt</span></td><td style="color:var(--text-3);font-size:11px">Ban bocor</td><td><span class="chip g">Diberi izin</span></td><td><div style="display:flex;gap:4px"><button class="btn btn-secondary btn-sm btn-icon"><i class="ti ti-edit"></i></button></div></td></tr>
+                <tr><td style="color:var(--text-3)">3</td><td><div style="font-weight:500">Candra Wijaya</div><div style="font-size:10px;color:var(--text-3)">2401023</div></td><td>X IPA 3</td><td style="font-weight:600">07:47</td><td><span class="chip a">17 mnt</span></td><td style="color:var(--text-3);font-size:11px">Macet</td><td><span class="chip a">Diproses</span></td><td><div style="display:flex;gap:4px"><button class="btn btn-secondary btn-sm btn-icon"><i class="ti ti-edit"></i></button></div></td></tr>
+                <tr><td style="color:var(--text-3)">4</td><td><div style="font-weight:500">Dewi Pratiwi</div><div style="font-size:10px;color:var(--text-3)">2401067</div></td><td>XII IPS 1</td><td style="font-weight:600">07:52</td><td><span class="chip r">22 mnt</span></td><td style="color:var(--text-3);font-size:11px">Kesiangan</td><td><span class="chip g">Diberi izin</span></td><td><div style="display:flex;gap:4px"><button class="btn btn-secondary btn-sm btn-icon"><i class="ti ti-edit"></i></button></div></td></tr>
+                <tr><td style="color:var(--text-3)">5</td><td><div style="font-weight:500">Eko Saputra</div><div style="font-size:10px;color:var(--text-3)">2401089</div></td><td>XI IPA 2</td><td style="font-weight:600">07:55</td><td><span class="chip r">25 mnt</span></td><td style="color:var(--text-3);font-size:11px">–</td><td><span class="chip a">Diproses</span></td><td><div style="display:flex;gap:4px"><button class="btn btn-secondary btn-sm btn-icon"><i class="ti ti-edit"></i></button></div></td></tr>
+                <tr><td style="color:var(--text-3)">6</td><td><div style="font-weight:500">Fitri Nuraini</div><div style="font-size:10px;color:var(--text-3)">2401034</div></td><td>X IPS 1</td><td style="font-weight:600">08:03</td><td><span class="chip r">33 mnt</span></td><td style="color:var(--text-3);font-size:11px">Kesiangan</td><td><span class="chip r">Pembinaan</span></td><td><div style="display:flex;gap:4px"><button class="btn btn-secondary btn-sm btn-icon"><i class="ti ti-edit"></i></button></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TERLAMBAT FORM -->
+      <div class="page" id="page-terlambat-form">
+        <div class="page-header">
+          <div class="page-title">Catat Siswa Terlambat</div>
+          <button class="btn btn-secondary" onclick="showPage('page-terlambat')"><i class="ti ti-arrow-left"></i> Kembali</button>
+        </div>
+        <div class="form-card" style="max-width:700px">
+          <div class="form-grid">
+            <div class="form-group"><label class="f-label">Tanggal</label><input class="f-input" type="date" value="2025-06-02"></div>
+            <div class="form-group"><label class="f-label">Jam tiba</label><input class="f-input" type="time" value="07:45"></div>
+            <div class="form-group full"><label class="f-label">Alasan keterlambatan</label><textarea class="f-textarea" placeholder="Opsional..."></textarea></div>
+            <div class="form-group full">
+              <label class="f-label">Siswa yang terlambat ✱</label>
+              <div style="display:flex;gap:8px;margin-bottom:10px;align-items:center">
+                <select class="f-select" style="width:160px"><option>— Semua kelas —</option><option>XII IPA 1</option><option>XI IPS 2</option><option>X IPA 3</option></select>
+                <input class="f-input" style="flex:1" placeholder="Cari nama siswa...">
+                <button class="btn btn-secondary btn-sm">Pilih semua</button>
+                <button class="btn btn-secondary btn-sm">Batal semua</button>
+              </div>
+              <div class="siswa-grid">
+                <label class="siswa-item"><input type="checkbox"><div><div class="si-name">Ahmad Rizki</div><div class="si-kelas">XII IPA 1</div></div></label>
+                <label class="siswa-item"><input type="checkbox" checked><div><div class="si-name">Bunga Lestari</div><div class="si-kelas">XI IPS 2</div></div></label>
+                <label class="siswa-item"><input type="checkbox"><div><div class="si-name">Candra Wijaya</div><div class="si-kelas">X IPA 3</div></div></label>
+                <label class="siswa-item"><input type="checkbox" checked><div><div class="si-name">Dewi Pratiwi</div><div class="si-kelas">XII IPS 1</div></div></label>
+                <label class="siswa-item"><input type="checkbox"><div><div class="si-name">Eko Saputra</div><div class="si-kelas">XI IPA 2</div></div></label>
+                <label class="siswa-item"><input type="checkbox"><div><div class="si-name">Fitri Nuraini</div><div class="si-kelas">X IPS 1</div></div></label>
+                <label class="siswa-item"><input type="checkbox"><div><div class="si-name">Galih Permana</div><div class="si-kelas">XII IPA 2</div></div></label>
+                <label class="siswa-item"><input type="checkbox"><div><div class="si-name">Hendra Kusuma</div><div class="si-kelas">XI IPA 3</div></div></label>
+                <label class="siswa-item"><input type="checkbox"><div><div class="si-name">Indah Sari</div><div class="si-kelas">X IPA 1</div></div></label>
+              </div>
+            </div>
+            <div class="form-group full">
+              <label class="f-label">Guru piket (TTD surat)</label>
+              <select class="f-select"><option>— Pilih guru piket —</option><option selected>Bu Sari Rahayu</option><option>Pak Budi Hartono</option></select>
+            </div>
+          </div>
+          <div class="alert i"><i class="ti ti-info-circle"></i> Surat Izin Masuk Kelas otomatis dibuat untuk setiap siswa.</div>
+          <div class="form-actions">
+            <button class="btn btn-primary" onclick="showPage('page-terlambat')"><i class="ti ti-device-floppy"></i> Simpan</button>
+            <button class="btn btn-secondary" onclick="showPage('page-terlambat')">Batal</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- IZIN KELUAR -->
+      <div class="page" id="page-izin">
+        <div class="page-header">
+          <div><div class="page-title">Izin Keluar KBM</div><div class="page-sub">3 catatan hari ini</div></div>
+          <button class="btn btn-primary" onclick="showPage('page-izin-form')"><i class="ti ti-plus"></i> Catat izin</button>
+        </div>
+        <div class="card">
+          <div class="filter-bar">
+            <input class="f-input" type="date" value="2025-06-02" style="width:150px">
+            <select class="f-select" style="width:150px"><option>Semua status</option><option>Menunggu</option><option>Disetujui</option><option>Ditolak</option></select>
+            <button class="btn btn-primary btn-sm"><i class="ti ti-search"></i> Filter</button>
+          </div>
+          <div class="table-wrap">
+            <table class="dt">
+              <thead><tr><th>No</th><th>Siswa</th><th>Kelas</th><th>Tanggal</th><th>Jenis</th><th>Keterangan</th><th>Status</th><th>Aksi</th></tr></thead>
+              <tbody>
+                <tr><td style="color:var(--text-3)">1</td><td style="font-weight:500">Hendra Kusuma</td><td>XI IPA 3</td><td style="color:var(--text-3);font-size:11px">02 Jun 2025</td><td><span class="chip g">Kesehatan</span></td><td style="font-size:11px;color:var(--text-3)">Berobat ke dokter gigi</td><td><span class="chip g">Disetujui</span></td><td><div style="display:flex;gap:4px"><button class="btn btn-secondary btn-sm btn-icon"><i class="ti ti-edit"></i></button><button class="btn btn-secondary btn-sm btn-icon"><i class="ti ti-printer"></i></button></div></td></tr>
+                <tr><td style="color:var(--text-3)">2</td><td style="font-weight:500">Irma Yuliana</td><td>XII IPS 2</td><td style="color:var(--text-3);font-size:11px">02 Jun 2025</td><td><span class="chip a">Keluarga</span></td><td style="font-size:11px;color:var(--text-3)">Menjemput adik sakit</td><td><span class="chip a">Menunggu</span></td><td><div style="display:flex;gap:4px"><button class="btn btn-primary btn-sm"><i class="ti ti-check"></i> Setujui</button><button class="btn btn-secondary btn-sm btn-icon"><i class="ti ti-edit"></i></button></div></td></tr>
+                <tr><td style="color:var(--text-3)">3</td><td style="font-weight:500">Joko Prabowo</td><td>X IPA 2</td><td style="color:var(--text-3);font-size:11px">02 Jun 2025</td><td><span class="chip b">Sekolah</span></td><td style="font-size:11px;color:var(--text-3)">Lomba olimpiade sains</td><td><span class="chip g">Disetujui</span></td><td><div style="display:flex;gap:4px"><button class="btn btn-secondary btn-sm btn-icon"><i class="ti ti-edit"></i></button><button class="btn btn-secondary btn-sm btn-icon"><i class="ti ti-printer"></i></button></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- IZIN KELUAR FORM -->
+      <div class="page" id="page-izin-form">
+        <div class="page-header">
+          <div class="page-title">Catat Izin Keluar KBM</div>
+          <button class="btn btn-secondary" onclick="showPage('page-izin')"><i class="ti ti-arrow-left"></i> Kembali</button>
+        </div>
+        <div class="form-card" style="max-width:700px">
+          <div class="form-grid">
+            <div class="form-group"><label class="f-label">Tanggal</label><input class="f-input" type="date" value="2025-06-02"></div>
+            <div class="form-group"><label class="f-label">Jenis keperluan</label><select class="f-select"><option>Kesehatan / Berobat</option><option>Keperluan keluarga</option><option>Keperluan sekolah</option><option>Lainnya</option></select></div>
+            <div class="form-group full"><label class="f-label">Keterangan / alasan ✱</label><textarea class="f-textarea" placeholder="Tulis alasan izin..."></textarea></div>
+            <div class="form-group full">
+              <label class="f-label">Siswa yang izin ✱</label>
+              <div style="display:flex;gap:8px;margin-bottom:10px">
+                <select class="f-select" style="width:160px"><option>— Semua kelas —</option><option>XI IPA 3</option></select>
+                <input class="f-input" style="flex:1" placeholder="Cari nama siswa...">
+                <button class="btn btn-secondary btn-sm">Pilih semua</button>
+              </div>
+              <div class="siswa-grid">
+                <label class="siswa-item" style="background:var(--green-l);border-color:#5DCAA5"><input type="checkbox" checked><div><div class="si-name">Hendra Kusuma</div><div class="si-kelas">XI IPA 3</div></div></label>
+                <label class="siswa-item"><input type="checkbox"><div><div class="si-name">Irma Yuliana</div><div class="si-kelas">XII IPS 2</div></div></label>
+                <label class="siswa-item"><input type="checkbox"><div><div class="si-name">Joko Prabowo</div><div class="si-kelas">X IPA 2</div></div></label>
+                <label class="siswa-item"><input type="checkbox"><div><div class="si-name">Kirana Dewi</div><div class="si-kelas">XI IPS 1</div></div></label>
+                <label class="siswa-item"><input type="checkbox"><div><div class="si-name">Lutfi Rahman</div><div class="si-kelas">XII IPA 3</div></div></label>
+                <label class="siswa-item"><input type="checkbox"><div><div class="si-name">Maya Anggraini</div><div class="si-kelas">X IPS 2</div></div></label>
+              </div>
+            </div>
+            <div class="form-group full"><label class="f-label">Guru piket (TTD surat)</label><select class="f-select"><option>— Pilih guru piket —</option><option selected>Bu Sari Rahayu</option><option>Pak Budi Hartono</option></select></div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" onclick="showPage('page-izin')"><i class="ti ti-device-floppy"></i> Simpan izin</button>
+            <button class="btn btn-secondary" onclick="showPage('page-izin')">Batal</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- IZIN MASUK -->
+      <div class="page" id="page-izin-masuk">
+        <div class="page-header">
+          <div><div class="page-title">Izin Masuk Kelas</div><div class="page-sub">7 surat hari ini</div></div>
+          <button class="btn btn-primary" onclick="showPage('page-izin-masuk-form')"><i class="ti ti-plus"></i> Buat izin masuk</button>
+        </div>
+        <div class="card">
+          <div class="filter-bar">
+            <input class="f-input" type="date" value="2025-06-02" style="width:150px">
+            <select class="f-select" style="width:150px"><option>Semua kelas</option></select>
+            <select class="f-select" style="width:150px"><option>Semua jenis</option><option>Terlambat</option><option>Sakit</option><option>Izin</option></select>
+            <button class="btn btn-primary btn-sm"><i class="ti ti-search"></i> Filter</button>
+          </div>
+          <div class="table-wrap">
+            <table class="dt">
+              <thead><tr><th>No</th><th>Siswa</th><th>Kelas</th><th>Jenis</th><th>Jam masuk</th><th>Keterangan</th><th>Dicatat</th><th>Aksi</th></tr></thead>
+              <tbody>
+                <tr><td style="color:var(--text-3)">1</td><td style="font-weight:500">Ahmad Rizki</td><td>XII IPA 1</td><td><span class="chip r">Terlambat</span></td><td style="font-weight:600">07:34</td><td style="font-size:11px;color:var(--text-3)">Kesiangan</td><td style="font-size:11px;color:var(--text-3)">Bu Sari</td><td><div style="display:flex;gap:4px"><button class="btn btn-secondary btn-sm btn-icon"><i class="ti ti-edit"></i></button><button class="btn btn-secondary btn-sm btn-icon"><i class="ti ti-printer"></i></button></div></td></tr>
+                <tr><td style="color:var(--text-3)">2</td><td style="font-weight:500">Bunga Lestari</td><td>XI IPS 2</td><td><span class="chip r">Terlambat</span></td><td style="font-weight:600">07:41</td><td style="font-size:11px;color:var(--text-3)">Ban bocor</td><td style="font-size:11px;color:var(--text-3)">Bu Sari</td><td><div style="display:flex;gap:4px"><button class="btn btn-secondary btn-sm btn-icon"><i class="ti ti-edit"></i></button><button class="btn btn-secondary btn-sm btn-icon"><i class="ti ti-printer"></i></button></div></td></tr>
+                <tr><td style="color:var(--text-3)">3</td><td style="font-weight:500">Kirana Dewi</td><td>XI IPS 1</td><td><span class="chip a">Izin</span></td><td style="font-weight:600">09:15</td><td style="font-size:11px;color:var(--text-3)">Kembali dari izin keluarga</td><td style="font-size:11px;color:var(--text-3)">Pak Budi</td><td><div style="display:flex;gap:4px"><button class="btn btn-secondary btn-sm btn-icon"><i class="ti ti-edit"></i></button><button class="btn btn-secondary btn-sm btn-icon"><i class="ti ti-printer"></i></button></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- IZIN MASUK FORM -->
+      <div class="page" id="page-izin-masuk-form">
+        <div class="page-header">
+          <div class="page-title">Buat Surat Izin Masuk Kelas</div>
+          <button class="btn btn-secondary" onclick="showPage('page-izin-masuk')"><i class="ti ti-arrow-left"></i> Kembali</button>
+        </div>
+        <div class="form-card" style="max-width:700px">
+          <div class="form-grid">
+            <div class="form-group"><label class="f-label">Tanggal</label><input class="f-input" type="date" value="2025-06-02"></div>
+            <div class="form-group"><label class="f-label">Jam masuk ✱</label><input class="f-input" type="time" value="09:15"></div>
+            <div class="form-group full"><label class="f-label">Jenis</label><select class="f-select"><option>Masuk karena terlambat</option><option>Kembali setelah sakit</option><option selected>Kembali dari izin</option><option>Lainnya</option></select></div>
+            <div class="form-group full"><label class="f-label">Keterangan</label><textarea class="f-textarea">Kembali dari izin keperluan keluarga</textarea></div>
+            <div class="form-group full">
+              <label class="f-label">Siswa yang izin masuk ✱</label>
+              <div style="display:flex;gap:8px;margin-bottom:10px">
+                <select class="f-select" style="width:160px"><option>— Semua kelas —</option></select>
+                <input class="f-input" style="flex:1" placeholder="Cari nama siswa...">
+                <button class="btn btn-secondary btn-sm">Pilih semua</button>
+              </div>
+              <div class="siswa-grid">
+                <label class="siswa-item" style="background:var(--green-l);border-color:#5DCAA5"><input type="checkbox" checked><div><div class="si-name">Kirana Dewi</div><div class="si-kelas">XI IPS 1</div></div></label>
+                <label class="siswa-item"><input type="checkbox"><div><div class="si-name">Lutfi Rahman</div><div class="si-kelas">XII IPA 3</div></div></label>
+                <label class="siswa-item"><input type="checkbox"><div><div class="si-name">Maya Anggraini</div><div class="si-kelas">X IPS 2</div></div></label>
+              </div>
+            </div>
+            <div class="form-group full"><label class="f-label">Guru piket (TTD surat)</label><select class="f-select"><option>— Pilih guru piket —</option><option selected>Bu Sari Rahayu</option><option>Pak Budi Hartono</option></select></div>
+          </div>
+          <div class="alert i"><i class="ti ti-info-circle"></i> Surat dibuat terpisah untuk setiap siswa.</div>
+          <div class="form-actions">
+            <button class="btn btn-primary" onclick="showPage('page-izin-masuk')"><i class="ti ti-printer"></i> Simpan & Cetak</button>
+            <button class="btn btn-secondary" onclick="showPage('page-izin-masuk')"><i class="ti ti-device-floppy"></i> Simpan saja</button>
+            <button class="btn btn-secondary" onclick="showPage('page-izin-masuk')">Batal</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABSEN PIKET -->
+      <div class="page" id="page-absen">
+        <div class="page-header">
+          <div><div class="page-title">Absensi Guru Piket</div><div class="page-sub">Senin, 2 Juni 2025</div></div>
+        </div>
+        <div class="card" style="margin-bottom:14px">
+          <div class="card-head" style="padding-bottom:14px"><i class="ti ti-plus" style="color:var(--green)"></i><span class="card-title">Catat absen guru piket</span></div>
+          <div class="card-body">
+            <div style="display:grid;grid-template-columns:2fr 1fr 2fr auto;gap:10px;align-items:end">
+              <div><label class="f-label">Nama guru ✱</label><select class="f-select"><option>— Pilih nama guru —</option><option>Bu Sari Rahayu</option><option>Pak Budi Hartono</option><option>Bu Aminah Susanti</option></select></div>
+              <div><label class="f-label">Status ✱</label><select class="f-select"><option>Hadir</option><option>Sakit</option><option>Izin</option><option>Alpha</option></select></div>
+              <div><label class="f-label">Keterangan</label><input class="f-input" placeholder="Opsional..."></div>
+              <div><button class="btn btn-primary" style="height:36px"><i class="ti ti-device-floppy"></i> Simpan</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head" style="padding-bottom:10px"><i class="ti ti-clipboard-check" style="color:var(--green)"></i><span class="card-title">Rekap absen hari ini</span><span class="chip g" style="margin-left:auto">2 guru</span></div>
+          <div class="table-wrap">
+            <table class="dt">
+              <thead><tr><th>Nama guru</th><th>Jadwal piket</th><th>Status</th><th>Keterangan</th><th>Aksi</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><div style="display:flex;align-items:center;gap:8px"><div class="av">SR</div><div><div style="font-weight:500">Bu Sari Rahayu</div><div style="font-size:10px;color:var(--text-3)">Guru Matematika</div></div></div></td>
+                  <td><span class="chip gr">07:00 – 14:00</span></td>
+                  <td><span class="chip g">Hadir</span></td>
+                  <td style="color:var(--text-3);font-size:11px">–</td>
+                  <td><div style="display:flex;gap:5px;align-items:center"><select class="f-select" style="width:100px;padding:4px 8px;font-size:11px"><option>Hadir</option><option>Sakit</option><option>Izin</option></select><button class="btn btn-primary btn-icon btn-sm"><i class="ti ti-check"></i></button></div></td>
+                </tr>
+                <tr>
+                  <td><div style="display:flex;align-items:center;gap:8px"><div class="av" style="background:var(--blue-l);color:#0C447C">BH</div><div><div style="font-weight:500">Pak Budi Hartono</div><div style="font-size:10px;color:var(--text-3)">Guru Bahasa Indonesia</div></div></div></td>
+                  <td><span class="chip gr">07:00 – 14:00</span></td>
+                  <td><span class="chip g">Hadir</span></td>
+                  <td style="color:var(--text-3);font-size:11px">–</td>
+                  <td><div style="display:flex;gap:5px;align-items:center"><select class="f-select" style="width:100px;padding:4px 8px;font-size:11px"><option>Hadir</option><option>Sakit</option><option>Izin</option></select><button class="btn btn-primary btn-icon btn-sm"><i class="ti ti-check"></i></button></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- SURAT PENGGANTI -->
+      <div class="page" id="page-surat">
+        <div class="page-header">
+          <div><div class="page-title">Surat Pengganti</div><div class="page-sub">2 surat hari ini</div></div>
+          <button class="btn btn-primary" onclick="showPage('page-surat-form')"><i class="ti ti-plus"></i> Buat surat</button>
+        </div>
+        <div class="card">
+          <div class="filter-bar">
+            <input class="f-input" type="date" value="2025-06-02" style="width:150px">
+            <button class="btn btn-primary btn-sm"><i class="ti ti-search"></i> Filter</button>
+          </div>
+          <div class="table-wrap">
+            <table class="dt">
+              <thead><tr><th>No</th><th>Tanggal</th><th>Kelas</th><th>Mata pelajaran</th><th>Guru absen</th><th>Guru pengganti</th><th>Dibuat oleh</th><th>Aksi</th></tr></thead>
+              <tbody>
+                <tr><td style="color:var(--text-3)">1</td><td style="color:var(--text-3);font-size:11px">02 Jun 2025</td><td style="font-weight:500">XII IPS 2</td><td>Ekonomi</td><td>Bu Aminah S.</td><td>Pak Rendi K.</td><td style="color:var(--text-3);font-size:11px">Bu Sari</td><td><div style="display:flex;gap:4px"><button class="btn btn-secondary btn-sm btn-icon"><i class="ti ti-eye"></i></button><button class="btn btn-primary btn-sm btn-icon"><i class="ti ti-printer"></i></button></div></td></tr>
+                <tr><td style="color:var(--text-3)">2</td><td style="color:var(--text-3);font-size:11px">02 Jun 2025</td><td style="font-weight:500">X IPA 1</td><td>Fisika</td><td>Pak Darmawan</td><td>Bu Yanti P.</td><td style="color:var(--text-3);font-size:11px">Pak Budi</td><td><div style="display:flex;gap:4px"><button class="btn btn-secondary btn-sm btn-icon"><i class="ti ti-eye"></i></button><button class="btn btn-primary btn-sm btn-icon"><i class="ti ti-printer"></i></button></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- SURAT FORM -->
+      <div class="page" id="page-surat-form">
+        <div class="page-header">
+          <div class="page-title">Buat Surat Pengganti</div>
+          <button class="btn btn-secondary" onclick="showPage('page-surat')"><i class="ti ti-arrow-left"></i> Kembali</button>
+        </div>
+        <div class="form-card" style="max-width:700px">
+          <div class="form-grid">
+            <div class="form-group full"><label class="f-label">Jadwal KBM yang kosong ✱</label><select class="f-select"><option>— Pilih jadwal —</option><option>XII IPS 2 · Ekonomi · Bu Aminah · Jam 3-4</option><option>X IPA 1 · Fisika · Pak Darmawan · Jam 5-6</option><option>XI IPA 2 · Kimia · Bu Ratna · Jam 1-2</option></select></div>
+            <div class="form-group full"><label class="f-label">Guru pengganti</label><select class="f-select"><option>— Pilih guru pengganti (opsional) —</option><option>Pak Rendi Kurniawan</option><option>Bu Yanti Puspita</option><option>Pak Ahmad Fauzi</option></select></div>
+            <div class="form-group full">
+              <label class="f-label">Tugas untuk guru pengganti</label>
+              <select class="f-select" style="margin-bottom:8px"><option>— Pilih template tugas —</option><option>Mengawasi dan membimbing siswa mengerjakan tugas</option><option>Memberikan latihan soal sesuai materi</option><option>Membaca dan merangkum materi dari buku paket</option></select>
+              <textarea class="f-textarea">Mengawasi dan membimbing siswa mengerjakan tugas dari guru yang bersangkutan.</textarea>
+            </div>
+            <div class="form-group full">
+              <label class="f-label">Guru piket (TTD surat) <span style="font-size:11px;color:var(--green);font-weight:400;margin-left:8px"><i class="ti ti-user-check" style="font-size:12px"></i> Login sebagai: Bu Sari Rahayu</span></label>
+              <select class="f-select"><option>Bu Sari Rahayu</option><option>Pak Budi Hartono</option></select>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" onclick="showPage('page-surat')"><i class="ti ti-printer"></i> Simpan & Cetak</button>
+            <button class="btn btn-secondary" onclick="showPage('page-surat')"><i class="ti ti-device-floppy"></i> Simpan saja</button>
+            <button class="btn btn-secondary" onclick="showPage('page-surat')">Batal</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN DASHBOARD -->
+      <div class="page" id="page-admin">
+        <div class="page-header">
+          <div><div class="page-title">Dashboard Admin</div><div class="page-sub">Senin, 2 Juni 2025</div></div>
+        </div>
+
+        <div style="font-size:10px;color:var(--text-3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Aktivitas hari ini</div>
+        <div class="kpi-grid">
+          <div class="kpi-card" onclick="showPage('page-admin-terlambat')" style="cursor:pointer">
+            <div class="kpi-head"><div class="kpi-icon r"><i class="ti ti-user-exclamation"></i></div><span class="kpi-tag r">hari ini</span></div>
+            <div class="kpi-num">7</div><div class="kpi-label">Siswa terlambat</div>
+            <div class="kpi-bar"><div class="kpi-fill" style="width:47%;background:var(--red)"></div></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-head"><div class="kpi-icon g"><i class="ti ti-login"></i></div><span class="kpi-tag g">hari ini</span></div>
+            <div class="kpi-num">7</div><div class="kpi-label">Izin masuk kelas</div>
+            <div class="kpi-bar"><div class="kpi-fill" style="width:47%;background:var(--green)"></div></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-head"><div class="kpi-icon a"><i class="ti ti-clock-check"></i></div><span class="kpi-tag a">hari ini</span></div>
+            <div class="kpi-num">3</div><div class="kpi-label">Izin keluar KBM</div>
+            <div class="kpi-bar"><div class="kpi-fill" style="width:30%;background:var(--amber)"></div></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-head"><div class="kpi-icon b"><i class="ti ti-door"></i></div><span class="kpi-tag b">hari ini</span></div>
+            <div class="kpi-num">1</div><div class="kpi-label">Jam kosong</div>
+            <div class="kpi-bar"><div class="kpi-fill" style="width:12%;background:var(--blue)"></div></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-head"><div class="kpi-icon p"><i class="ti ti-file-check"></i></div><span class="kpi-tag p">hari ini</span></div>
+            <div class="kpi-num">2</div><div class="kpi-label">Surat pengganti</div>
+            <div class="kpi-bar"><div class="kpi-fill" style="width:25%;background:var(--purple)"></div></div>
+          </div>
+        </div>
+
+        <div style="font-size:10px;color:var(--text-3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;margin-top:4px">Total data sistem</div>
+        <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:14px">
+          <div class="kpi-card"><div class="kpi-head"><div class="kpi-icon b"><i class="ti ti-users"></i></div></div><div class="kpi-num">486</div><div class="kpi-label">Total siswa aktif</div></div>
+          <div class="kpi-card"><div class="kpi-head"><div class="kpi-icon b"><i class="ti ti-chalkboard"></i></div></div><div class="kpi-num">42</div><div class="kpi-label">Total guru</div></div>
+          <div class="kpi-card"><div class="kpi-head"><div class="kpi-icon b"><i class="ti ti-door"></i></div></div><div class="kpi-num">18</div><div class="kpi-label">Total kelas</div></div>
+          <div class="kpi-card"><div class="kpi-head"><div class="kpi-icon b"><i class="ti ti-user-circle"></i></div></div><div class="kpi-num">6</div><div class="kpi-label">Total user sistem</div></div>
+        </div>
+
+        <div class="row-3">
+          <div>
+            <div class="card">
+              <div class="card-head" style="padding-bottom:12px"><i class="ti ti-chart-line" style="color:var(--green)"></i><span class="card-title">Tren 7 hari terakhir</span><span style="font-size:11px;color:var(--text-3);margin-left:auto">● Terlambat &nbsp; ● Izin masuk</span></div>
+              <div class="card-body">
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span>Senin</span><span style="color:var(--red)">7 / <span style="color:var(--green)">7</span></span></div><div class="prog-track"><div class="prog-fill-r" style="width:70%"></div></div><div class="prog-track" style="margin-top:2px"><div class="prog-fill-g" style="width:70%"></div></div></div>
+                  <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span>Selasa</span><span style="color:var(--red)">4 / <span style="color:var(--green)">4</span></span></div><div class="prog-track"><div class="prog-fill-r" style="width:40%"></div></div><div class="prog-track" style="margin-top:2px"><div class="prog-fill-g" style="width:40%"></div></div></div>
+                  <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span>Rabu</span><span style="color:var(--red)">9 / <span style="color:var(--green)">8</span></span></div><div class="prog-track"><div class="prog-fill-r" style="width:90%"></div></div><div class="prog-track" style="margin-top:2px"><div class="prog-fill-g" style="width:80%"></div></div></div>
+                  <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span>Kamis</span><span style="color:var(--red)">3 / <span style="color:var(--green)">3</span></span></div><div class="prog-track"><div class="prog-fill-r" style="width:30%"></div></div><div class="prog-track" style="margin-top:2px"><div class="prog-fill-g" style="width:30%"></div></div></div>
+                  <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span>Jumat</span><span style="color:var(--red)">6 / <span style="color:var(--green)">6</span></span></div><div class="prog-track"><div class="prog-fill-r" style="width:60%"></div></div><div class="prog-track" style="margin-top:2px"><div class="prog-fill-g" style="width:60%"></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-stack">
+            <div class="card">
+              <div class="card-head" style="padding-bottom:10px"><i class="ti ti-award" style="color:var(--red)"></i><span class="card-title">Paling sering terlambat bulan ini</span></div>
+              <div class="list-row"><div class="av av-red" style="font-size:11px;font-weight:700">1</div><div style="flex:1"><div class="li-name">Fitri Nuraini</div><div class="li-detail">X IPS 1</div></div><span class="chip r">8×</span></div>
+              <div class="list-row"><div class="av av-red" style="font-size:11px;font-weight:700">2</div><div style="flex:1"><div class="li-name">Eko Saputra</div><div class="li-detail">XI IPA 2</div></div><span class="chip r">6×</span></div>
+              <div class="list-row"><div class="av av-red" style="font-size:11px;font-weight:700">3</div><div style="flex:1"><div class="li-name">Galih Permana</div><div class="li-detail">XII IPA 2</div></div><span class="chip r">5×</span></div>
+              <div class="list-row"><div class="av av-red" style="font-size:11px;font-weight:700">4</div><div style="flex:1"><div class="li-name">Ahmad Rizki</div><div class="li-detail">XII IPA 1</div></div><span class="chip a">4×</span></div>
+              <div class="list-row"><div class="av av-red" style="font-size:11px;font-weight:700">5</div><div style="flex:1"><div class="li-name">Candra Wijaya</div><div class="li-detail">X IPA 3</div></div><span class="chip a">3×</span></div>
+            </div>
+            <div class="card">
+              <div class="card-head" style="padding-bottom:10px"><i class="ti ti-clipboard-check" style="color:var(--green)"></i><span class="card-title">Guru piket hari ini</span></div>
+              <div class="list-row"><div class="av">SR</div><div style="flex:1"><div class="li-name">Bu Sari Rahayu</div><div class="li-detail">Hadir</div></div><span class="chip g">Hadir</span></div>
+              <div class="list-row"><div class="av" style="background:var(--blue-l);color:#0C447C">BH</div><div style="flex:1"><div class="li-name">Pak Budi Hartono</div><div class="li-detail">Hadir</div></div><span class="chip g">Hadir</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN TERLAMBAT -->
+      <div class="page" id="page-admin-terlambat">
+        <div class="page-header">
+          <div><div class="page-title">Data Siswa Terlambat</div><div class="page-sub">7 data ditemukan</div></div>
+          <button class="btn btn-primary" onclick="showPage('page-terlambat-form')"><i class="ti ti-plus"></i> Catat terlambat</button>
+        </div>
+        <div class="card">
+          <div class="filter-bar">
+            <input class="f-input" type="date" value="2025-06-02" style="width:150px">
+            <select class="f-select" style="width:150px"><option>Semua kelas</option></select>
+            <button class="btn btn-primary btn-sm"><i class="ti ti-search"></i> Filter</button>
+            <button class="btn btn-secondary btn-sm"><i class="ti ti-arrow-left"></i> Kembali</button>
+          </div>
+          <div class="table-wrap">
+            <table class="dt">
+              <thead><tr><th>No</th><th>Siswa</th><th>Kelas</th><th>Tanggal</th><th>Jam tiba</th><th>Terlambat</th><th>Alasan</th><th>Status</th><th>Aksi</th></tr></thead>
+              <tbody>
+                <tr><td style="color:var(--text-3)">1</td><td><div style="font-weight:500">Ahmad Rizki</div><div style="font-size:10px;color:var(--text-3)">2401001</div></td><td>XII IPA 1</td><td style="font-size:11px;color:var(--text-3)">02/06/2025</td><td style="font-weight:600">07:34</td><td><span class="chip a">4 mnt</span></td><td style="font-size:11px;color:var(--text-3)">Kesiangan</td><td><span class="chip a">Diproses</span></td><td><div style="display:flex;gap:4px"><select style="width:100px;padding:3px 6px;font-size:11px;border:0.5px solid var(--border);border-radius:6px" onchange="this.form&&this.form.submit()"><option>Diproses</option><option>Diberi izin</option><option>Pembinaan</option></select><button class="btn btn-secondary btn-sm btn-icon"><i class="ti ti-edit"></i></button><button class="btn btn-danger btn-sm btn-icon"><i class="ti ti-trash"></i></button></div></td></tr>
+                <tr><td style="color:var(--text-3)">2</td><td><div style="font-weight:500">Bunga Lestari</div><div style="font-size:10px;color:var(--text-3)">2401045</div></td><td>XI IPS 2</td><td style="font-size:11px;color:var(--text-3)">02/06/2025</td><td style="font-weight:600">07:41</td><td><span class="chip a">11 mnt</span></td><td style="font-size:11px;color:var(--text-3)">Ban bocor</td><td><span class="chip g">Diberi izin</span></td><td><div style="display:flex;gap:4px"><select style="width:100px;padding:3px 6px;font-size:11px;border:0.5px solid var(--border);border-radius:6px"><option>Diproses</option><option selected>Diberi izin</option><option>Pembinaan</option></select><button class="btn btn-secondary btn-sm btn-icon"><i class="ti ti-edit"></i></button><button class="btn btn-danger btn-sm btn-icon"><i class="ti ti-trash"></i></button></div></td></tr>
+                <tr><td style="color:var(--text-3)">3</td><td><div style="font-weight:500">Fitri Nuraini</div><div style="font-size:10px;color:var(--text-3)">2401034</div></td><td>X IPS 1</td><td style="font-size:11px;color:var(--text-3)">02/06/2025</td><td style="font-weight:600">08:03</td><td><span class="chip r">33 mnt</span></td><td style="font-size:11px;color:var(--text-3)">Kesiangan</td><td><span class="chip r">Pembinaan</span></td><td><div style="display:flex;gap:4px"><select style="width:100px;padding:3px 6px;font-size:11px;border:0.5px solid var(--border);border-radius:6px"><option>Diproses</option><option>Diberi izin</option><option selected>Pembinaan</option></select><button class="btn btn-secondary btn-sm btn-icon"><i class="ti ti-edit"></i></button><button class="btn btn-danger btn-sm btn-icon"><i class="ti ti-trash"></i></button></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const USERS = {
+  'admin':     { pass:'admin1234', role:'admin', name:'Admin Sekolah', initials:'AS' },
+  'gurupiket': { pass:'demo1234',  role:'user',  name:'Bu Sari Rahayu', initials:'SR' },
+};
+
+const MENUS = {
+  user: [
+    { icon:'ti-layout-dashboard', label:'Dashboard',        page:'page-dashboard' },
+    { icon:'ti-clipboard-check',  label:'Absen guru piket', page:'page-absen' },
+    { icon:'ti-user-exclamation', label:'Siswa terlambat',  page:'page-terlambat', badge:'7' },
+    { icon:'ti-clock-check',      label:'Izin keluar KBM',  page:'page-izin', badge:'3' },
+    { icon:'ti-login',            label:'Izin masuk kelas', page:'page-izin-masuk' },
+    { icon:'ti-file-plus',        label:'Surat pengganti',  page:'page-surat' },
+  ],
+  admin: [
+    { icon:'ti-layout-dashboard', label:'Dashboard',        page:'page-admin' },
+    { section:'Data master' },
+    { icon:'ti-users',            label:'Siswa',            page:'page-admin' },
+    { icon:'ti-chalkboard',       label:'Guru',             page:'page-admin' },
+    { icon:'ti-door',             label:'Kelas',            page:'page-admin' },
+    { section:'Rekap & laporan' },
+    { icon:'ti-user-exclamation', label:'Siswa terlambat',  page:'page-admin-terlambat' },
+    { icon:'ti-clock-check',      label:'Izin keluar KBM',  page:'page-admin' },
+    { icon:'ti-login',            label:'Izin masuk kelas', page:'page-admin' },
+    { icon:'ti-file-text',        label:'Surat pengganti',  page:'page-admin' },
+    { section:'Konfigurasi' },
+    { icon:'ti-settings-2',       label:'Referensi & dropdown', page:'page-admin' },
+  ],
+};
+
+let currentRole = 'user';
+let currentPage = 'page-dashboard';
+
+function setLogin(u, p) {
+  document.getElementById('inp-user').value = u;
+  document.getElementById('inp-pass').value = p;
+}
+
+function doLogin() {
+  const u = document.getElementById('inp-user').value.trim();
+  const p = document.getElementById('inp-pass').value.trim();
+  const user = USERS[u];
+  if (!user || user.pass !== p) { alert('Username atau password salah.\nCoba: admin/admin1234 atau gurupiket/demo1234'); return; }
+  currentRole = user.role;
+  document.getElementById('login-page').classList.remove('active');
+  document.getElementById('app').classList.add('active');
+  document.getElementById('sb-av').textContent = user.initials;
+  document.getElementById('nb-av').textContent = user.initials;
+  document.getElementById('sb-name').textContent = user.name;
+  document.getElementById('sb-role').textContent = user.role === 'admin' ? 'Administrator' : 'Guru Piket';
+  buildSidebar();
+  const firstPage = currentRole === 'admin' ? 'page-admin' : 'page-dashboard';
+  showPage(firstPage);
+  updateTime();
+  setInterval(updateTime, 60000);
+  setGreeting(user.name);
+}
+
+function doLogout() {
+  document.getElementById('app').classList.remove('active');
+  document.getElementById('login-page').classList.add('active');
+}
+
+function buildSidebar() {
+  const nav = document.getElementById('sidebar-nav');
+  const menus = MENUS[currentRole] || MENUS.user;
+  nav.innerHTML = '';
+  menus.forEach(m => {
+    if (m.section) {
+      nav.innerHTML += `<div class="nav-label">${m.section}</div>`;
+    } else {
+      nav.innerHTML += `<div class="nav-item" onclick="showPage('${m.page}')" id="nav-${m.page}">
+        <i class="ti ${m.icon}"></i><span>${m.label}</span>
+        ${m.badge ? `<span class="nav-badge">${m.badge}</span>` : ''}
+      </div>`;
+    }
+  });
+}
+
+function showPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById(pageId);
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navEl = document.getElementById('nav-' + pageId);
+  if (navEl) navEl.classList.add('active');
+  currentPage = pageId;
+  const titles = {
+    'page-dashboard': 'Dashboard',
+    'page-terlambat': 'Siswa Terlambat',
+    'page-terlambat-form': 'Catat Terlambat',
+    'page-izin': 'Izin Keluar KBM',
+    'page-izin-form': 'Catat Izin Keluar',
+    'page-izin-masuk': 'Izin Masuk Kelas',
+    'page-izin-masuk-form': 'Buat Izin Masuk',
+    'page-absen': 'Absensi Guru Piket',
+    'page-surat': 'Surat Pengganti',
+    'page-surat-form': 'Buat Surat Pengganti',
+    'page-admin': 'Dashboard Admin',
+    'page-admin-terlambat': 'Data Siswa Terlambat',
+  };
+  document.getElementById('nb-title').textContent = titles[pageId] || pageId;
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('hidden');
+  document.querySelector('.main-wrap').style.marginLeft =
+    document.getElementById('sidebar').classList.contains('hidden') ? '0' : 'var(--sidebar-w)';
+}
+
+function updateTime() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  document.getElementById('nb-time').textContent = `${h}:${m} WIB`;
+}
+
+function setGreeting(name) {
+  const h = new Date().getHours();
+  const salam = h >= 4 && h < 11 ? 'Selamat pagi' : h < 15 ? 'Selamat siang' : h < 18 ? 'Selamat sore' : 'Selamat malam';
+  const first = name.split(' ').slice(0,2).join(' ');
+  const el = document.getElementById('greeting-title');
+  if (el) el.textContent = `${salam}, ${first}!`;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Admin — EduGate PPDB</title>
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/dashboard-siswa.css">
+  <link rel="stylesheet" href="css/dashboard-admin.css">
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- SIDEBAR ADMIN -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">E</div>
+      <div class="sidebar-brand">
+        <span class="name">EduGate</span>
+        <span class="sub">Panel Admin</span>
+      </div>
+    </div>
+    <div class="sidebar-user">
+      <div class="user-avatar" style="background:linear-gradient(135deg,#c0392b,#e74c3c);">AD</div>
+      <div class="user-info">
+        <span class="user-name">Administrator</span>
+        <span class="user-role">Super Admin</span>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Dashboard</div>
+      <a href="dashboard-admin.html" class="nav-item active">
+        <span class="nav-icon">📊</span> Ringkasan
+      </a>
+
+      <div class="nav-section-title">Manajemen PPDB</div>
+      <a href="admin-data-pendaftar.html" class="nav-item">
+        <span class="nav-icon">👥</span> Data Pendaftar
+        <span class="nav-badge">12</span>
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">✅</span> Verifikasi Berkas
+        <span class="nav-badge">8</span>
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">🏆</span> Hasil Seleksi
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">🔄</span> Daftar Ulang
+      </a>
+
+      <div class="nav-section-title">Konfigurasi</div>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">🏫</span> Pengaturan Sekolah
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">📅</span> Jadwal PPDB
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">🚪</span> Manajemen Jalur
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">👤</span> Kelola Pengguna
+      </a>
+
+      <div class="nav-section-title">Laporan</div>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">📈</span> Statistik & Laporan
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">🖨️</span> Ekspor Data
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="index.html" class="nav-item"><span class="nav-icon">🏫</span> Ke Halaman Publik</a>
+      <a href="login.html" class="nav-item"><span class="nav-icon">🚪</span> Keluar</a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <div class="topbar">
+      <div class="topbar-left">
+        <span class="page-title">Dashboard Admin</span>
+        <span class="breadcrumb">PPDB 2025/2026 · SMA Negeri 1 Surabaya</span>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-icon-btn">🔔<span class="notif-dot"></span></div>
+        <a href="admin-data-pendaftar.html" class="btn btn-primary btn-sm">+ Tambah Pendaftar</a>
+        <div class="user-avatar" style="background:linear-gradient(135deg,#c0392b,#e74c3c);cursor:pointer;">AD</div>
+      </div>
+    </div>
+
+    <div class="page-body">
+
+      <!-- STAT CARDS -->
+      <div class="stat-cards">
+        <div class="stat-card blue">
+          <div class="stat-icon-box blue">📋</div>
+          <div class="stat-info">
+            <span class="stat-num">1.247</span>
+            <span class="stat-label">Total Pendaftar</span>
+            <div class="stat-delta up">▲ +48 minggu ini</div>
+          </div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-icon-box green">✅</div>
+          <div class="stat-info">
+            <span class="stat-num">836</span>
+            <span class="stat-label">Berkas Lengkap</span>
+            <div class="stat-delta up">▲ 67% dari total</div>
+          </div>
+        </div>
+        <div class="stat-card orange">
+          <div class="stat-icon-box orange">⏳</div>
+          <div class="stat-info">
+            <span class="stat-num">289</span>
+            <span class="stat-label">Menunggu Verifikasi</span>
+            <div class="stat-delta down">▼ Perlu ditindak</div>
+          </div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-icon-box red">❌</div>
+          <div class="stat-info">
+            <span class="stat-num">122</span>
+            <span class="stat-label">Berkas Tidak Lengkap</span>
+            <div class="stat-delta down">▼ 9.8% dari total</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CHARTS ROW -->
+      <div class="charts-row">
+        <!-- Bar Chart -->
+        <div class="chart-box">
+          <div class="chart-box-header">
+            <span class="chart-box-title">📈 Pendaftar per Hari (Jan 2026)</span>
+            <div class="chart-legend">
+              <div class="legend-item"><div class="legend-dot" style="background:var(--primary);"></div> Daftar</div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--accent);"></div> Diverifikasi</div>
+            </div>
+          </div>
+          <div class="bar-chart">
+            <div class="bar-group">
+              <div class="bar-wrap"><div class="bar primary" style="height:60%;"></div><div class="bar accent" style="height:45%;"></div></div>
+              <span class="bar-x-label">1</span>
+            </div>
+            <div class="bar-group">
+              <div class="bar-wrap"><div class="bar primary" style="height:75%;"></div><div class="bar accent" style="height:55%;"></div></div>
+              <span class="bar-x-label">2</span>
+            </div>
+            <div class="bar-group">
+              <div class="bar-wrap"><div class="bar primary" style="height:50%;"></div><div class="bar accent" style="height:40%;"></div></div>
+              <span class="bar-x-label">3</span>
+            </div>
+            <div class="bar-group">
+              <div class="bar-wrap"><div class="bar primary" style="height:90%;"></div><div class="bar accent" style="height:70%;"></div></div>
+              <span class="bar-x-label">4</span>
+            </div>
+            <div class="bar-group">
+              <div class="bar-wrap"><div class="bar primary" style="height:65%;"></div><div class="bar accent" style="height:50%;"></div></div>
+              <span class="bar-x-label">5</span>
+            </div>
+            <div class="bar-group">
+              <div class="bar-wrap"><div class="bar primary" style="height:100%;"></div><div class="bar accent" style="height:80%;"></div></div>
+              <span class="bar-x-label">6</span>
+            </div>
+            <div class="bar-group">
+              <div class="bar-wrap"><div class="bar primary" style="height:85%;"></div><div class="bar accent" style="height:65%;"></div></div>
+              <span class="bar-x-label">7</span>
+            </div>
+            <div class="bar-group">
+              <div class="bar-wrap"><div class="bar primary" style="height:70%;"></div><div class="bar accent" style="height:55%;"></div></div>
+              <span class="bar-x-label">8</span>
+            </div>
+            <div class="bar-group">
+              <div class="bar-wrap"><div class="bar primary" style="height:55%;"></div><div class="bar accent" style="height:42%;"></div></div>
+              <span class="bar-x-label">9</span>
+            </div>
+            <div class="bar-group">
+              <div class="bar-wrap"><div class="bar primary" style="height:80%;"></div><div class="bar accent" style="height:60%;"></div></div>
+              <span class="bar-x-label">10</span>
+            </div>
+            <div class="bar-group">
+              <div class="bar-wrap"><div class="bar primary" style="height:45%;"></div><div class="bar accent" style="height:35%;"></div></div>
+              <span class="bar-x-label">11</span>
+            </div>
+            <div class="bar-group">
+              <div class="bar-wrap"><div class="bar primary" style="height:92%;"></div><div class="bar accent" style="height:72%;"></div></div>
+              <span class="bar-x-label">12</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Donut Chart -->
+        <div class="chart-box">
+          <div class="chart-box-header">
+            <span class="chart-box-title">🥧 Distribusi Jalur</span>
+          </div>
+          <div class="donut-wrap">
+            <div class="donut"></div>
+            <div class="donut-legend">
+              <div class="donut-legend-item">
+                <div class="dli-left"><div class="dli-dot" style="background:var(--primary);"></div><span class="dli-label">Zonasi</span></div>
+                <span class="dli-val">624 (50%)</span>
+              </div>
+              <div class="donut-legend-item">
+                <div class="dli-left"><div class="dli-dot" style="background:var(--accent);"></div><span class="dli-label">Prestasi</span></div>
+                <span class="dli-val">374 (30%)</span>
+              </div>
+              <div class="donut-legend-item">
+                <div class="dli-left"><div class="dli-dot" style="background:var(--info);"></div><span class="dli-label">Afirmasi</span></div>
+                <span class="dli-val">187 (15%)</span>
+              </div>
+              <div class="donut-legend-item">
+                <div class="dli-left"><div class="dli-dot" style="background:var(--danger);"></div><span class="dli-label">Mutasi</span></div>
+                <span class="dli-val">62 (5%)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RECENT APPLICATIONS TABLE -->
+      <div class="recent-apps">
+        <div class="ra-header">
+          <span class="ra-title">📋 Pendaftar Terbaru — Perlu Tindakan</span>
+          <div class="ra-filters">
+            <button class="filter-chip active" onclick="filterChip(this)">Semua</button>
+            <button class="filter-chip" onclick="filterChip(this)">Belum Verifikasi</button>
+            <button class="filter-chip" onclick="filterChip(this)">Berkas Kurang</button>
+            <button class="filter-chip" onclick="filterChip(this)">Siap Diproses</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>No. Daftar</th>
+                <th>Nama Siswa</th>
+                <th>Jalur</th>
+                <th>Asal Sekolah</th>
+                <th>Tgl Daftar</th>
+                <th>Berkas</th>
+                <th>Status</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight:700;color:var(--primary);">2025-0048</td>
+                <td>
+                  <div style="font-weight:600;font-size:14px;">Citra Ayu Lestari</div>
+                  <div style="font-size:12px;color:var(--text-light);">NISN: 0057891234</div>
+                </td>
+                <td><span class="badge badge-info">Prestasi</span></td>
+                <td>SMP Negeri 3 Surabaya</td>
+                <td>2 Jan 2026</td>
+                <td>
+                  <div style="font-size:13px;font-weight:600;color:var(--success);">6/6 ✓</div>
+                </td>
+                <td><span class="badge badge-warning">Menunggu</span></td>
+                <td>
+                  <div class="action-btns">
+                    <button class="act-btn view" title="Lihat Detail">👁</button>
+                    <button class="act-btn approve" title="Setujui" onclick="setujui(this)">✓</button>
+                    <button class="act-btn reject" title="Tolak">✕</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td style="font-weight:700;color:var(--primary);">2025-0049</td>
+                <td>
+                  <div style="font-weight:600;font-size:14px;">Rizki Maulana</div>
+                  <div style="font-size:12px;color:var(--text-light);">NISN: 0051239876</div>
+                </td>
+                <td><span class="badge badge-neutral">Zonasi</span></td>
+                <td>SMP Negeri 7 Surabaya</td>
+                <td>2 Jan 2026</td>
+                <td>
+                  <div style="font-size:13px;font-weight:600;color:var(--warning);">4/6 ⚠</div>
+                </td>
+                <td><span class="badge badge-warning">Berkas Kurang</span></td>
+                <td>
+                  <div class="action-btns">
+                    <button class="act-btn view">👁</button>
+                    <button class="act-btn approve" onclick="setujui(this)">✓</button>
+                    <button class="act-btn reject">✕</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td style="font-weight:700;color:var(--primary);">2025-0050</td>
+                <td>
+                  <div style="font-weight:600;font-size:14px;">Annisa Putri Wulandari</div>
+                  <div style="font-size:12px;color:var(--text-light);">NISN: 0058765432</div>
+                </td>
+                <td><span class="badge badge-neutral">Afirmasi</span></td>
+                <td>MTs Negeri 1 Surabaya</td>
+                <td>2 Jan 2026</td>
+                <td>
+                  <div style="font-size:13px;font-weight:600;color:var(--success);">6/6 ✓</div>
+                </td>
+                <td><span class="badge badge-success">Disetujui</span></td>
+                <td>
+                  <div class="action-btns">
+                    <button class="act-btn view">👁</button>
+                    <button class="act-btn" title="Edit">✏️</button>
+                    <button class="act-btn reject">✕</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td style="font-weight:700;color:var(--primary);">2025-0051</td>
+                <td>
+                  <div style="font-weight:600;font-size:14px;">Doni Hermawan</div>
+                  <div style="font-size:12px;color:var(--text-light);">NISN: 0054321098</div>
+                </td>
+                <td><span class="badge badge-info">Prestasi</span></td>
+                <td>SMP Al-Irsyad Surabaya</td>
+                <td>3 Jan 2026</td>
+                <td>
+                  <div style="font-size:13px;font-weight:600;color:var(--danger);">2/6 ✕</div>
+                </td>
+                <td><span class="badge badge-danger">Tidak Lengkap</span></td>
+                <td>
+                  <div class="action-btns">
+                    <button class="act-btn view">👁</button>
+                    <button class="act-btn approve" onclick="setujui(this)">✓</button>
+                    <button class="act-btn reject">✕</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td style="font-weight:700;color:var(--primary);">2025-0052</td>
+                <td>
+                  <div style="font-weight:600;font-size:14px;">Mega Sari Utami</div>
+                  <div style="font-size:12px;color:var(--text-light);">NISN: 0059871234</div>
+                </td>
+                <td><span class="badge badge-neutral">Mutasi</span></td>
+                <td>SMP Negeri 2 Malang</td>
+                <td>3 Jan 2026</td>
+                <td>
+                  <div style="font-size:13px;font-weight:600;color:var(--success);">6/6 ✓</div>
+                </td>
+                <td><span class="badge badge-warning">Menunggu</span></td>
+                <td>
+                  <div class="action-btns">
+                    <button class="act-btn view">👁</button>
+                    <button class="act-btn approve" onclick="setujui(this)">✓</button>
+                    <button class="act-btn reject">✕</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="padding:14px 22px;display:flex;align-items:center;justify-content:space-between;background:#f8fafc;border-top:1px solid var(--border);">
+          <span style="font-size:13px;color:var(--text-light);">Menampilkan 5 dari 289 data perlu tindakan</span>
+          <a href="admin-data-pendaftar.html" class="btn btn-outline btn-sm">Lihat Semua →</a>
+        </div>
+      </div>
+
+      <!-- BOTTOM GRID -->
+      <div class="admin-bottom-grid">
+
+        <!-- Task List -->
+        <div class="panel-box">
+          <div class="panel-box-header">
+            <span class="panel-box-title">✅ Daftar Tugas Hari Ini</span>
+            <span style="font-size:12px;color:var(--text-light);">3/7 selesai</span>
+          </div>
+          <div class="task-list">
+            <div class="task-item">
+              <div class="task-check done">✓</div>
+              <span class="task-text done">Verifikasi 15 berkas masuk pagi</span>
+              <span class="task-priority low">Selesai</span>
+            </div>
+            <div class="task-item">
+              <div class="task-check done">✓</div>
+              <span class="task-text done">Update kuota jalur zonasi</span>
+              <span class="task-priority low">Selesai</span>
+            </div>
+            <div class="task-item">
+              <div class="task-check done">✓</div>
+              <span class="task-text done">Kirim notifikasi pengumuman jalur prestasi</span>
+              <span class="task-priority low">Selesai</span>
+            </div>
+            <div class="task-item">
+              <div class="task-check" onclick="toggleTask(this)"></div>
+              <span class="task-text">Review 8 berkas bermasalah (foto buram)</span>
+              <span class="task-priority high">Penting</span>
+            </div>
+            <div class="task-item">
+              <div class="task-check" onclick="toggleTask(this)"></div>
+              <span class="task-text">Ekspor data pendaftar ke Excel</span>
+              <span class="task-priority medium">Sedang</span>
+            </div>
+            <div class="task-item">
+              <div class="task-check" onclick="toggleTask(this)"></div>
+              <span class="task-text">Rapat evaluasi PPDB dengan tim (14:00)</span>
+              <span class="task-priority high">Penting</span>
+            </div>
+            <div class="task-item">
+              <div class="task-check" onclick="toggleTask(this)"></div>
+              <span class="task-text">Perbarui jadwal pengumuman di halaman publik</span>
+              <span class="task-priority medium">Sedang</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Access -->
+        <div class="panel-box">
+          <div class="panel-box-header">
+            <span class="panel-box-title">⚡ Akses Cepat</span>
+          </div>
+          <div class="admin-quick-grid">
+            <a href="admin-data-pendaftar.html" class="aq-btn">
+              <span class="aq-icon">👥</span>
+              <span class="aq-label">Data Pendaftar</span>
+            </a>
+            <a href="#" class="aq-btn">
+              <span class="aq-icon">✅</span>
+              <span class="aq-label">Verifikasi Berkas</span>
+            </a>
+            <a href="#" class="aq-btn">
+              <span class="aq-icon">🏆</span>
+              <span class="aq-label">Hasil Seleksi</span>
+            </a>
+            <a href="#" class="aq-btn">
+              <span class="aq-icon">📊</span>
+              <span class="aq-label">Laporan</span>
+            </a>
+            <a href="#" class="aq-btn">
+              <span class="aq-icon">📁</span>
+              <span class="aq-label">Ekspor Data</span>
+            </a>
+            <a href="#" class="aq-btn">
+              <span class="aq-icon">📢</span>
+              <span class="aq-label">Pengumuman</span>
+            </a>
+            <a href="#" class="aq-btn">
+              <span class="aq-icon">⚙️</span>
+              <span class="aq-label">Pengaturan</span>
+            </a>
+            <a href="#" class="aq-btn">
+              <span class="aq-icon">👤</span>
+              <span class="aq-label">Manajemen User</span>
+            </a>
+            <a href="#" class="aq-btn">
+              <span class="aq-icon">📅</span>
+              <span class="aq-label">Edit Jadwal</span>
+            </a>
+          </div>
+
+          <!-- Summary info -->
+          <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+            <div style="font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-light);margin-bottom:12px;">Ringkasan Kuota</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                  <span style="font-size:12px;color:var(--text-mid);font-weight:500;">Zonasi (240 kuota)</span>
+                  <span style="font-size:12px;font-weight:700;color:var(--primary);">156 / 240</span>
+                </div>
+                <div style="height:6px;background:var(--border);border-radius:99px;overflow:hidden;">
+                  <div style="height:100%;width:65%;background:var(--primary);border-radius:99px;"></div>
+                </div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                  <span style="font-size:12px;color:var(--text-mid);font-weight:500;">Prestasi (144 kuota)</span>
+                  <span style="font-size:12px;font-weight:700;color:var(--accent);">112 / 144</span>
+                </div>
+                <div style="height:6px;background:var(--border);border-radius:99px;overflow:hidden;">
+                  <div style="height:100%;width:78%;background:var(--accent);border-radius:99px;"></div>
+                </div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                  <span style="font-size:12px;color:var(--text-mid);font-weight:500;">Afirmasi (72 kuota)</span>
+                  <span style="font-size:12px;font-weight:700;color:var(--info);">43 / 72</span>
+                </div>
+                <div style="height:6px;background:var(--border);border-radius:99px;overflow:hidden;">
+                  <div style="height:100%;width:60%;background:var(--info);border-radius:99px;"></div>
+                </div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                  <span style="font-size:12px;color:var(--text-mid);font-weight:500;">Mutasi (24 kuota)</span>
+                  <span style="font-size:12px;font-weight:700;color:var(--success);">18 / 24</span>
+                </div>
+                <div style="height:6px;background:var(--border);border-radius:99px;overflow:hidden;">
+                  <div style="height:100%;width:75%;background:var(--success);border-radius:99px;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function filterChip(el) {
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function setujui(btn) {
+    const row = btn.closest('tr');
+    const statusCell = row.querySelector('td:nth-child(7)');
+    statusCell.innerHTML = '<span class="badge badge-success">Disetujui</span>';
+    btn.parentElement.querySelector('.act-btn.approve').disabled = true;
+  }
+
+  function toggleTask(el) {
+    el.classList.toggle('done');
+    const text = el.nextElementSibling;
+    text.classList.toggle('done');
+    if (el.classList.contains('done')) el.textContent = '✓';
+    else el.textContent = '';
+  }
+</script>
+</body>
+</html>

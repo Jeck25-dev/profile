@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulir Pendaftaran — EduGate PPDB</title>
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/dashboard-siswa.css">
+  <link rel="stylesheet" href="css/form-pendaftaran.css">
+</head>
+<body>
+<div class="app-layout">
+
+  <!-- SIDEBAR (same as dashboard) -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">E</div>
+      <div class="sidebar-brand">
+        <span class="name">EduGate</span>
+        <span class="sub">PPDB Online</span>
+      </div>
+    </div>
+    <div class="sidebar-user">
+      <div class="user-avatar">BS</div>
+      <div class="user-info">
+        <span class="user-name">Budi Santoso</span>
+        <span class="user-role">Pendaftar · 2025-0047</span>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Menu Utama</div>
+      <a href="dashboard-siswa.html" class="nav-item">
+        <span class="nav-icon">🏠</span> Beranda
+      </a>
+      <a href="form-pendaftaran.html" class="nav-item active">
+        <span class="nav-icon">📝</span> Formulir Pendaftaran
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">📁</span> Upload Dokumen
+        <span class="nav-badge">2</span>
+      </a>
+      <a href="status-pendaftaran.html" class="nav-item">
+        <span class="nav-icon">🔍</span> Status Pendaftaran
+      </a>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">🖨️</span> Cetak Kartu
+      </a>
+      <div class="nav-section-title">Lainnya</div>
+      <a href="#" class="nav-item">
+        <span class="nav-icon">🔔</span> Notifikasi
+        <span class="nav-badge">3</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <a href="login.html" class="nav-item"><span class="nav-icon">🚪</span> Keluar</a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <div class="topbar">
+      <div class="topbar-left">
+        <span class="page-title">Formulir Pendaftaran</span>
+        <span class="breadcrumb">Dashboard › Formulir Pendaftaran</span>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-icon-btn">🔔<span class="notif-dot"></span></div>
+        <div class="user-avatar">BS</div>
+      </div>
+    </div>
+
+    <div class="page-body">
+
+      <!-- STEPPER -->
+      <div class="form-stepper">
+        <div class="form-stepper-row">
+          <div class="fstep done">
+            <div class="fstep-circle">✓</div>
+            <span class="fstep-label">Pilihan Sekolah</span>
+          </div>
+          <div class="fstep active">
+            <div class="fstep-circle">2</div>
+            <span class="fstep-label">Data Pribadi</span>
+          </div>
+          <div class="fstep">
+            <div class="fstep-circle">3</div>
+            <span class="fstep-label">Data Orang Tua</span>
+          </div>
+          <div class="fstep">
+            <div class="fstep-circle">4</div>
+            <span class="fstep-label">Akademik</span>
+          </div>
+          <div class="fstep">
+            <div class="fstep-circle">5</div>
+            <span class="fstep-label">Upload Berkas</span>
+          </div>
+          <div class="fstep">
+            <div class="fstep-circle">6</div>
+            <span class="fstep-label">Review & Submit</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 1: PILIHAN SEKOLAH & JALUR (completed, shown for reference) -->
+      <div class="form-section">
+        <div class="form-section-header">
+          <div class="form-section-icon">🏫</div>
+          <div>
+            <div class="form-section-title">Pilihan Sekolah & Jalur</div>
+            <div class="form-section-sub">Sudah diisi — <a href="#" style="color:var(--primary);font-size:12px;">Ubah</a></div>
+          </div>
+        </div>
+        <div class="form-section-body">
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Pilihan Sekolah Tujuan</label>
+              <select class="form-control">
+                <option selected>SMA Negeri 1 Surabaya</option>
+                <option>SMA Negeri 2 Surabaya</option>
+                <option>SMK Negeri 1 Surabaya</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Jurusan / Program Studi</label>
+              <select class="form-control">
+                <option selected>MIPA (Matematika & Ilmu Pengetahuan Alam)</option>
+                <option>IPS (Ilmu Pengetahuan Sosial)</option>
+                <option>Bahasa</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Jalur Pendaftaran</label>
+            <div class="radio-card-group">
+              <label class="radio-card selected" onclick="selectJalur(this)">
+                <input type="radio" name="jalur" value="prestasi" checked>
+                <div class="radio-card-dot"></div>
+                <div>
+                  <div class="rc-title">🏆 Jalur Prestasi</div>
+                  <div class="rc-desc">Berdasarkan nilai rapor dan prestasi akademik/non-akademik.</div>
+                </div>
+              </label>
+              <label class="radio-card" onclick="selectJalur(this)">
+                <input type="radio" name="jalur" value="zonasi">
+                <div class="radio-card-dot"></div>
+                <div>
+                  <div class="rc-title">🏠 Jalur Zonasi</div>
+                  <div class="rc-desc">Berdasarkan domisili terdekat dengan sekolah.</div>
+                </div>
+              </label>
+              <label class="radio-card" onclick="selectJalur(this)">
+                <input type="radio" name="jalur" value="afirmasi">
+                <div class="radio-card-dot"></div>
+                <div>
+                  <div class="rc-title">🤝 Jalur Afirmasi</div>
+                  <div class="rc-desc">Untuk keluarga tidak mampu pemegang KIP/PKH.</div>
+                </div>
+              </label>
+              <label class="radio-card" onclick="selectJalur(this)">
+                <input type="radio" name="jalur" value="mutasi">
+                <div class="radio-card-dot"></div>
+                <div>
+                  <div class="rc-title">🔄 Jalur Mutasi</div>
+                  <div class="rc-desc">Untuk peserta didik pindah domisili karena orang tua pindah tugas.</div>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: DATA PRIBADI (active) -->
+      <div class="form-section">
+        <div class="form-section-header">
+          <div class="form-section-icon">👤</div>
+          <div>
+            <div class="form-section-title">Data Pribadi Calon Siswa</div>
+            <div class="form-section-sub">Isi data sesuai dokumen kependudukan resmi</div>
+          </div>
+        </div>
+        <div class="form-section-body">
+          <div style="display:flex;gap:24px;align-items:flex-start;margin-bottom:24px;">
+            <div class="photo-upload-area" onclick="alert('Upload foto...')">
+              <span class="pu-icon">📷</span>
+              <span>Upload Pas Foto</span>
+              <span style="font-size:10px;color:var(--text-light);">4×6 cm<br>Latar merah</span>
+            </div>
+            <div style="flex:1;">
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label class="form-label">Nama Depan *</label>
+                  <input type="text" class="form-control" value="Budi" placeholder="Nama depan">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Nama Belakang *</label>
+                  <input type="text" class="form-control" value="Santoso" placeholder="Nama belakang">
+                </div>
+              </div>
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label class="form-label">NISN *</label>
+                  <input type="text" class="form-control" value="0051234567" placeholder="10 digit NISN">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">NIK (Sesuai KTP/KK) *</label>
+                  <input type="text" class="form-control" value="3578051203090001" placeholder="16 digit NIK">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label class="form-label">Tempat Lahir *</label>
+              <input type="text" class="form-control" value="Surabaya" placeholder="Kota kelahiran">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tanggal Lahir *</label>
+              <input type="date" class="form-control" value="2009-03-12">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Jenis Kelamin *</label>
+              <select class="form-control">
+                <option selected>Laki-laki</option>
+                <option>Perempuan</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Agama *</label>
+              <select class="form-control">
+                <option selected>Islam</option>
+                <option>Kristen Protestan</option>
+                <option>Kristen Katolik</option>
+                <option>Hindu</option>
+                <option>Buddha</option>
+                <option>Konghucu</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Golongan Darah</label>
+              <select class="form-control">
+                <option>-- Pilih --</option>
+                <option selected>A</option>
+                <option>B</option>
+                <option>AB</option>
+                <option>O</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">No. HP / WhatsApp</label>
+              <input type="tel" class="form-control" value="081234567890" placeholder="08xxxxxxxxxx">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Alamat Lengkap *</label>
+            <textarea class="form-control" rows="3" placeholder="Jalan, RT/RW, kelurahan, kecamatan...">Jl. Veteran No. 45, RT 02 / RW 06, Kelurahan Pucang Sewu, Kecamatan Gubeng, Kota Surabaya</textarea>
+          </div>
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label class="form-label">Kelurahan *</label>
+              <input type="text" class="form-control" value="Pucang Sewu" placeholder="Kelurahan">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Kecamatan *</label>
+              <input type="text" class="form-control" value="Gubeng" placeholder="Kecamatan">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Kota / Kabupaten *</label>
+              <input type="text" class="form-control" value="Surabaya" placeholder="Kota/Kabupaten">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: DATA ORANG TUA -->
+      <div class="form-section">
+        <div class="form-section-header">
+          <div class="form-section-icon">👨‍👩‍👦</div>
+          <div>
+            <div class="form-section-title">Data Orang Tua / Wali</div>
+            <div class="form-section-sub">Isi data ayah dan ibu kandung / wali sah</div>
+          </div>
+        </div>
+        <div class="form-section-body">
+          <div style="margin-bottom:8px;font-size:13px;font-weight:700;color:var(--text-mid);text-transform:uppercase;letter-spacing:0.06em;">Ayah</div>
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label class="form-label">Nama Ayah *</label>
+              <input type="text" class="form-control" value="Heri Santoso" placeholder="Nama lengkap">
+            </div>
+            <div class="form-group">
+              <label class="form-label">NIK Ayah</label>
+              <input type="text" class="form-control" placeholder="16 digit NIK">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Pekerjaan Ayah</label>
+              <select class="form-control">
+                <option>Pegawai Negeri Sipil</option>
+                <option selected>Karyawan Swasta</option>
+                <option>Wiraswasta</option>
+                <option>TNI / Polri</option>
+                <option>Petani</option>
+                <option>Tidak Bekerja</option>
+                <option>Lainnya</option>
+              </select>
+            </div>
+          </div>
+          <div style="margin-bottom:8px;font-size:13px;font-weight:700;color:var(--text-mid);text-transform:uppercase;letter-spacing:0.06em;">Ibu</div>
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label class="form-label">Nama Ibu *</label>
+              <input type="text" class="form-control" value="Siti Rahayu" placeholder="Nama lengkap">
+            </div>
+            <div class="form-group">
+              <label class="form-label">NIK Ibu</label>
+              <input type="text" class="form-control" placeholder="16 digit NIK">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Pekerjaan Ibu</label>
+              <select class="form-control">
+                <option>Pegawai Negeri Sipil</option>
+                <option>Karyawan Swasta</option>
+                <option>Wiraswasta</option>
+                <option selected>Ibu Rumah Tangga</option>
+                <option>Lainnya</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">No. HP Orang Tua / Wali *</label>
+              <input type="tel" class="form-control" value="0812-3456-7891" placeholder="No. yang bisa dihubungi">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email Orang Tua</label>
+              <input type="email" class="form-control" placeholder="email@contoh.com">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4: AKADEMIK -->
+      <div class="form-section">
+        <div class="form-section-header">
+          <div class="form-section-icon">📊</div>
+          <div>
+            <div class="form-section-title">Data Akademik</div>
+            <div class="form-section-sub">Asal sekolah, nilai rapor, dan prestasi</div>
+          </div>
+        </div>
+        <div class="form-section-body">
+          <div class="form-grid-2" style="margin-bottom:20px;">
+            <div class="form-group">
+              <label class="form-label">Nama Sekolah Asal *</label>
+              <input type="text" class="form-control" value="SMP Negeri 5 Surabaya" placeholder="Nama sekolah asal">
+            </div>
+            <div class="form-group">
+              <label class="form-label">NPSN Sekolah Asal</label>
+              <input type="text" class="form-control" value="20532417" placeholder="8 digit NPSN">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tahun Lulus / Kelas Terakhir</label>
+              <select class="form-control">
+                <option selected>Kelas 9 (Tahun Ajaran 2024/2025)</option>
+                <option>Lulus 2024</option>
+                <option>Lulus 2023</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">No. Seri Ijazah</label>
+              <input type="text" class="form-control" placeholder="Nomor seri ijazah">
+            </div>
+          </div>
+
+          <div style="margin-bottom:16px;">
+            <label class="form-label" style="font-size:13px;">Nilai Rapor Rata-rata (Semester 1–5)</label>
+            <div class="nilai-grid">
+              <div class="nilai-item">
+                <span class="nilai-mapel">Matematika</span>
+                <input type="number" min="0" max="100" value="88" placeholder="0–100">
+              </div>
+              <div class="nilai-item">
+                <span class="nilai-mapel">B. Indonesia</span>
+                <input type="number" min="0" max="100" value="90" placeholder="0–100">
+              </div>
+              <div class="nilai-item">
+                <span class="nilai-mapel">B. Inggris</span>
+                <input type="number" min="0" max="100" value="85" placeholder="0–100">
+              </div>
+              <div class="nilai-item">
+                <span class="nilai-mapel">IPA</span>
+                <input type="number" min="0" max="100" value="92" placeholder="0–100">
+              </div>
+              <div class="nilai-item">
+                <span class="nilai-mapel">IPS</span>
+                <input type="number" min="0" max="100" value="87" placeholder="0–100">
+              </div>
+              <div class="nilai-item">
+                <span class="nilai-mapel">Rata-rata</span>
+                <input type="number" value="88.4" style="color:var(--primary);font-size:16px;" readonly>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label class="form-label" style="margin-bottom:12px;font-size:13px;">Prestasi / Penghargaan (opsional)</label>
+            <div id="prestasi-list">
+              <div class="prestasi-row">
+                <div class="prestasi-num">1</div>
+                <input type="text" value="Juara 1 Olimpiade Matematika" placeholder="Nama prestasi/lomba">
+                <select>
+                  <option selected>Kota</option>
+                  <option>Provinsi</option>
+                  <option>Nasional</option>
+                  <option>Internasional</option>
+                </select>
+                <input type="number" min="2020" max="2026" value="2024" placeholder="Tahun" style="max-width:90px;">
+                <button class="prestasi-del" onclick="this.parentElement.remove()">✕</button>
+              </div>
+            </div>
+            <button class="btn btn-outline btn-sm" style="margin-top:8px;" onclick="addPrestasi()">+ Tambah Prestasi</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- FORM NAV -->
+      <div class="form-nav">
+        <span class="form-nav-info">* Wajib diisi · Data tersimpan otomatis tiap 5 menit</span>
+        <div class="form-nav-actions">
+          <button class="btn btn-outline">← Sebelumnya</button>
+          <button class="btn btn-primary">Simpan & Lanjut →</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  let prestasiCount = 1;
+  function addPrestasi() {
+    prestasiCount++;
+    const div = document.createElement('div');
+    div.className = 'prestasi-row';
+    div.innerHTML = `
+      <div class="prestasi-num">${prestasiCount}</div>
+      <input type="text" placeholder="Nama prestasi/lomba">
+      <select>
+        <option>Kota</option>
+        <option>Provinsi</option>
+        <option>Nasional</option>
+        <option>Internasional</option>
+      </select>
+      <input type="number" min="2020" max="2026" placeholder="Tahun" style="max-width:90px;">
+      <button class="prestasi-del" onclick="this.parentElement.remove()">✕</button>
+    `;
+    document.getElementById('prestasi-list').appendChild(div);
+  }
+
+  function selectJalur(el) {
+    document.querySelectorAll('.radio-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+</script>
+</body>
+</html>
