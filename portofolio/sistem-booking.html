@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SiBook — Sistem Reservasi</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --primary: #2563eb; --primary-dark: #1d4ed8; --primary-light: #dbeafe;
+    --secondary: #0ea5e9; --success: #16a34a; --success-light: #dcfce7;
+    --warning: #d97706; --warning-light: #fef3c7;
+    --danger: #dc2626; --danger-light: #fee2e2;
+    --gray-50: #f8fafc; --gray-100: #f1f5f9; --gray-200: #e2e8f0;
+    --gray-300: #cbd5e1; --gray-400: #94a3b8; --gray-500: #64748b;
+    --gray-600: #475569; --gray-700: #334155; --gray-800: #1e293b; --gray-900: #0f172a;
+    --white: #ffffff; --sidebar-w: 260px; --header-h: 64px;
+    --radius: 10px;
+    --shadow: 0 1px 3px rgba(0,0,0,.08), 0 4px 12px rgba(0,0,0,.06);
+    --shadow-lg: 0 8px 30px rgba(0,0,0,.12);
+    --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+  html, body { height: 100%; font-family: var(--font); background: var(--gray-50); color: var(--gray-800); font-size: 14px; }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--gray-100); }
+  ::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 3px; }
+
+  /* LOGIN */
+  #login-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1e40af 0%, #0ea5e9 100%); padding: 20px; }
+  .login-card { background: var(--white); border-radius: 18px; box-shadow: var(--shadow-lg); width: 100%; max-width: 420px; overflow: hidden; }
+  .login-header { background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); padding: 36px 32px 28px; text-align: center; color: white; }
+  .login-logo { font-size: 40px; margin-bottom: 8px; }
+  .login-header h1 { font-size: 26px; font-weight: 700; }
+  .login-header p { font-size: 13px; opacity: .85; margin-top: 4px; }
+  .login-body { padding: 28px; }
+  .login-body h2 { font-size: 18px; font-weight: 600; color: var(--gray-800); margin-bottom: 20px; }
+  .form-group { margin-bottom: 14px; }
+  .form-group label { display: block; font-size: 13px; font-weight: 500; color: var(--gray-600); margin-bottom: 6px; }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%; padding: 10px 14px; border: 1.5px solid var(--gray-200); border-radius: var(--radius);
+    font-size: 14px; font-family: var(--font); color: var(--gray-800); transition: border-color .2s, box-shadow .2s; background: white;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
+  .demo-accounts { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: var(--radius); padding: 14px; margin-bottom: 18px; }
+  .demo-accounts p { font-size: 11px; font-weight: 700; color: var(--gray-500); margin-bottom: 10px; text-transform: uppercase; letter-spacing: .5px; }
+  .demo-btn { display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 12px; background: white; border: 1px solid var(--gray-200); border-radius: 8px; cursor: pointer; font-size: 13px; color: var(--gray-700); transition: all .15s; margin-bottom: 6px; text-align: left; }
+  .demo-btn:last-child { margin-bottom: 0; }
+  .demo-btn:hover { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+  .demo-btn .badge { font-size: 11px; padding: 2px 8px; border-radius: 99px; font-weight: 600; margin-left: auto; white-space: nowrap; }
+  .badge-admin { background: #fef3c7; color: #92400e; }
+  .badge-staff { background: #e0e7ff; color: #3730a3; }
+  .badge-customer { background: #dcfce7; color: #166534; }
+  .error-msg { color: var(--danger); font-size: 13px; margin-top: 8px; display: none; }
+
+  /* BUTTONS */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 20px; border-radius: var(--radius); font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all .15s; text-decoration: none; white-space: nowrap; }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37,99,235,.3); }
+  .btn-full { width: 100%; }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
+  .btn-outline { background: transparent; border: 1.5px solid var(--gray-200); color: var(--gray-600); }
+  .btn-outline:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+  .btn-success { background: var(--success); color: white; }
+  .btn-success:hover { background: #15803d; }
+  .btn-danger { background: var(--danger); color: white; }
+  .btn-danger:hover { background: #b91c1c; }
+  .btn-warning { background: var(--warning); color: white; }
+  .btn-ghost { background: transparent; color: var(--gray-600); }
+  .btn-ghost:hover { background: var(--gray-100); }
+
+  /* APP LAYOUT */
+  #app { display: none; height: 100vh; overflow: hidden; position: relative; }
+
+  /* OVERLAY for mobile sidebar */
+  .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 99; }
+  .sidebar-overlay.show { display: block; }
+
+  /* SIDEBAR */
+  .sidebar {
+    position: fixed; left: 0; top: 0; bottom: 0; width: var(--sidebar-w);
+    background: var(--gray-900); display: flex; flex-direction: column; z-index: 100;
+    transition: transform .3s cubic-bezier(.4,0,.2,1);
+  }
+  .sidebar-brand { padding: 18px 20px 16px; border-bottom: 1px solid rgba(255,255,255,.08); display: flex; align-items: center; gap: 10px; }
+  .sidebar-brand .logo { font-size: 26px; }
+  .sidebar-brand .brand-text h2 { font-size: 18px; font-weight: 700; color: white; }
+  .sidebar-brand .brand-text p { font-size: 11px; color: var(--gray-400); margin-top: 1px; }
+  .sidebar-user { padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,.08); display: flex; align-items: center; gap: 10px; }
+  .avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: white; flex-shrink: 0; }
+  .avatar-admin { background: linear-gradient(135deg, #f59e0b, #d97706); }
+  .avatar-staff { background: linear-gradient(135deg, #6366f1, #4f46e5); }
+  .avatar-customer { background: linear-gradient(135deg, #10b981, #059669); }
+  .sidebar-user-info h4 { font-size: 13px; font-weight: 600; color: white; }
+  .sidebar-user-info span { font-size: 11px; color: var(--gray-400); }
+  .sidebar-nav { flex: 1; overflow-y: auto; padding: 10px 0; }
+  .nav-section { padding: 10px 20px 4px; font-size: 10px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 1px; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 20px; color: var(--gray-400); cursor: pointer; transition: all .15s; border-left: 3px solid transparent; font-size: 13.5px; }
+  .nav-item:hover { color: white; background: rgba(255,255,255,.06); }
+  .nav-item.active { color: white; background: rgba(37,99,235,.2); border-left-color: var(--primary); }
+  .nav-item .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+  .nav-badge { margin-left: auto; background: var(--primary); color: white; font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 99px; }
+  .sidebar-footer { padding: 14px 20px; border-top: 1px solid rgba(255,255,255,.08); }
+  .logout-btn { display: flex; align-items: center; gap: 8px; color: var(--gray-400); cursor: pointer; font-size: 13px; padding: 8px 0; }
+  .logout-btn:hover { color: var(--danger); }
+
+  /* MAIN */
+  .main { margin-left: var(--sidebar-w); display: flex; flex-direction: column; height: 100vh; overflow: hidden; transition: margin-left .3s; }
+  .topbar { height: var(--header-h); background: white; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; padding: 0 20px; gap: 12px; flex-shrink: 0; }
+  .topbar-menu-btn { display: none; background: none; border: none; font-size: 22px; cursor: pointer; padding: 4px; color: var(--gray-600); }
+  .topbar-title { font-size: 17px; font-weight: 700; color: var(--gray-800); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .topbar-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .content-area { flex: 1; overflow-y: auto; padding: 20px; }
+
+  /* PAGES */
+  .page { display: none; animation: fadeIn .2s ease; }
+  .page.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* STATS */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 20px; }
+  .stat-card { background: white; border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 14px; border-left: 4px solid transparent; }
+  .stat-card.blue { border-left-color: var(--primary); }
+  .stat-card.green { border-left-color: var(--success); }
+  .stat-card.yellow { border-left-color: var(--warning); }
+  .stat-card.red { border-left-color: var(--danger); }
+  .stat-icon { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .stat-icon.blue { background: var(--primary-light); }
+  .stat-icon.green { background: var(--success-light); }
+  .stat-icon.yellow { background: var(--warning-light); }
+  .stat-icon.red { background: var(--danger-light); }
+  .stat-info h3 { font-size: 24px; font-weight: 700; color: var(--gray-800); }
+  .stat-info p { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+  .stat-trend { font-size: 12px; font-weight: 600; margin-top: 4px; }
+  .stat-trend.up { color: var(--success); }
+  .stat-trend.down { color: var(--danger); }
+
+  /* CARD */
+  .card { background: white; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 16px; overflow: hidden; }
+  .card-header { padding: 14px 18px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  .card-header h3 { font-size: 14px; font-weight: 600; color: var(--gray-800); }
+  .card-body { padding: 18px; }
+
+  /* DASHBOARD GRID — responsive 2-col */
+  .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* TABLE */
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { width: 100%; border-collapse: collapse; min-width: 500px; }
+  thead tr { background: var(--gray-50); }
+  th { padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: .5px; border-bottom: 1px solid var(--gray-200); white-space: nowrap; }
+  td { padding: 11px 12px; border-bottom: 1px solid var(--gray-100); color: var(--gray-700); font-size: 13px; vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--gray-50); }
+
+  /* STATUS */
+  .status { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 99px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .status::before { content: ''; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .status-pending { background: var(--warning-light); color: var(--warning); }
+  .status-pending::before { background: var(--warning); }
+  .status-confirmed { background: var(--primary-light); color: var(--primary); }
+  .status-confirmed::before { background: var(--primary); }
+  .status-done { background: var(--success-light); color: var(--success); }
+  .status-done::before { background: var(--success); }
+  .status-cancelled { background: var(--danger-light); color: var(--danger); }
+  .status-cancelled::before { background: var(--danger); }
+
+  /* MODAL */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 999; display: none; align-items: center; justify-content: center; padding: 16px; backdrop-filter: blur(3px); }
+  .modal-overlay.open { display: flex; animation: fadeIn .15s ease; }
+  .modal { background: white; border-radius: 14px; width: 100%; max-width: 520px; box-shadow: var(--shadow-lg); max-height: 92vh; overflow-y: auto; }
+  .modal-header { padding: 18px 22px 14px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
+  .modal-header h3 { font-size: 16px; font-weight: 700; color: var(--gray-800); }
+  .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--gray-400); line-height: 1; padding: 4px; }
+  .modal-close:hover { color: var(--gray-700); }
+  .modal-body { padding: 20px; }
+  .modal-footer { padding: 14px 20px; border-top: 1px solid var(--gray-100); display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
+
+  /* FORM */
+  .form-row { display: grid; gap: 12px; margin-bottom: 12px; }
+  .form-row.col-2 { grid-template-columns: 1fr 1fr; }
+  .form-row.col-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .form-group { margin-bottom: 0; }
+  textarea { resize: vertical; min-height: 76px; }
+
+  /* SEARCH & FILTER */
+  .search-bar { position: relative; }
+  .search-bar input { padding-left: 34px; }
+  .search-bar::before { content: '🔍'; position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 13px; pointer-events: none; }
+  .filter-bar { display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: var(--gray-50); border-bottom: 1px solid var(--gray-100); flex-wrap: wrap; }
+  .filter-bar .search-bar { flex: 1; min-width: 160px; }
+  .filter-bar select { padding: 8px 10px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 12px; color: var(--gray-700); background: white; cursor: pointer; }
+  .filter-bar select:focus { outline: none; border-color: var(--primary); }
+
+  /* ITEM GRID */
+  .items-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+  .item-card { background: white; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; transition: transform .2s, box-shadow .2s; }
+  .item-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+  .item-card-img { height: 130px; display: flex; align-items: center; justify-content: center; font-size: 48px; background: var(--gray-100); }
+  .item-card-body { padding: 14px; }
+  .item-card-body h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .item-card-body p { font-size: 12px; color: var(--gray-500); margin-bottom: 8px; line-height: 1.5; }
+  .item-price { font-size: 15px; font-weight: 700; color: var(--primary); }
+  .item-price span { font-size: 12px; font-weight: 400; color: var(--gray-400); }
+  .item-avail { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 99px; margin-bottom: 8px; }
+  .item-avail.available { background: var(--success-light); color: var(--success); }
+  .item-avail.full { background: var(--danger-light); color: var(--danger); }
+
+  /* TIMELINE */
+  .timeline { position: relative; padding-left: 26px; }
+  .timeline::before { content: ''; position: absolute; left: 7px; top: 0; bottom: 0; width: 2px; background: var(--gray-200); }
+  .tl-item { position: relative; margin-bottom: 18px; }
+  .tl-item::before { content: ''; position: absolute; left: -22px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); border: 2px solid white; box-shadow: 0 0 0 2px var(--primary); }
+  .tl-item h4 { font-size: 13px; font-weight: 600; color: var(--gray-800); }
+  .tl-item p { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+  .tl-time { font-size: 11px; color: var(--gray-400); margin-top: 3px; }
+
+  /* WELCOME BANNER */
+  .welcome-banner { background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); border-radius: 12px; padding: 20px 24px; color: white; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
+  .welcome-banner h2 { font-size: 18px; font-weight: 700; }
+  .welcome-banner p { font-size: 13px; opacity: .85; margin-top: 4px; }
+  .welcome-banner .big-icon { font-size: 52px; opacity: .25; flex-shrink: 0; }
+
+  /* TABS */
+  .tabs { display: flex; gap: 0; border-bottom: 2px solid var(--gray-200); margin-bottom: 18px; overflow-x: auto; }
+  .tab-btn { padding: 10px 16px; font-size: 13px; font-weight: 500; color: var(--gray-500); border: none; background: none; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all .15s; white-space: nowrap; }
+  .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+  .tab-btn:hover:not(.active) { color: var(--gray-700); }
+
+  /* PROFILE */
+  .profile-card { background: white; border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; text-align: center; margin-bottom: 16px; }
+  .profile-avatar { width: 76px; height: 76px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; font-weight: 700; color: white; margin: 0 auto 12px; }
+  .profile-card h3 { font-size: 17px; font-weight: 700; }
+  .profile-card .role-badge { display: inline-block; padding: 3px 14px; border-radius: 99px; font-size: 12px; font-weight: 600; margin-top: 6px; }
+
+  /* NOTIF */
+  .notif-btn { position: relative; background: var(--gray-100); border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 17px; display: flex; align-items: center; justify-content: center; transition: background .15s; }
+  .notif-btn:hover { background: var(--gray-200); }
+  .notif-dot { position: absolute; top: 5px; right: 5px; width: 8px; height: 8px; background: var(--danger); border-radius: 50%; border: 2px solid white; }
+
+  /* EMPTY STATE */
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--gray-400); }
+  .empty-state .icon { font-size: 44px; margin-bottom: 10px; }
+  .empty-state p { font-size: 14px; }
+
+  /* MISC */
+  .divider { height: 1px; background: var(--gray-100); margin: 14px 0; }
+  .text-muted { color: var(--gray-400); }
+  .text-sm { font-size: 12px; }
+  .col-actions { display: flex; gap: 5px; align-items: center; flex-wrap: nowrap; }
+  .info-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: flex-start; }
+  .info-row .label { min-width: 140px; font-size: 13px; color: var(--gray-500); flex-shrink: 0; }
+  .info-row .value { font-size: 13px; font-weight: 600; color: var(--gray-800); }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 900px) {
+    .dash-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 768px) {
+    /* Sidebar slide-out on mobile */
+    .sidebar { transform: translateX(calc(-1 * var(--sidebar-w))); }
+    .sidebar.open { transform: translateX(0); }
+
+    /* Main takes full width */
+    .main { margin-left: 0 !important; }
+
+    /* Show hamburger */
+    .topbar-menu-btn { display: flex; }
+
+    /* Content padding smaller */
+    .content-area { padding: 14px; }
+
+    /* Stats 2-col on tablet */
+    .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    /* Form cols collapse */
+    .form-row.col-2, .form-row.col-3 { grid-template-columns: 1fr; }
+
+    /* Welcome banner compact */
+    .welcome-banner .big-icon { display: none; }
+    .welcome-banner { padding: 16px 18px; }
+    .welcome-banner h2 { font-size: 15px; }
+
+    /* Items grid 1-col */
+    .items-grid { grid-template-columns: 1fr 1fr; }
+
+    /* Topbar title smaller */
+    .topbar-title { font-size: 15px; }
+
+    /* Card header wrap */
+    .card-header { padding: 12px 14px; }
+  }
+
+  @media (max-width: 480px) {
+    .stats-grid { grid-template-columns: 1fr; }
+    .items-grid { grid-template-columns: 1fr; }
+    .topbar { padding: 0 12px; gap: 8px; }
+    .content-area { padding: 10px; }
+    .modal { border-radius: 10px; }
+    .btn-sm { padding: 5px 8px; font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-page">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="login-logo">📋</div>
+      <h1>SiBook</h1>
+      <p>Sistem Reservasi & Booking</p>
+    </div>
+    <div class="login-body">
+      <h2>Masuk ke Akun Anda</h2>
+      <div class="demo-accounts">
+        <p>🚀 Akun Demo Tersedia</p>
+        <button class="demo-btn" onclick="fillDemo('admin@sibook.id','admin123')">
+          <span>👑</span>
+          <span><strong>Admin Demo</strong><br><small>admin@sibook.id</small></span>
+          <span class="badge badge-admin">Admin</span>
+        </button>
+        <button class="demo-btn" onclick="fillDemo('staff@sibook.id','staff123')">
+          <span>👨‍💼</span>
+          <span><strong>Staff Demo</strong><br><small>staff@sibook.id</small></span>
+          <span class="badge badge-staff">Staff</span>
+        </button>
+        <button class="demo-btn" onclick="fillDemo('pelanggan@sibook.id','user123')">
+          <span>👤</span>
+          <span><strong>Pelanggan Demo</strong><br><small>pelanggan@sibook.id</small></span>
+          <span class="badge badge-customer">Pelanggan</span>
+        </button>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="login-email" placeholder="Masukkan email...">
+      </div>
+      <div class="form-group" style="margin-bottom:18px">
+        <label>Password</label>
+        <input type="password" id="login-pass" placeholder="Masukkan password...">
+      </div>
+      <p class="error-msg" id="login-error">⚠️ Email atau password salah.</p>
+      <button class="btn btn-primary btn-full" onclick="doLogin()" style="padding:12px">Masuk →</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <span class="logo">📋</span>
+      <div class="brand-text"><h2>SiBook</h2><p>Sistem Reservasi</p></div>
+    </div>
+    <div class="sidebar-user">
+      <div class="avatar" id="sb-avatar"></div>
+      <div class="sidebar-user-info">
+        <h4 id="sb-name">—</h4>
+        <span id="sb-role">—</span>
+      </div>
+    </div>
+    <nav class="sidebar-nav" id="sidebar-nav"></nav>
+    <div class="sidebar-footer">
+      <div class="logout-btn" onclick="doLogout()">⏻ &nbsp; Keluar</div>
+    </div>
+  </aside>
+
+  <div class="main" id="main">
+    <header class="topbar">
+      <button class="topbar-menu-btn" onclick="toggleSidebar()">☰</button>
+      <h1 class="topbar-title" id="page-title">Dashboard</h1>
+      <div class="topbar-actions">
+        <button class="notif-btn" onclick="showNotif()">🔔<span class="notif-dot"></span></button>
+        <div class="avatar" id="topbar-avatar" style="cursor:pointer" onclick="navigate('profil')"></div>
+      </div>
+    </header>
+
+    <div class="content-area">
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="welcome-banner">
+          <div>
+            <h2 id="welcome-text">Selamat Datang!</h2>
+            <p id="welcome-sub">Pantau semua aktivitas reservasi Anda di sini.</p>
+          </div>
+          <div class="big-icon">📋</div>
+        </div>
+        <div class="stats-grid" id="stats-grid"></div>
+        <div class="dash-grid" id="dash-grid">
+          <div class="card">
+            <div class="card-header">
+              <h3>📅 Reservasi Terbaru</h3>
+              <button class="btn btn-sm btn-outline" onclick="navigate('reservasi')">Lihat Semua</button>
+            </div>
+            <div class="table-wrap">
+              <table id="dash-booking-table"></table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>🕐 Aktivitas Terkini</h3></div>
+            <div class="card-body">
+              <div class="timeline" id="dash-timeline"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESERVASI -->
+      <div class="page" id="page-reservasi">
+        <div class="card">
+          <div class="card-header">
+            <h3>📅 Manajemen Reservasi</h3>
+            <button class="btn btn-primary btn-sm" id="btn-add-booking" onclick="openBookingModal()">+ Buat Reservasi</button>
+          </div>
+          <div class="filter-bar">
+            <div class="search-bar" style="flex:1;min-width:150px">
+              <input type="text" placeholder="Cari nama, kode reservasi..." id="search-booking" oninput="filterBookings()">
+            </div>
+            <select id="filter-status" onchange="filterBookings()">
+              <option value="">Semua Status</option>
+              <option value="pending">Pending</option>
+              <option value="confirmed">Terkonfirmasi</option>
+              <option value="done">Selesai</option>
+              <option value="cancelled">Dibatalkan</option>
+            </select>
+            <select id="filter-date" onchange="filterBookings()">
+              <option value="">Semua Tanggal</option>
+              <option value="today">Hari Ini</option>
+              <option value="week">Minggu Ini</option>
+              <option value="month">Bulan Ini</option>
+            </select>
+          </div>
+          <div class="table-wrap">
+            <table id="booking-table">
+              <thead><tr><th>Kode</th><th>Pelanggan</th><th>Layanan</th><th>Tanggal</th><th>Waktu</th><th>Pax</th><th>Total</th><th>Status</th><th>Aksi</th></tr></thead>
+              <tbody id="booking-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- LAYANAN -->
+      <div class="page" id="page-layanan">
+        <div class="card" style="margin-bottom:14px">
+          <div class="card-header">
+            <h3>🛎️ Daftar Layanan / Item</h3>
+            <button class="btn btn-primary btn-sm" id="btn-add-item" onclick="openItemModal()">+ Tambah Layanan</button>
+          </div>
+        </div>
+        <div class="items-grid" id="items-grid"></div>
+      </div>
+
+      <!-- PELANGGAN -->
+      <div class="page" id="page-pelanggan">
+        <div class="card">
+          <div class="card-header">
+            <h3>👥 Data Pelanggan</h3>
+            <button class="btn btn-primary btn-sm" onclick="openCustomerModal()">+ Tambah Pelanggan</button>
+          </div>
+          <div class="filter-bar">
+            <div class="search-bar" style="flex:1">
+              <input type="text" placeholder="Cari nama atau email..." id="search-customer" oninput="filterCustomers()">
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>#</th><th>Nama</th><th>Email</th><th>Telepon</th><th>Total Booking</th><th>Bergabung</th><th>Aksi</th></tr></thead>
+              <tbody id="customer-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- PENGGUNA -->
+      <div class="page" id="page-pengguna">
+        <div class="card">
+          <div class="card-header">
+            <h3>🔐 Manajemen Pengguna & Akun</h3>
+            <button class="btn btn-primary btn-sm" onclick="openUserModal()">+ Tambah Pengguna</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>#</th><th>Nama</th><th>Email</th><th>Role</th><th>Status</th><th>Terakhir Login</th><th>Aksi</th></tr></thead>
+              <tbody id="user-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- LAPORAN -->
+      <div class="page" id="page-laporan">
+        <div class="tabs">
+          <button class="tab-btn active" onclick="switchTab(this,'rpt-ringkasan')">📊 Ringkasan</button>
+          <button class="tab-btn" onclick="switchTab(this,'rpt-pendapatan')">💰 Pendapatan</button>
+          <button class="tab-btn" onclick="switchTab(this,'rpt-layanan')">🛎️ Per Layanan</button>
+        </div>
+        <div id="rpt-ringkasan">
+          <div class="stats-grid">
+            <div class="stat-card blue"><div class="stat-icon blue">📅</div><div class="stat-info"><h3>127</h3><p>Total Reservasi</p><div class="stat-trend up">↑ +12% bulan ini</div></div></div>
+            <div class="stat-card green"><div class="stat-icon green">✅</div><div class="stat-info"><h3>98</h3><p>Selesai</p><div class="stat-trend up">↑ 77%</div></div></div>
+            <div class="stat-card yellow"><div class="stat-icon yellow">⏳</div><div class="stat-info"><h3>18</h3><p>Pending / Proses</p><div class="stat-trend down">↓ -3</div></div></div>
+            <div class="stat-card red"><div class="stat-icon red">❌</div><div class="stat-info"><h3>11</h3><p>Dibatalkan</p><div class="stat-trend up">↓ 8.7%</div></div></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>📈 Grafik Reservasi — 6 Bulan Terakhir</h3></div>
+            <div class="card-body">
+              <div style="display:flex;align-items:flex-end;gap:10px;height:160px;padding-bottom:4px">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px"><div style="background:var(--primary);width:100%;border-radius:6px 6px 0 0;height:60%"></div><small style="font-size:11px;color:var(--gray-500)">Jan</small></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px"><div style="background:var(--primary);width:100%;border-radius:6px 6px 0 0;height:75%"></div><small style="font-size:11px;color:var(--gray-500)">Feb</small></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px"><div style="background:var(--primary);width:100%;border-radius:6px 6px 0 0;height:48%"></div><small style="font-size:11px;color:var(--gray-500)">Mar</small></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px"><div style="background:var(--primary);width:100%;border-radius:6px 6px 0 0;height:85%"></div><small style="font-size:11px;color:var(--gray-500)">Apr</small></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px"><div style="background:var(--primary);width:100%;border-radius:6px 6px 0 0;height:70%"></div><small style="font-size:11px;color:var(--gray-500)">Mei</small></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px"><div style="background:var(--secondary);width:100%;border-radius:6px 6px 0 0;height:100%"></div><small style="font-size:11px;color:var(--gray-500)">Jun</small></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="rpt-pendapatan" style="display:none">
+          <div class="card">
+            <div class="card-header"><h3>💰 Laporan Pendapatan</h3></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Bulan</th><th>Total Reservasi</th><th>Selesai</th><th>Pendapatan</th><th>Pertumbuhan</th></tr></thead>
+                <tbody>
+                  <tr><td>Januari 2025</td><td>18</td><td>15</td><td>Rp 4.500.000</td><td style="color:var(--success);font-weight:600">↑ +5%</td></tr>
+                  <tr><td>Februari 2025</td><td>22</td><td>20</td><td>Rp 6.000.000</td><td style="color:var(--success);font-weight:600">↑ +33%</td></tr>
+                  <tr><td>Maret 2025</td><td>15</td><td>12</td><td>Rp 3.600.000</td><td style="color:var(--danger);font-weight:600">↓ -40%</td></tr>
+                  <tr><td>April 2025</td><td>28</td><td>25</td><td>Rp 7.500.000</td><td style="color:var(--success);font-weight:600">↑ +108%</td></tr>
+                  <tr><td>Mei 2025</td><td>20</td><td>17</td><td>Rp 5.100.000</td><td style="color:var(--danger);font-weight:600">↓ -32%</td></tr>
+                  <tr><td>Juni 2025</td><td>24</td><td>9</td><td>Rp 2.700.000</td><td style="color:var(--warning);font-weight:600">berjalan</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div id="rpt-layanan" style="display:none">
+          <div class="card">
+            <div class="card-header"><h3>🛎️ Performa Per Layanan</h3></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Layanan</th><th>Total Dipesan</th><th>Selesai</th><th>Dibatalkan</th><th>Pendapatan</th></tr></thead>
+                <tbody id="report-service-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PENGATURAN -->
+      <div class="page" id="page-pengaturan">
+        <div class="card">
+          <div class="card-header"><h3>⚙️ Pengaturan Sistem</h3></div>
+          <div class="card-body">
+            <div class="form-row col-2">
+              <div class="form-group"><label>Nama Bisnis</label><input type="text" value="SiBook Demo"></div>
+              <div class="form-group"><label>Jenis Usaha</label>
+                <select><option>Hotel / Penginapan</option><option>Restoran / Kafe</option><option>Klinik / Medis</option><option>Fasilitas Olahraga</option><option>Salon / Spa</option><option>Lainnya</option></select>
+              </div>
+            </div>
+            <div class="form-row col-2">
+              <div class="form-group"><label>Telepon</label><input type="text" value="+62 812-3456-7890"></div>
+              <div class="form-group"><label>Email Bisnis</label><input type="text" value="admin@sibook.id"></div>
+            </div>
+            <div class="form-group" style="margin-bottom:12px"><label>Alamat</label><textarea>Jl. Demo Raya No. 1, Surabaya, Jawa Timur</textarea></div>
+            <div class="form-row col-2">
+              <div class="form-group"><label>Jam Buka</label><input type="time" value="08:00"></div>
+              <div class="form-group"><label>Jam Tutup</label><input type="time" value="21:00"></div>
+            </div>
+            <div class="form-group" style="margin-bottom:16px"><label>Catatan Booking</label><textarea>Harap hadir 15 menit sebelum waktu booking. Pembatalan kurang dari 1 jam akan dikenakan biaya 50%.</textarea></div>
+            <button class="btn btn-primary" onclick="alert('✅ Pengaturan disimpan! (demo)')">Simpan Pengaturan</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROFIL -->
+      <div class="page" id="page-profil">
+        <div style="max-width:540px">
+          <div class="profile-card" id="profile-card-main"></div>
+          <div class="card">
+            <div class="card-header"><h3>✏️ Edit Profil</h3></div>
+            <div class="card-body">
+              <div class="form-row col-2">
+                <div class="form-group"><label>Nama Lengkap</label><input type="text" id="prof-nama"></div>
+                <div class="form-group"><label>Email</label><input type="email" id="prof-email"></div>
+              </div>
+              <div class="form-row col-2">
+                <div class="form-group"><label>Telepon</label><input type="text" id="prof-telp"></div>
+                <div class="form-group"><label>Role</label><input type="text" id="prof-role" readonly style="background:var(--gray-100)"></div>
+              </div>
+              <div class="form-group" style="margin-bottom:14px"><label>Alamat</label><textarea id="prof-alamat"></textarea></div>
+              <button class="btn btn-primary" onclick="saveProfile()">Simpan Perubahan</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>🔒 Ubah Password</h3></div>
+            <div class="card-body">
+              <div class="form-group" style="margin-bottom:12px"><label>Password Lama</label><input type="password" placeholder="••••••••"></div>
+              <div class="form-row col-2">
+                <div class="form-group"><label>Password Baru</label><input type="password" placeholder="••••••••"></div>
+                <div class="form-group"><label>Konfirmasi</label><input type="password" placeholder="••••••••"></div>
+              </div>
+              <button class="btn btn-outline" onclick="alert('✅ Password berhasil diubah! (demo)')">Ubah Password</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOOKING SAYA (customer) -->
+      <div class="page" id="page-bookingku">
+        <div class="card">
+          <div class="card-header">
+            <h3>🗓️ Reservasi Saya</h3>
+            <button class="btn btn-primary btn-sm" onclick="openBookingModal()">+ Buat Reservasi Baru</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Kode</th><th>Layanan</th><th>Tanggal</th><th>Waktu</th><th>Pax</th><th>Total</th><th>Status</th><th>Aksi</th></tr></thead>
+              <tbody id="my-booking-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content-area -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- MODAL: RESERVASI -->
+<div class="modal-overlay" id="modal-booking">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-booking-title">📅 Buat Reservasi</h3>
+      <button class="modal-close" onclick="closeModal('modal-booking')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row col-2">
+        <div class="form-group"><label>Nama Pelanggan *</label><input type="text" id="bk-nama" placeholder="Nama lengkap..."></div>
+        <div class="form-group"><label>Telepon *</label><input type="text" id="bk-telp" placeholder="08xx-xxxx-xxxx"></div>
+      </div>
+      <div class="form-row col-2">
+        <div class="form-group"><label>Email</label><input type="email" id="bk-email" placeholder="email@domain.com"></div>
+        <div class="form-group"><label>Layanan *</label>
+          <select id="bk-layanan" onchange="updateBookingPrice()"><option value="">-- Pilih Layanan --</option></select>
+        </div>
+      </div>
+      <div class="form-row col-3">
+        <div class="form-group"><label>Tanggal *</label><input type="date" id="bk-tanggal"></div>
+        <div class="form-group"><label>Waktu *</label><input type="time" id="bk-waktu" value="09:00"></div>
+        <div class="form-group"><label>Jml (Pax/Unit)</label><input type="number" id="bk-pax" value="1" min="1" oninput="updateBookingPrice()"></div>
+      </div>
+      <div class="form-group" style="margin-bottom:14px"><label>Catatan Tambahan</label><textarea id="bk-catatan" placeholder="Permintaan khusus..."></textarea></div>
+      <div style="background:var(--primary-light);border-radius:var(--radius);padding:14px;display:flex;justify-content:space-between;align-items:center">
+        <span style="color:var(--primary);font-weight:600">Estimasi Total</span>
+        <span style="font-size:20px;font-weight:700;color:var(--primary)" id="bk-total">Rp 0</span>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-booking')">Batal</button>
+      <button class="btn btn-primary" onclick="saveBooking()">💾 Simpan Reservasi</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: DETAIL -->
+<div class="modal-overlay" id="modal-detail">
+  <div class="modal">
+    <div class="modal-header"><h3>📋 Detail Reservasi</h3><button class="modal-close" onclick="closeModal('modal-detail')">✕</button></div>
+    <div class="modal-body" id="modal-detail-body"></div>
+    <div class="modal-footer" id="modal-detail-footer"></div>
+  </div>
+</div>
+
+<!-- MODAL: LAYANAN -->
+<div class="modal-overlay" id="modal-item">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-item-title">🛎️ Tambah Layanan</h3>
+      <button class="modal-close" onclick="closeModal('modal-item')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row col-2">
+        <div class="form-group"><label>Nama Layanan *</label><input type="text" id="it-nama" placeholder="Contoh: Kamar Deluxe"></div>
+        <div class="form-group"><label>Kategori</label><input type="text" id="it-kategori" placeholder="Kamar, Paket, dll"></div>
+      </div>
+      <div class="form-row col-2">
+        <div class="form-group"><label>Harga (Rp) *</label><input type="number" id="it-harga" placeholder="250000"></div>
+        <div class="form-group"><label>Satuan</label><input type="text" id="it-satuan" placeholder="malam / orang / sesi"></div>
+      </div>
+      <div class="form-group" style="margin-bottom:12px"><label>Deskripsi</label><textarea id="it-deskripsi" placeholder="Deskripsi layanan..."></textarea></div>
+      <div class="form-row col-2">
+        <div class="form-group"><label>Kapasitas / Stok</label><input type="number" id="it-kapasitas" value="10"></div>
+        <div class="form-group"><label>Status</label><select id="it-status"><option value="available">Tersedia</option><option value="full">Penuh</option></select></div>
+      </div>
+      <div class="form-group"><label>Ikon (emoji)</label><input type="text" id="it-icon" placeholder="🛏️" maxlength="4"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-item')">Batal</button>
+      <button class="btn btn-primary" onclick="saveItem()">💾 Simpan Layanan</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: PELANGGAN -->
+<div class="modal-overlay" id="modal-customer">
+  <div class="modal">
+    <div class="modal-header"><h3>👤 Tambah Pelanggan</h3><button class="modal-close" onclick="closeModal('modal-customer')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row col-2">
+        <div class="form-group"><label>Nama Lengkap *</label><input type="text" id="cs-nama"></div>
+        <div class="form-group"><label>Email *</label><input type="email" id="cs-email"></div>
+      </div>
+      <div class="form-row col-2">
+        <div class="form-group"><label>Telepon *</label><input type="text" id="cs-telp"></div>
+        <div class="form-group"><label>Jenis Kelamin</label><select id="cs-gender"><option>Laki-laki</option><option>Perempuan</option></select></div>
+      </div>
+      <div class="form-group" style="margin-bottom:12px"><label>Alamat</label><textarea id="cs-alamat"></textarea></div>
+      <div class="form-group"><label>Catatan</label><input type="text" id="cs-catatan"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-customer')">Batal</button>
+      <button class="btn btn-primary" onclick="saveCustomer()">💾 Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: PENGGUNA -->
+<div class="modal-overlay" id="modal-user">
+  <div class="modal">
+    <div class="modal-header"><h3>🔐 Tambah Pengguna</h3><button class="modal-close" onclick="closeModal('modal-user')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row col-2">
+        <div class="form-group"><label>Nama Lengkap *</label><input type="text" id="us-nama"></div>
+        <div class="form-group"><label>Email *</label><input type="email" id="us-email"></div>
+      </div>
+      <div class="form-row col-2">
+        <div class="form-group"><label>Password *</label><input type="password" id="us-pass"></div>
+        <div class="form-group"><label>Role *</label><select id="us-role"><option value="admin">Admin</option><option value="staff">Staff</option><option value="customer">Pelanggan</option></select></div>
+      </div>
+      <div class="form-group"><label>Telepon</label><input type="text" id="us-telp"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-user')">Batal</button>
+      <button class="btn btn-primary" onclick="saveUser()">💾 Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: NOTIFIKASI -->
+<div class="modal-overlay" id="modal-notif">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-header"><h3>🔔 Notifikasi</h3><button class="modal-close" onclick="closeModal('modal-notif')">✕</button></div>
+    <div class="modal-body" style="padding:0"><div id="notif-list"></div></div>
+  </div>
+</div>
+
+<script>
+// ===== DATA =====
+const ACCOUNTS = [
+  { id:1, nama:'Budi Santoso', email:'admin@sibook.id', password:'admin123', role:'admin', telp:'08112345678', alamat:'Jl. Admin No. 1, Surabaya' },
+  { id:2, nama:'Siti Rahayu', email:'staff@sibook.id', password:'staff123', role:'staff', telp:'08223456789', alamat:'Jl. Staff No. 2, Surabaya' },
+  { id:3, nama:'Andi Wijaya', email:'pelanggan@sibook.id', password:'user123', role:'customer', telp:'08334567890', alamat:'Jl. Pelanggan No. 3, Surabaya' },
+];
+
+let ITEMS = [
+  { id:1, nama:'Kamar Standar', kategori:'Kamar', harga:300000, satuan:'malam', deskripsi:'Kamar nyaman dengan AC, TV, dan kamar mandi dalam.', kapasitas:5, status:'available', icon:'🛏️' },
+  { id:2, nama:'Kamar Deluxe', kategori:'Kamar', harga:500000, satuan:'malam', deskripsi:'Kamar luas dengan view taman, bathtub, dan sarapan gratis.', kapasitas:3, status:'available', icon:'🏨' },
+  { id:3, nama:'Kamar Suite', kategori:'Kamar', harga:900000, satuan:'malam', deskripsi:'Kamar premium dengan ruang tamu terpisah dan fasilitas lengkap.', kapasitas:2, status:'available', icon:'👑' },
+  { id:4, nama:'Meja Meeting', kategori:'Fasilitas', harga:200000, satuan:'jam', deskripsi:'Ruang rapat kapasitas 10 orang dengan proyektor dan whiteboard.', kapasitas:10, status:'available', icon:'🖥️' },
+  { id:5, nama:'Paket Sarapan', kategori:'Makanan', harga:75000, satuan:'orang', deskripsi:'Sarapan prasmanan pilihan Indonesia dan Western.', kapasitas:50, status:'available', icon:'🍳' },
+  { id:6, nama:'Kolam Renang', kategori:'Fasilitas', harga:50000, satuan:'orang', deskripsi:'Kolam renang outdoor dengan loker dan area berjemur.', kapasitas:30, status:'full', icon:'🏊' },
+];
+
+let BOOKINGS = [
+  { id:1, kode:'BK-001', nama:'Dewi Kusuma', telp:'08112233445', email:'dewi@email.com', layananId:1, tanggal:'2025-06-01', waktu:'14:00', pax:2, total:600000, status:'confirmed', catatan:'Minta kamar lantai atas', createdAt:'2025-05-28' },
+  { id:2, kode:'BK-002', nama:'Andi Wijaya', telp:'08334567890', email:'pelanggan@sibook.id', layananId:2, tanggal:'2025-06-02', waktu:'13:00', pax:1, total:500000, status:'pending', catatan:'', createdAt:'2025-05-29' },
+  { id:3, kode:'BK-003', nama:'Rini Hartati', telp:'08556677889', email:'rini@email.com', layananId:3, tanggal:'2025-06-03', waktu:'15:00', pax:2, total:1800000, status:'done', catatan:'Paket bulan madu', createdAt:'2025-05-30' },
+  { id:4, kode:'BK-004', nama:'Hendra Gunawan', telp:'08667788990', email:'hendra@email.com', layananId:4, tanggal:'2025-06-05', waktu:'09:00', pax:10, total:400000, status:'confirmed', catatan:'Perlu proyektor', createdAt:'2025-06-01' },
+  { id:5, kode:'BK-005', nama:'Maya Sari', telp:'08778899001', email:'maya@email.com', layananId:1, tanggal:'2025-05-25', waktu:'14:00', pax:1, total:300000, status:'done', catatan:'', createdAt:'2025-05-20' },
+  { id:6, kode:'BK-006', nama:'Budi Santoso', telp:'08112345678', email:'admin@sibook.id', layananId:5, tanggal:'2025-06-10', waktu:'07:30', pax:3, total:225000, status:'pending', catatan:'Vegetarian', createdAt:'2025-06-01' },
+];
+
+let CUSTOMERS = [
+  { id:1, nama:'Dewi Kusuma', email:'dewi@email.com', telp:'08112233445', gender:'Perempuan', alamat:'Jl. Melati 10, Surabaya', catatan:'Pelanggan setia', bergabung:'2025-01-15' },
+  { id:2, nama:'Andi Wijaya', email:'pelanggan@sibook.id', telp:'08334567890', gender:'Laki-laki', alamat:'Jl. Pelanggan No. 3, Surabaya', catatan:'', bergabung:'2025-02-20' },
+  { id:3, nama:'Rini Hartati', email:'rini@email.com', telp:'08556677889', gender:'Perempuan', alamat:'Jl. Flamboyan 5, Malang', catatan:'', bergabung:'2025-03-10' },
+  { id:4, nama:'Hendra Gunawan', email:'hendra@email.com', telp:'08667788990', gender:'Laki-laki', alamat:'Jl. Kenanga 7, Sidoarjo', catatan:'Corporate client', bergabung:'2025-04-05' },
+  { id:5, nama:'Maya Sari', email:'maya@email.com', telp:'08778899001', gender:'Perempuan', alamat:'Jl. Anggrek 3, Surabaya', catatan:'', bergabung:'2025-04-20' },
+];
+
+let USERS = [
+  { id:1, nama:'Budi Santoso', email:'admin@sibook.id', role:'admin', status:'aktif', lastLogin:'2025-06-01 08:30' },
+  { id:2, nama:'Siti Rahayu', email:'staff@sibook.id', role:'staff', status:'aktif', lastLogin:'2025-06-01 07:45' },
+  { id:3, nama:'Andi Wijaya', email:'pelanggan@sibook.id', role:'customer', status:'aktif', lastLogin:'2025-05-30 20:10' },
+];
+
+const NOTIFS = [
+  { icon:'📅', text:'Reservasi BK-004 menunggu konfirmasi', time:'5 menit lalu', nw:true },
+  { icon:'✅', text:'Reservasi BK-003 telah selesai', time:'1 jam lalu', nw:true },
+  { icon:'👤', text:'Pelanggan baru Maya Sari terdaftar', time:'2 jam lalu', nw:false },
+  { icon:'⚠️', text:'Kapasitas Kolam Renang sudah penuh', time:'Kemarin', nw:false },
+];
+
+let currentUser = null;
+let editingBookingId = null;
+let editingItemId = null;
+
+// ===== SIDEBAR MOBILE =====
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('sidebar-overlay');
+  sb.classList.toggle('open');
+  ov.classList.toggle('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('show');
+}
+
+// ===== LOGIN =====
+function fillDemo(email, pass) {
+  document.getElementById('login-email').value = email;
+  document.getElementById('login-pass').value = pass;
+  document.getElementById('login-error').style.display = 'none';
+}
+function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const user = ACCOUNTS.find(a => a.email === email && a.password === pass);
+  if (!user) { document.getElementById('login-error').style.display = 'block'; return; }
+  currentUser = { ...user };
+  document.getElementById('login-error').style.display = 'none';
+  document.getElementById('login-page').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  initApp();
+}
+function doLogout() {
+  currentUser = null;
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-page').style.display = 'flex';
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-pass').value = '';
+  closeSidebar();
+}
+document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+// ===== INIT =====
+function initApp() {
+  const u = currentUser;
+  const roleLabel = { admin:'Administrator', staff:'Staff', customer:'Pelanggan' };
+  const avatarClass = { admin:'avatar-admin', staff:'avatar-staff', customer:'avatar-customer' };
+  const initial = u.nama.charAt(0).toUpperCase();
+
+  document.getElementById('sb-avatar').className = 'avatar ' + avatarClass[u.role];
+  document.getElementById('sb-avatar').textContent = initial;
+  document.getElementById('sb-name').textContent = u.nama;
+  document.getElementById('sb-role').textContent = roleLabel[u.role];
+  document.getElementById('topbar-avatar').className = 'avatar ' + avatarClass[u.role];
+  document.getElementById('topbar-avatar').textContent = initial;
+
+  buildNav();
+  buildStats();
+  buildDashBookings();
+  buildDashTimeline();
+  renderBookings();
+  renderItems();
+  renderCustomers();
+  renderUsers();
+  renderMyBookings();
+  renderReportServices();
+  buildProfile();
+  navigate('dashboard');
+}
+
+// ===== NAV =====
+const NAV = {
+  admin: [
+    { section:'Menu Utama' },
+    { id:'dashboard', label:'Dashboard', icon:'📊' },
+    { id:'reservasi', label:'Reservasi', icon:'📅', badge:()=>BOOKINGS.filter(b=>b.status==='pending').length },
+    { id:'layanan', label:'Layanan & Item', icon:'🛎️' },
+    { section:'Data' },
+    { id:'pelanggan', label:'Pelanggan', icon:'👥' },
+    { id:'pengguna', label:'Pengguna & Akun', icon:'🔐' },
+    { section:'Lainnya' },
+    { id:'laporan', label:'Laporan', icon:'📈' },
+    { id:'pengaturan', label:'Pengaturan', icon:'⚙️' },
+    { id:'profil', label:'Profil Saya', icon:'👤' },
+  ],
+  staff: [
+    { section:'Menu Utama' },
+    { id:'dashboard', label:'Dashboard', icon:'📊' },
+    { id:'reservasi', label:'Reservasi', icon:'📅', badge:()=>BOOKINGS.filter(b=>b.status==='pending').length },
+    { id:'layanan', label:'Layanan & Item', icon:'🛎️' },
+    { section:'Data' },
+    { id:'pelanggan', label:'Pelanggan', icon:'👥' },
+    { section:'Lainnya' },
+    { id:'laporan', label:'Laporan', icon:'📈' },
+    { id:'profil', label:'Profil Saya', icon:'👤' },
+  ],
+  customer: [
+    { section:'Menu' },
+    { id:'dashboard', label:'Beranda', icon:'🏠' },
+    { id:'layanan', label:'Lihat Layanan', icon:'🛎️' },
+    { id:'bookingku', label:'Reservasi Saya', icon:'📅', badge:()=>BOOKINGS.filter(b=>b.email===currentUser.email&&b.status==='pending').length },
+    { section:'Akun' },
+    { id:'profil', label:'Profil Saya', icon:'👤' },
+  ],
+};
+
+function buildNav() {
+  const nav = document.getElementById('sidebar-nav');
+  nav.innerHTML = '';
+  (NAV[currentUser.role]||[]).forEach(item => {
+    if (item.section) {
+      nav.innerHTML += `<div class="nav-section">${item.section}</div>`;
+    } else {
+      const cnt = item.badge ? item.badge() : 0;
+      const badge = cnt > 0 ? `<span class="nav-badge">${cnt}</span>` : '';
+      nav.innerHTML += `<div class="nav-item" id="nav-${item.id}" onclick="navigate('${item.id}')">`
+        + `<span class="nav-icon">${item.icon}</span>${item.label}${badge}</div>`;
+    }
+  });
+}
+
+const pageTitles = { dashboard:'Dashboard', reservasi:'Manajemen Reservasi', layanan:'Layanan & Item', pelanggan:'Data Pelanggan', pengguna:'Pengguna & Akun', laporan:'Laporan', pengaturan:'Pengaturan Sistem', profil:'Profil Saya', bookingku:'Reservasi Saya' };
+
+function navigate(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const page = document.getElementById('page-'+pageId);
+  if (page) page.classList.add('active');
+  const nav = document.getElementById('nav-'+pageId);
+  if (nav) nav.classList.add('active');
+  document.getElementById('page-title').textContent = pageTitles[pageId] || '';
+  // hide add btns for customer
+  const ab = document.getElementById('btn-add-booking');
+  const ai = document.getElementById('btn-add-item');
+  if (ab) ab.style.display = currentUser.role==='customer' ? 'none' : '';
+  if (ai) ai.style.display = currentUser.role==='customer' ? 'none' : '';
+  // close mobile sidebar on navigate
+  closeSidebar();
+}
+
+// ===== STATS =====
+function buildStats() {
+  const pending = BOOKINGS.filter(b=>b.status==='pending').length;
+  const confirmed = BOOKINGS.filter(b=>b.status==='confirmed').length;
+  const revenue = BOOKINGS.filter(b=>b.status!=='cancelled').reduce((s,b)=>s+b.total,0);
+  const statsAdmin = [
+    { label:'Total Reservasi', value:BOOKINGS.length, icon:'📅', color:'blue', trend:'↑ +3 minggu ini', up:true },
+    { label:'Terkonfirmasi', value:confirmed, icon:'✅', color:'green', trend:'Hari ini aktif', up:true },
+    { label:'Menunggu Konfirmasi', value:pending, icon:'⏳', color:'yellow', trend:'Perlu tindakan', up:false },
+    { label:'Total Pendapatan', value:'Rp '+revenue.toLocaleString('id-ID'), icon:'💰', color:'blue', trend:'Bulan ini', up:true },
+  ];
+  const statsCust = [
+    { label:'Reservasi Saya', value:BOOKINGS.filter(b=>b.email===currentUser.email).length, icon:'📅', color:'blue', trend:'', up:true },
+    { label:'Aktif', value:BOOKINGS.filter(b=>b.email===currentUser.email&&(b.status==='pending'||b.status==='confirmed')).length, icon:'✅', color:'green', trend:'', up:true },
+    { label:'Selesai', value:BOOKINGS.filter(b=>b.email===currentUser.email&&b.status==='done').length, icon:'🏆', color:'yellow', trend:'', up:true },
+  ];
+  const stats = currentUser.role==='customer' ? statsCust : statsAdmin;
+  document.getElementById('stats-grid').innerHTML = stats.map(s=>`
+    <div class="stat-card ${s.color}">
+      <div class="stat-icon ${s.color}">${s.icon}</div>
+      <div class="stat-info"><h3>${s.value}</h3><p>${s.label}</p>${s.trend?`<div class="stat-trend ${s.up?'up':'down'}">${s.trend}</div>`:''}</div>
+    </div>`).join('');
+  const greet = new Date().getHours()<12?'Selamat Pagi':new Date().getHours()<17?'Selamat Siang':'Selamat Malam';
+  document.getElementById('welcome-text').textContent = `${greet}, ${currentUser.nama.split(' ')[0]}! 👋`;
+  const subs = { admin:'Pantau semua aktivitas reservasi bisnis Anda.', staff:'Kelola reservasi dan layanan pelanggan.', customer:'Lihat dan kelola reservasi Anda.' };
+  document.getElementById('welcome-sub').textContent = subs[currentUser.role];
+}
+
+function buildDashBookings() {
+  const list = (currentUser.role==='customer'
+    ? BOOKINGS.filter(b=>b.email===currentUser.email)
+    : BOOKINGS).slice(-5).reverse();
+  document.getElementById('dash-booking-table').innerHTML = `
+    <thead><tr><th>Kode</th><th>Pelanggan</th><th>Layanan</th><th>Status</th></tr></thead>
+    <tbody>${list.map(b=>{
+      const item = ITEMS.find(i=>i.id===b.layananId);
+      return `<tr><td><strong>${b.kode}</strong></td><td>${b.nama}</td><td>${item?item.nama:'-'}</td><td>${statusBadge(b.status)}</td></tr>`;
+    }).join('')}</tbody>`;
+}
+
+function buildDashTimeline() {
+  const events = [
+    { title:'Reservasi BK-004 dikonfirmasi', sub:'Hendra Gunawan — Meja Meeting', time:'Hari ini, 09:15' },
+    { title:'Pelanggan baru terdaftar', sub:'Maya Sari bergabung', time:'Kemarin, 16:30' },
+    { title:'Reservasi BK-003 selesai', sub:'Rini Hartati — Kamar Suite', time:'Kemarin, 12:00' },
+    { title:'Layanan Kolam Renang penuh', sub:'Kapasitas tercapai', time:'3 hari lalu' },
+  ];
+  document.getElementById('dash-timeline').innerHTML = events.map(e=>`
+    <div class="tl-item"><h4>${e.title}</h4><p>${e.sub}</p><div class="tl-time">🕐 ${e.time}</div></div>`).join('');
+}
+
+// ===== STATUS BADGE =====
+function statusBadge(s) {
+  const map = { pending:'status-pending', confirmed:'status-confirmed', done:'status-done', cancelled:'status-cancelled' };
+  const labels = { pending:'Pending', confirmed:'Terkonfirmasi', done:'Selesai', cancelled:'Dibatalkan' };
+  return `<span class="status ${map[s]||''}">${labels[s]||s}</span>`;
+}
+
+// ===== BOOKINGS =====
+function renderBookings(list) {
+  list = list || BOOKINGS;
+  const tbody = document.getElementById('booking-tbody');
+  if (!list.length) { tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state"><div class="icon">📭</div><p>Belum ada data reservasi</p></div></td></tr>`; return; }
+  tbody.innerHTML = list.map(b => {
+    const item = ITEMS.find(i=>i.id===b.layananId);
+    const canAct = currentUser.role!=='customer';
+    return `<tr>
+      <td><strong>${b.kode}</strong></td><td>${b.nama}</td>
+      <td>${item?item.icon+' '+item.nama:'-'}</td>
+      <td>${b.tanggal}</td><td>${b.waktu}</td><td>${b.pax}</td>
+      <td>Rp ${b.total.toLocaleString('id-ID')}</td>
+      <td>${statusBadge(b.status)}</td>
+      <td><div class="col-actions">
+        <button class="btn btn-sm btn-outline" onclick="viewBooking(${b.id})">🔍</button>
+        ${canAct?`<button class="btn btn-sm btn-warning" onclick="editBooking(${b.id})">✏️</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteBooking(${b.id})">🗑️</button>`:''}
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function filterBookings() {
+  const q = document.getElementById('search-booking').value.toLowerCase();
+  const st = document.getElementById('filter-status').value;
+  renderBookings(BOOKINGS.filter(b => {
+    const mQ = !q || b.kode.toLowerCase().includes(q) || b.nama.toLowerCase().includes(q) || b.email.toLowerCase().includes(q);
+    const mSt = !st || b.status===st;
+    return mQ && mSt;
+  }));
+}
+
+function openBookingModal(id=null) {
+  editingBookingId = id;
+  document.getElementById('modal-booking-title').textContent = id?'✏️ Edit Reservasi':'📅 Buat Reservasi';
+  const sel = document.getElementById('bk-layanan');
+  sel.innerHTML = '<option value="">-- Pilih Layanan --</option>' + ITEMS.map(i=>`<option value="${i.id}" data-harga="${i.harga}">${i.icon} ${i.nama} — Rp ${i.harga.toLocaleString('id-ID')}/${i.satuan}</option>`).join('');
+  if (id) {
+    const b = BOOKINGS.find(x=>x.id===id);
+    document.getElementById('bk-nama').value=b.nama; document.getElementById('bk-telp').value=b.telp;
+    document.getElementById('bk-email').value=b.email; document.getElementById('bk-layanan').value=b.layananId;
+    document.getElementById('bk-tanggal').value=b.tanggal; document.getElementById('bk-waktu').value=b.waktu;
+    document.getElementById('bk-pax').value=b.pax; document.getElementById('bk-catatan').value=b.catatan;
+    updateBookingPrice();
+  } else {
+    document.getElementById('bk-nama').value=currentUser.role==='customer'?currentUser.nama:'';
+    document.getElementById('bk-telp').value=currentUser.role==='customer'?currentUser.telp:'';
+    document.getElementById('bk-email').value=currentUser.role==='customer'?currentUser.email:'';
+    ['bk-layanan','bk-tanggal','bk-catatan'].forEach(f=>document.getElementById(f).value='');
+    document.getElementById('bk-waktu').value='09:00'; document.getElementById('bk-pax').value=1;
+    document.getElementById('bk-total').textContent='Rp 0';
+  }
+  openModal('modal-booking');
+}
+
+function updateBookingPrice() {
+  const sel = document.getElementById('bk-layanan');
+  const opt = sel.options[sel.selectedIndex];
+  const harga = opt ? parseInt(opt.getAttribute('data-harga')||0) : 0;
+  const pax = parseInt(document.getElementById('bk-pax').value)||1;
+  document.getElementById('bk-total').textContent = 'Rp '+(harga*pax).toLocaleString('id-ID');
+}
+
+function editBooking(id) { openBookingModal(id); }
+
+function saveBooking() {
+  const nama = document.getElementById('bk-nama').value.trim();
+  const telp = document.getElementById('bk-telp').value.trim();
+  const layananId = parseInt(document.getElementById('bk-layanan').value);
+  const tanggal = document.getElementById('bk-tanggal').value;
+  if (!nama||!telp||!layananId||!tanggal) { alert('⚠️ Harap lengkapi semua field wajib!'); return; }
+  const sel = document.getElementById('bk-layanan');
+  const harga = parseInt(sel.options[sel.selectedIndex].getAttribute('data-harga')||0);
+  const pax = parseInt(document.getElementById('bk-pax').value)||1;
+  if (editingBookingId) {
+    const b = BOOKINGS.find(x=>x.id===editingBookingId);
+    Object.assign(b, { nama, telp, email:document.getElementById('bk-email').value, layananId, tanggal, waktu:document.getElementById('bk-waktu').value, pax, total:harga*pax, catatan:document.getElementById('bk-catatan').value });
+  } else {
+    const nid = BOOKINGS.length+1;
+    BOOKINGS.push({ id:nid, kode:'BK-'+String(nid).padStart(3,'0'), nama, telp, email:document.getElementById('bk-email').value, layananId, tanggal, waktu:document.getElementById('bk-waktu').value, pax, total:harga*pax, status:'pending', catatan:document.getElementById('bk-catatan').value, createdAt:new Date().toISOString().slice(0,10) });
+  }
+  closeModal('modal-booking');
+  renderBookings(); renderMyBookings(); buildDashBookings(); buildStats(); buildNav();
+  alert('✅ Reservasi berhasil disimpan!');
+}
+
+function deleteBooking(id) {
+  if (!confirm('Hapus reservasi ini?')) return;
+  BOOKINGS.splice(BOOKINGS.findIndex(b=>b.id===id),1);
+  renderBookings(); renderMyBookings(); buildDashBookings(); buildStats(); buildNav();
+}
+
+function viewBooking(id) {
+  const b = BOOKINGS.find(x=>x.id===id);
+  const item = ITEMS.find(i=>i.id===b.layananId);
+  document.getElementById('modal-detail-body').innerHTML = `
+    <div class="info-row"><span class="label">Kode Reservasi</span><span class="value">${b.kode}</span></div>
+    <div class="info-row"><span class="label">Nama Pelanggan</span><span class="value">${b.nama}</span></div>
+    <div class="info-row"><span class="label">Telepon</span><span class="value">${b.telp}</span></div>
+    <div class="info-row"><span class="label">Email</span><span class="value">${b.email||'-'}</span></div>
+    <div class="divider"></div>
+    <div class="info-row"><span class="label">Layanan</span><span class="value">${item?item.icon+' '+item.nama:'-'}</span></div>
+    <div class="info-row"><span class="label">Tanggal</span><span class="value">${b.tanggal}</span></div>
+    <div class="info-row"><span class="label">Waktu</span><span class="value">${b.waktu}</span></div>
+    <div class="info-row"><span class="label">Jumlah (Pax/Unit)</span><span class="value">${b.pax}</span></div>
+    <div class="info-row"><span class="label">Total Pembayaran</span><span class="value" style="color:var(--primary);font-size:16px">Rp ${b.total.toLocaleString('id-ID')}</span></div>
+    <div class="info-row"><span class="label">Status</span><span class="value">${statusBadge(b.status)}</span></div>
+    <div class="info-row"><span class="label">Catatan</span><span class="value">${b.catatan||'-'}</span></div>`;
+  const ftr = document.getElementById('modal-detail-footer');
+  if (currentUser.role!=='customer') {
+    ftr.innerHTML = `<button class="btn btn-outline" onclick="closeModal('modal-detail')">Tutup</button>
+      ${b.status==='pending'?`<button class="btn btn-success btn-sm" onclick="updateStatus(${b.id},'confirmed');closeModal('modal-detail')">✅ Konfirmasi</button>`:''}
+      ${b.status==='confirmed'?`<button class="btn btn-primary btn-sm" onclick="updateStatus(${b.id},'done');closeModal('modal-detail')">🏁 Selesai</button>`:''}
+      ${b.status!=='cancelled'&&b.status!=='done'?`<button class="btn btn-danger btn-sm" onclick="updateStatus(${b.id},'cancelled');closeModal('modal-detail')">❌ Batalkan</button>`:''}`;
+  } else {
+    ftr.innerHTML = `<button class="btn btn-outline" onclick="closeModal('modal-detail')">Tutup</button>
+      ${b.status==='pending'?`<button class="btn btn-danger btn-sm" onclick="updateStatus(${b.id},'cancelled');closeModal('modal-detail')">❌ Batalkan</button>`:''}`;
+  }
+  openModal('modal-detail');
+}
+
+function updateStatus(id, status) {
+  const b = BOOKINGS.find(x=>x.id===id);
+  if (b) b.status = status;
+  renderBookings(); renderMyBookings(); buildDashBookings(); buildStats(); buildNav();
+}
+
+// ===== MY BOOKINGS =====
+function renderMyBookings() {
+  const list = BOOKINGS.filter(b=>b.email===currentUser.email);
+  const tbody = document.getElementById('my-booking-tbody');
+  if (!list.length) { tbody.innerHTML=`<tr><td colspan="8"><div class="empty-state"><div class="icon">📭</div><p>Belum ada reservasi</p></div></td></tr>`; return; }
+  tbody.innerHTML = list.map(b=>{
+    const item=ITEMS.find(i=>i.id===b.layananId);
+    return `<tr><td><strong>${b.kode}</strong></td><td>${item?item.icon+' '+item.nama:'-'}</td><td>${b.tanggal}</td><td>${b.waktu}</td><td>${b.pax}</td><td>Rp ${b.total.toLocaleString('id-ID')}</td><td>${statusBadge(b.status)}</td><td><button class="btn btn-sm btn-outline" onclick="viewBooking(${b.id})">🔍 Detail</button></td></tr>`;
+  }).join('');
+}
+
+// ===== ITEMS =====
+function renderItems() {
+  document.getElementById('items-grid').innerHTML = ITEMS.map(item=>`
+    <div class="item-card">
+      <div class="item-card-img">${item.icon}</div>
+      <div class="item-card-body">
+        <span style="font-size:11px;color:var(--gray-400)">${item.kategori}</span>
+        <h4>${item.nama}</h4>
+        <p>${item.deskripsi}</p>
+        <span class="item-avail ${item.status}">${item.status==='available'?'✅ Tersedia':'❌ Penuh'}</span><br>
+        <div class="item-price">Rp ${item.harga.toLocaleString('id-ID')} <span>/ ${item.satuan}</span></div>
+        <div style="margin-top:10px;display:flex;gap:6px">
+          ${currentUser.role==='customer'
+            ?`<button class="btn btn-primary btn-sm" onclick="openBookingModal();setTimeout(()=>{document.getElementById('bk-layanan').value=${item.id};updateBookingPrice();},50)">📅 Pesan</button>`
+            :`<button class="btn btn-outline btn-sm" onclick="openItemModal(${item.id})">✏️ Edit</button><button class="btn btn-danger btn-sm" onclick="deleteItem(${item.id})">🗑️</button>`}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function openItemModal(id=null) {
+  editingItemId=id;
+  document.getElementById('modal-item-title').textContent=id?'✏️ Edit Layanan':'🛎️ Tambah Layanan';
+  if (id) {
+    const it=ITEMS.find(x=>x.id===id);
+    document.getElementById('it-nama').value=it.nama; document.getElementById('it-kategori').value=it.kategori;
+    document.getElementById('it-harga').value=it.harga; document.getElementById('it-satuan').value=it.satuan;
+    document.getElementById('it-deskripsi').value=it.deskripsi; document.getElementById('it-kapasitas').value=it.kapasitas;
+    document.getElementById('it-status').value=it.status; document.getElementById('it-icon').value=it.icon;
+  } else {
+    ['it-nama','it-kategori','it-satuan','it-deskripsi','it-icon'].forEach(f=>document.getElementById(f).value='');
+    document.getElementById('it-harga').value=''; document.getElementById('it-kapasitas').value=10; document.getElementById('it-status').value='available';
+  }
+  openModal('modal-item');
+}
+
+function saveItem() {
+  const nama=document.getElementById('it-nama').value.trim();
+  const harga=parseInt(document.getElementById('it-harga').value);
+  if (!nama||!harga) { alert('⚠️ Nama dan harga wajib diisi!'); return; }
+  const data={ nama, kategori:document.getElementById('it-kategori').value, harga, satuan:document.getElementById('it-satuan').value||'unit', deskripsi:document.getElementById('it-deskripsi').value, kapasitas:parseInt(document.getElementById('it-kapasitas').value)||1, status:document.getElementById('it-status').value, icon:document.getElementById('it-icon').value||'📦' };
+  if (editingItemId) { Object.assign(ITEMS.find(x=>x.id===editingItemId), data); }
+  else { ITEMS.push({ id:ITEMS.length+1, ...data }); }
+  closeModal('modal-item'); renderItems();
+}
+
+function deleteItem(id) {
+  if (!confirm('Hapus layanan ini?')) return;
+  ITEMS.splice(ITEMS.findIndex(i=>i.id===id),1); renderItems();
+}
+
+// ===== CUSTOMERS =====
+function renderCustomers(list) {
+  list=list||CUSTOMERS;
+  document.getElementById('customer-tbody').innerHTML = list.map((c,i)=>{
+    const total=BOOKINGS.filter(b=>b.email===c.email).length;
+    return `<tr><td>${i+1}</td><td>${c.nama}</td><td>${c.email}</td><td>${c.telp}</td><td><strong>${total}</strong></td><td>${c.bergabung}</td><td><div class="col-actions"><button class="btn btn-sm btn-outline" onclick="alert('Detail ${c.nama}')">🔍</button><button class="btn btn-sm btn-danger" onclick="deleteCustomer(${c.id})">🗑️</button></div></td></tr>`;
+  }).join('');
+}
+
+function filterCustomers() {
+  const q=document.getElementById('search-customer').value.toLowerCase();
+  renderCustomers(CUSTOMERS.filter(c=>c.nama.toLowerCase().includes(q)||c.email.toLowerCase().includes(q)));
+}
+
+function openCustomerModal() { openModal('modal-customer'); ['cs-nama','cs-email','cs-telp','cs-alamat','cs-catatan'].forEach(f=>document.getElementById(f).value=''); }
+
+function saveCustomer() {
+  const nama=document.getElementById('cs-nama').value.trim();
+  const email=document.getElementById('cs-email').value.trim();
+  if (!nama||!email) { alert('⚠️ Nama dan email wajib!'); return; }
+  CUSTOMERS.push({ id:CUSTOMERS.length+1, nama, email, telp:document.getElementById('cs-telp').value, gender:document.getElementById('cs-gender').value, alamat:document.getElementById('cs-alamat').value, catatan:document.getElementById('cs-catatan').value, bergabung:new Date().toISOString().slice(0,10) });
+  closeModal('modal-customer'); renderCustomers();
+}
+
+function deleteCustomer(id) {
+  if (!confirm('Hapus pelanggan?')) return;
+  CUSTOMERS.splice(CUSTOMERS.findIndex(c=>c.id===id),1); renderCustomers();
+}
+
+// ===== USERS =====
+function renderUsers() {
+  const rl={ admin:'👑 Admin', staff:'👨‍💼 Staff', customer:'👤 Pelanggan' };
+  document.getElementById('user-tbody').innerHTML = USERS.map((u,i)=>`
+    <tr><td>${i+1}</td><td>${u.nama}</td><td>${u.email}</td><td>${rl[u.role]||u.role}</td>
+    <td><span class="status ${u.status==='aktif'?'status-confirmed':'status-cancelled'}">${u.status}</span></td>
+    <td>${u.lastLogin}</td><td><div class="col-actions"><button class="btn btn-sm btn-danger" onclick="deleteUser(${u.id})">🗑️</button></div></td></tr>`).join('');
+}
+
+function openUserModal() { openModal('modal-user'); ['us-nama','us-email','us-pass','us-telp'].forEach(f=>document.getElementById(f).value=''); }
+
+function saveUser() {
+  const nama=document.getElementById('us-nama').value.trim();
+  const email=document.getElementById('us-email').value.trim();
+  if (!nama||!email) { alert('⚠️ Nama dan email wajib!'); return; }
+  USERS.push({ id:USERS.length+1, nama, email, role:document.getElementById('us-role').value, status:'aktif', lastLogin:'-' });
+  closeModal('modal-user'); renderUsers();
+}
+
+function deleteUser(id) {
+  if (!confirm('Hapus pengguna?')) return;
+  USERS.splice(USERS.findIndex(u=>u.id===id),1); renderUsers();
+}
+
+// ===== REPORT =====
+function renderReportServices() {
+  document.getElementById('report-service-tbody').innerHTML = ITEMS.map(item=>{
+    const bks=BOOKINGS.filter(b=>b.layananId===item.id);
+    const done=bks.filter(b=>b.status==='done').length;
+    const cancelled=bks.filter(b=>b.status==='cancelled').length;
+    const rev=bks.filter(b=>b.status!=='cancelled').reduce((s,b)=>s+b.total,0);
+    return `<tr><td>${item.icon} ${item.nama}</td><td>${bks.length}</td><td>${done}</td><td>${cancelled}</td><td>Rp ${rev.toLocaleString('id-ID')}</td></tr>`;
+  }).join('');
+}
+
+// ===== PROFILE =====
+function buildProfile() {
+  const u=currentUser;
+  const rl={ admin:'Administrator', staff:'Staff', customer:'Pelanggan' };
+  const ac={ admin:'avatar-admin', staff:'avatar-staff', customer:'avatar-customer' };
+  const bc={ admin:'badge-admin', staff:'badge-staff', customer:'badge-customer' };
+  document.getElementById('profile-card-main').innerHTML = `
+    <div class="profile-avatar ${ac[u.role]}">${u.nama.charAt(0)}</div>
+    <h3>${u.nama}</h3>
+    <p style="color:var(--gray-500);margin-top:4px;font-size:13px">${u.email}</p>
+    <span class="role-badge ${bc[u.role]}">${rl[u.role]}</span>`;
+  document.getElementById('prof-nama').value=u.nama; document.getElementById('prof-email').value=u.email;
+  document.getElementById('prof-telp').value=u.telp||''; document.getElementById('prof-role').value=rl[u.role];
+  document.getElementById('prof-alamat').value=u.alamat||'';
+}
+
+function saveProfile() {
+  currentUser.nama=document.getElementById('prof-nama').value;
+  currentUser.email=document.getElementById('prof-email').value;
+  currentUser.telp=document.getElementById('prof-telp').value;
+  currentUser.alamat=document.getElementById('prof-alamat').value;
+  buildProfile(); buildNav();
+  document.getElementById('sb-name').textContent=currentUser.nama;
+  document.getElementById('topbar-avatar').textContent=currentUser.nama.charAt(0);
+  alert('✅ Profil berhasil disimpan!');
+}
+
+// ===== TABS =====
+function switchTab(btn, targetId) {
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  ['rpt-ringkasan','rpt-pendapatan','rpt-layanan'].forEach(id=>{
+    document.getElementById(id).style.display = id===targetId?'':'none';
+  });
+}
+
+// ===== MODALS =====
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(o=>{
+  o.addEventListener('click', e=>{ if(e.target===o) o.classList.remove('open'); });
+});
+
+// ===== NOTIF =====
+function showNotif() {
+  document.getElementById('notif-list').innerHTML = NOTIFS.map(n=>`
+    <div style="display:flex;gap:12px;padding:14px 18px;border-bottom:1px solid var(--gray-100);background:${n.nw?'var(--primary-light)':'white'}">
+      <span style="font-size:20px">${n.icon}</span>
+      <div><p style="font-size:13px;font-weight:${n.nw?'600':'400'};color:var(--gray-800)">${n.text}</p>
+      <p style="font-size:11px;color:var(--gray-400);margin-top:2px">${n.time}</p></div>
+    </div>`).join('');
+  openModal('modal-notif');
+}
+</script>
+</body>
+</html>

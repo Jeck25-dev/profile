@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduManage — Demo Sistem</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+/* ============================================================
+   RESET & ROOT
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; scrollbar-width: none; -ms-overflow-style: none; }
+*::-webkit-scrollbar { display: none; }
+
+:root {
+  --primary:       #4f46e5;
+  --primary-d:     #3730a3;
+  --primary-l:     #e0e7ff;
+  --secondary:     #0ea5e9;
+  --success:       #10b981;
+  --warning:       #f59e0b;
+  --danger:        #ef4444;
+  --sidebar-bg:    #0f0e1a;
+  --sidebar-text:  #94a3b8;
+  --bg:            #f1f5f9;
+  --card:          #ffffff;
+  --text:          #0f172a;
+  --text-m:        #64748b;
+  --border:        #e2e8f0;
+  --shadow:        0 1px 3px rgba(0,0,0,0.07),0 1px 2px rgba(0,0,0,0.04);
+  --shadow-lg:     0 10px 25px rgba(0,0,0,0.08);
+  --r:             14px;
+  --r-sm:          8px;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ============================================================
+   LOGIN PAGE
+   ============================================================ */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  background: #070714;
+  position: relative;
+  overflow: hidden;
+}
+.login-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(79,70,229,0.25) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 70%, rgba(14,165,233,0.15) 0%, transparent 60%);
+}
+.login-dots {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+.login-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 72px;
+  position: relative;
+  z-index: 1;
+}
+.login-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 56px;
+}
+.login-brand-icon {
+  width: 52px; height: 52px;
+  background: linear-gradient(135deg, #4f46e5, #818cf8);
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; color: white;
+  box-shadow: 0 8px 24px rgba(79,70,229,0.4);
+}
+.login-brand-name { font-size: 26px; font-weight: 900; color: white; letter-spacing: -1px; }
+.login-brand-sub  { font-size: 11px; color: rgba(255,255,255,0.4); font-weight: 500; letter-spacing: 1px; text-transform: uppercase; }
+.login-headline {
+  font-family: 'DM Serif Display', serif;
+  font-size: 52px;
+  color: white;
+  line-height: 1.1;
+  letter-spacing: -1px;
+  margin-bottom: 20px;
+}
+.login-headline em { color: #818cf8; font-style: italic; }
+.login-sub {
+  font-size: 16px;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.7;
+  max-width: 380px;
+  margin-bottom: 48px;
+}
+.login-features { display: flex; flex-direction: column; gap: 14px; }
+.login-feat {
+  display: flex; align-items: center; gap: 14px;
+  color: rgba(255,255,255,0.7);
+  font-size: 14px;
+}
+.login-feat-dot {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.08);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+  color: #818cf8;
+  flex-shrink: 0;
+}
+
+.login-right {
+  width: 520px;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 56px;
+  position: relative;
+}
+.login-form-wrap { width: 100%; max-width: 380px; }
+.login-form-title { font-size: 28px; font-weight: 900; letter-spacing: -1px; margin-bottom: 6px; color: var(--text); }
+.login-form-sub   { font-size: 14px; color: var(--text-m); margin-bottom: 36px; }
+
+.demo-pill {
+  background: linear-gradient(135deg, var(--primary-l), #f0f9ff);
+  border: 1.5px solid #c7d2fe;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 28px;
+}
+.demo-pill-title { font-size: 12px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+.demo-account {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 6px 10px;
+  background: white;
+  border-radius: 8px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1px solid transparent;
+}
+.demo-account:last-child { margin-bottom: 0; }
+.demo-account:hover { border-color: var(--primary); }
+.demo-account-role { font-size: 11px; font-weight: 700; color: var(--text-m); }
+.demo-account-cred { font-size: 12px; color: var(--text); font-weight: 600; }
+.demo-use-btn { font-size: 11px; color: var(--primary); font-weight: 700; background: none; border: none; cursor: pointer; }
+
+.form-group { margin-bottom: 18px; }
+.form-label { display: block; font-size: 12.5px; font-weight: 700; color: var(--text); margin-bottom: 7px; letter-spacing: 0.2px; }
+.input-wrap { position: relative; }
+.input-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--text-m); font-size: 14px; pointer-events: none; }
+.form-control {
+  width: 100%;
+  padding: 11px 13px 11px 40px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--text);
+  background: #f8fafc;
+  transition: all 0.2s;
+}
+.form-control:focus { outline: none; border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
+.btn-login {
+  width: 100%;
+  padding: 13px;
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px; font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 4px 16px rgba(79,70,229,0.35);
+  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-login:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(79,70,229,0.45); }
+
+/* ============================================================
+   APP SHELL (setelah login)
+   ============================================================ */
+.app { display: flex; min-height: 100vh; }
+.app.hidden { display: none; }
+.login-page.hidden { display: none; }
+
+/* SIDEBAR */
+.sidebar {
+  width: 256px;
+  background: var(--sidebar-bg);
+  min-height: 100vh;
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  display: flex; flex-direction: column;
+  z-index: 100;
+  border-right: 1px solid rgba(255,255,255,0.04);
+}
+.sb-brand {
+  padding: 22px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex; align-items: center; gap: 12px;
+  text-decoration: none;
+}
+.sb-brand-icon {
+  width: 38px; height: 38px;
+  background: linear-gradient(135deg, #4f46e5, #818cf8);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; color: white;
+  box-shadow: 0 4px 12px rgba(79,70,229,0.35);
+}
+.sb-brand-name { font-size: 17px; font-weight: 800; color: white; letter-spacing: -0.5px; }
+.sb-brand-sub  { font-size: 10px; color: rgba(255,255,255,0.3); letter-spacing: 0.5px; }
+
+.sb-user {
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex; align-items: center; gap: 10px;
+}
+.sb-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4f46e5, #0ea5e9);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; color: white; font-size: 13px;
+  flex-shrink: 0;
+}
+.sb-user-name { font-size: 13px; font-weight: 600; color: white; }
+.sb-user-role { font-size: 10.5px; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.5px; }
+
+.sb-nav { flex: 1; padding: 14px 10px; overflow-y: auto; }
+.sb-section {
+  font-size: 9.5px; font-weight: 800;
+  color: rgba(255,255,255,0.2);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  padding: 10px 10px 4px;
+  margin-top: 6px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  color: var(--sidebar-text);
+  text-decoration: none;
+  font-size: 13.5px; font-weight: 500;
+  transition: all 0.15s;
+  margin-bottom: 1px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+}
+.nav-item:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+.nav-item.active { background: rgba(79,70,229,0.3); color: white; }
+.nav-item.active i { color: #818cf8; }
+.nav-item i { width: 16px; text-align: center; font-size: 14px; opacity: 0.7; }
+
+.sb-footer {
+  padding: 12px 10px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+/* MAIN */
+.main-content { margin-left: 256px; flex: 1; display: flex; flex-direction: column; }
+.topbar {
+  background: white;
+  padding: 0 28px;
+  height: 62px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 50;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.05);
+}
+.topbar-title { font-size: 18px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; }
+.topbar-title span { color: var(--primary); }
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+.topbar-time { font-size: 12.5px; color: var(--text-m); }
+.topbar-avatar {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4f46e5, #0ea5e9);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: white;
+  cursor: pointer;
+}
+
+.page-content { padding: 28px; }
+
+/* PAGE visibility */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ============================================================
+   COMPONENTS
+   ============================================================ */
+.card {
+  background: white;
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+.card-header {
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card-title { font-size: 14.5px; font-weight: 700; }
+.card-body  { padding: 22px; }
+
+/* STAT GRID */
+.stat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 24px; }
+.stat-card {
+  background: white;
+  border-radius: var(--r);
+  padding: 20px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  display: flex; align-items: center; gap: 14px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: default;
+}
+.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.stat-icon { width: 48px; height: 48px; border-radius: 13px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.si-blue   { background:#eff6ff; color:#3b82f6; }
+.si-purple { background:#f5f3ff; color:#8b5cf6; }
+.si-green  { background:#f0fdf4; color:#10b981; }
+.si-orange { background:#fff7ed; color:#f97316; }
+.stat-value { font-size: 28px; font-weight: 900; line-height: 1; letter-spacing: -1px; }
+.stat-label { font-size: 12px; color: var(--text-m); font-weight: 500; margin-top: 3px; }
+
+/* BADGES */
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 99px; font-size: 11px; font-weight: 700; }
+.b-success { background:#dcfce7; color:#15803d; }
+.b-danger  { background:#fee2e2; color:#b91c1c; }
+.b-warning { background:#fef3c7; color:#b45309; }
+.b-info    { background:#e0f2fe; color:#0369a1; }
+.b-purple  { background:#f3e8ff; color:#7c3aed; }
+.b-gray    { background:#f1f5f9; color:#475569; }
+.b-primary { background:var(--primary-l); color:var(--primary); }
+
+/* BUTTONS */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 15px;
+  border-radius: var(--r-sm);
+  font-size: 13px; font-weight: 600;
+  border: none; cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.btn-primary  { background:var(--primary);  color:white; box-shadow:0 2px 6px rgba(79,70,229,0.25); }
+.btn-primary:hover { background:var(--primary-d); }
+.btn-success  { background:var(--success);  color:white; }
+.btn-success:hover { background:#059669; }
+.btn-warning  { background:var(--warning);  color:white; }
+.btn-danger   { background:var(--danger);   color:white; }
+.btn-outline  { background:transparent; border:1.5px solid var(--border); color:var(--text); }
+.btn-outline:hover { background:#f8fafc; }
+.btn-sm       { padding:5px 10px; font-size:12px; }
+
+/* TABLE */
+.table-responsive { overflow-x: auto; }
+table { width:100%; border-collapse:collapse; }
+thead th {
+  background:#f8fafc; padding:11px 16px;
+  text-align:left; font-size:10.5px; font-weight:700;
+  color:var(--text-m); text-transform:uppercase; letter-spacing:0.5px;
+  border-bottom:1px solid var(--border);
+}
+tbody tr { border-bottom:1px solid var(--border); transition:background 0.12s; }
+tbody tr:hover { background:#f8fafc; }
+tbody tr:last-child { border-bottom:none; }
+tbody td { padding:12px 16px; font-size:13.5px; }
+
+/* AVATAR */
+.avatar {
+  border-radius:50%;
+  background:linear-gradient(135deg,#4f46e5,#0ea5e9);
+  display:inline-flex; align-items:center; justify-content:center;
+  font-weight:700; color:white; flex-shrink:0; overflow:hidden;
+}
+
+/* PROGRESS */
+.progress { height:7px; background:#e2e8f0; border-radius:99px; overflow:hidden; }
+.progress-bar { height:100%; border-radius:99px; transition:width 0.6s ease; }
+.pb-green  { background:var(--success); }
+.pb-orange { background:var(--warning); }
+.pb-red    { background:var(--danger); }
+.pb-blue   { background:var(--primary); }
+
+/* ALERT */
+.alert { display:flex; align-items:flex-start; gap:10px; padding:13px 16px; border-radius:var(--r-sm); margin-bottom:18px; font-size:13.5px; }
+.alert-info    { background:#eff6ff; color:#1e40af; border-left:4px solid #3b82f6; }
+.alert-success { background:#f0fdf4; color:#166534; border-left:4px solid #22c55e; }
+.alert-warning { background:#fffbeb; color:#92400e; border-left:4px solid #f59e0b; }
+
+/* EMPTY STATE */
+.empty-state { text-align:center; padding:52px 20px; color:var(--text-m); }
+.empty-state i { font-size:44px; opacity:0.25; display:block; margin-bottom:14px; }
+.empty-state h3 { font-size:16px; font-weight:700; color:var(--text); margin-bottom:6px; }
+
+/* GRADE LETTER */
+.grade-letter { display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:8px; font-weight:900; font-size:14px; }
+.gl-A { background:#dcfce7; color:#15803d; }
+.gl-B { background:#dbeafe; color:#1d4ed8; }
+.gl-C { background:#fef9c3; color:#b45309; }
+.gl-D { background:#fee2e2; color:#b91c1c; }
+
+/* QUICK ACTIONS */
+.quick-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:24px; }
+.qa-btn {
+  display:flex; flex-direction:column; align-items:center; gap:9px;
+  padding:18px 10px;
+  background:white; border:1.5px solid var(--border); border-radius:13px;
+  text-decoration:none; color:var(--text);
+  font-size:12.5px; font-weight:600;
+  transition:all 0.2s; cursor:pointer;
+  box-shadow:var(--shadow);
+  font-family:inherit;
+}
+.qa-btn:hover { border-color:var(--primary); color:var(--primary); transform:translateY(-2px); box-shadow:0 6px 16px rgba(79,70,229,0.1); }
+.qa-icon { width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:15px; transition:transform 0.2s; }
+.qa-btn:hover .qa-icon { transform:scale(1.1); }
+
+/* CLASS CARD */
+.class-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:18px; }
+.class-card {
+  background:white; border:1.5px solid var(--border); border-radius:16px;
+  overflow:hidden; cursor:pointer; transition:all 0.2s;
+  box-shadow:var(--shadow); display:block; text-decoration:none; color:inherit;
+}
+.class-card:hover { transform:translateY(-4px); box-shadow:0 14px 28px rgba(0,0,0,0.09); border-color:transparent; }
+.cc-strip { height:5px; }
+.cc-body { padding:20px 22px 16px; }
+.cc-top { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:14px; }
+.cc-icon { width:48px; height:48px; border-radius:13px; display:flex; align-items:center; justify-content:center; font-size:20px; }
+.cc-name { font-size:20px; font-weight:900; letter-spacing:-0.5px; margin-bottom:2px; }
+.cc-sub  { font-size:12.5px; color:var(--text-m); }
+.cc-divider { height:1px; background:#f1f5f9; margin:13px 0; }
+.cc-meta { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.cc-meta-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; color:var(--text-m); }
+.cc-meta-val   { font-size:14px; font-weight:800; }
+.cc-footer { padding:12px 22px; background:#fafbff; border-top:1px solid #f1f5f9; display:flex; align-items:center; justify-content:space-between; }
+.cc-arrow { width:28px; height:28px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:12px; transition:all 0.2s; }
+
+.c0 .cc-strip { background:linear-gradient(90deg,#4f46e5,#818cf8); }
+.c0 .cc-icon  { background:#ede9fe; color:#7c3aed; }
+.c0 .cc-arrow { background:#ede9fe; color:#7c3aed; }
+.c0:hover .cc-arrow { background:#7c3aed; color:white; }
+.c1 .cc-strip { background:linear-gradient(90deg,#0ea5e9,#38bdf8); }
+.c1 .cc-icon  { background:#e0f2fe; color:#0284c7; }
+.c1 .cc-arrow { background:#e0f2fe; color:#0284c7; }
+.c1:hover .cc-arrow { background:#0284c7; color:white; }
+.c2 .cc-strip { background:linear-gradient(90deg,#10b981,#34d399); }
+.c2 .cc-icon  { background:#d1fae5; color:#059669; }
+.c2 .cc-arrow { background:#d1fae5; color:#059669; }
+.c2:hover .cc-arrow { background:#059669; color:white; }
+.c3 .cc-strip { background:linear-gradient(90deg,#f59e0b,#fbbf24); }
+.c3 .cc-icon  { background:#fef3c7; color:#d97706; }
+.c3 .cc-arrow { background:#fef3c7; color:#d97706; }
+.c3:hover .cc-arrow { background:#d97706; color:white; }
+.c4 .cc-strip { background:linear-gradient(90deg,#ec4899,#f472b6); }
+.c4 .cc-icon  { background:#fce7f3; color:#db2777; }
+.c4 .cc-arrow { background:#fce7f3; color:#db2777; }
+.c4:hover .cc-arrow { background:#db2777; color:white; }
+
+/* HERO BANNER */
+.hero-banner {
+  background:linear-gradient(135deg,#0f0e1a 0%,#1e1b4b 45%,#312e81 100%);
+  border-radius:18px; padding:28px 32px;
+  margin-bottom:24px;
+  display:flex; align-items:center; justify-content:space-between; gap:20px;
+  position:relative; overflow:hidden;
+}
+.hero-banner::before {
+  content:''; position:absolute; top:-60px; right:-60px;
+  width:260px; height:260px; border-radius:50%;
+  background:rgba(255,255,255,0.03); pointer-events:none;
+}
+.hero-greeting { font-size:11px; font-weight:700; color:#a5b4fc; text-transform:uppercase; letter-spacing:1px; margin-bottom:5px; }
+.hero-name     { font-size:24px; font-weight:900; color:white; letter-spacing:-0.5px; margin-bottom:6px; }
+.hero-meta     { font-size:13px; color:rgba(255,255,255,0.55); }
+.hero-actions  { display:flex; gap:9px; flex-wrap:wrap; z-index:1; }
+.hero-btn {
+  display:inline-flex; align-items:center; gap:7px;
+  padding:9px 16px; border-radius:9px;
+  font-size:12.5px; font-weight:700;
+  text-decoration:none; transition:all 0.2s; border:none; cursor:pointer; font-family:inherit;
+}
+.hb-white  { background:white; color:#3730a3; box-shadow:0 4px 12px rgba(0,0,0,0.2); }
+.hb-white:hover  { transform:translateY(-1px); }
+.hb-ghost  { background:rgba(255,255,255,0.1); color:white; border:1px solid rgba(255,255,255,0.2); }
+.hb-ghost:hover  { background:rgba(255,255,255,0.18); }
+
+/* MATERI CARD */
+.mat-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; padding:20px 22px; }
+.mat-card {
+  border:1.5px solid var(--border); border-radius:13px; overflow:hidden;
+  background:white; transition:all 0.2s; display:flex; flex-direction:column;
+}
+.mat-card:hover { transform:translateY(-3px); box-shadow:var(--shadow-lg); border-color:#c7d2fe; }
+.mat-card-top   { padding:18px 18px 12px; flex:1; }
+.mat-card-icon  { width:42px; height:42px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:17px; margin-bottom:11px; }
+.mat-card-title { font-size:14px; font-weight:800; margin-bottom:5px; }
+.mat-card-desc  { font-size:12.5px; color:var(--text-m); line-height:1.5; }
+.mat-card-footer {
+  padding:11px 18px; border-top:1px solid #f1f5f9;
+  display:flex; align-items:center; justify-content:space-between;
+  background:#fafbff;
+}
+
+/* FILTER BAR */
+.filter-bar {
+  display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end;
+  padding:14px 22px; border-bottom:1px solid var(--border); background:#fafafa;
+}
+.filter-bar .form-group { margin:0; }
+.form-group { margin-bottom:16px; }
+.form-label-sm { display:block; font-size:11.5px; font-weight:700; color:var(--text); margin-bottom:5px; }
+.fc {
+  padding:8px 12px; border:1.5px solid var(--border); border-radius:var(--r-sm);
+  font-size:13px; font-family:inherit; color:var(--text);
+  background:white; min-width:150px;
+}
+.fc:focus { outline:none; border-color:var(--primary); }
+
+/* ATTENDANCE GRID */
+.att-badge { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:7px; font-size:11px; font-weight:800; }
+.att-H { background:#dcfce7; color:#15803d; }
+.att-I { background:#e0f2fe; color:#0369a1; }
+.att-S { background:#fef3c7; color:#b45309; }
+.att-A { background:#fee2e2; color:#b91c1c; }
+
+/* SUMMARY BAR */
+.sum-bar { display:flex; height:7px; border-radius:99px; overflow:hidden; }
+.sb-h { background:var(--success); }
+.sb-i { background:var(--secondary); }
+.sb-s { background:var(--warning); }
+.sb-a { background:var(--danger); }
+
+/* BREADCRUMB */
+.breadcrumb { display:flex; align-items:center; gap:8px; font-size:13px; color:var(--text-m); margin-bottom:20px; }
+.breadcrumb a { color:var(--primary); text-decoration:none; font-weight:600; cursor:pointer; }
+.breadcrumb a:hover { text-decoration:underline; }
+.breadcrumb .sep { font-size:9px; opacity:0.4; }
+
+/* GRID 2 */
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; }
+
+/* FORM SECTION */
+.form-section { background:white; border:1px solid var(--border); border-radius:14px; margin-bottom:18px; overflow:hidden; }
+.fsh { padding:14px 18px; background:#f8fafc; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:9px; }
+.fsh-icon { width:26px; height:26px; border-radius:6px; background:var(--primary-l); color:var(--primary); display:flex; align-items:center; justify-content:center; font-size:12px; }
+.fsh-title { font-size:13.5px; font-weight:700; }
+.fsb { padding:18px; }
+
+/* SECTION HEADER */
+.section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+.section-title { font-size:17px; font-weight:800; letter-spacing:-0.3px; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     LOGIN PAGE
+     ============================================================ -->
+<div class="login-page" id="loginPage">
+  <div class="login-bg"></div>
+  <div class="login-dots"></div>
+
+  <div class="login-left">
+    <div class="login-brand">
+      <div class="login-brand-icon"><i class="fas fa-graduation-cap"></i></div>
+      <div>
+        <div class="login-brand-name">EduManage</div>
+        <div class="login-brand-sub">Sistem Manajemen Sekolah</div>
+      </div>
+    </div>
+    <div class="login-headline">Platform<br>Pendidikan<br><em>Modern</em></div>
+    <div class="login-sub">Kelola siswa, absensi, penilaian, dan materi pembelajaran dalam satu sistem terintegrasi yang dirancang untuk kemudahan guru dan siswa.</div>
+    <div class="login-features">
+      <div class="login-feat"><div class="login-feat-dot"><i class="fas fa-users"></i></div>Manajemen data siswa & kelas lengkap</div>
+      <div class="login-feat"><div class="login-feat-dot"><i class="fas fa-calendar-check"></i></div>Absensi digital per mata pelajaran</div>
+      <div class="login-feat"><div class="login-feat-dot"><i class="fas fa-star"></i></div>Penilaian multi-kategori & rapor otomatis</div>
+      <div class="login-feat"><div class="login-feat-dot"><i class="fas fa-shield-alt"></i></div>Materi dengan proteksi konten</div>
+    </div>
+  </div>
+
+  <div class="login-right">
+    <div class="login-form-wrap">
+      <div class="login-form-title">Selamat Datang</div>
+      <div class="login-form-sub">Masuk untuk mengakses sistem</div>
+
+      <div class="demo-pill">
+        <div class="demo-pill-title"><i class="fas fa-bolt" style="margin-right:5px;"></i>Akun Demo — Klik untuk isi otomatis</div>
+        <div class="demo-account" onclick="fillLogin('budi.santoso','guru123','Budi Santoso','admin')">
+          <div><div class="demo-account-role">👨‍🏫 Admin / Guru</div><div class="demo-account-cred">budi.santoso / guru123</div></div>
+          <button class="demo-use-btn">Gunakan →</button>
+        </div>
+        <div class="demo-account" onclick="fillLogin('ahmad.fauzi','siswa123','Ahmad Fauzi','student')">
+          <div><div class="demo-account-role">👩‍🎓 Siswa</div><div class="demo-account-cred">ahmad.fauzi / siswa123</div></div>
+          <button class="demo-use-btn">Gunakan →</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <div class="input-wrap">
+          <i class="fas fa-user input-icon"></i>
+          <input type="text" class="form-control" id="loginUser" placeholder="Masukkan username">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <div class="input-wrap">
+          <i class="fas fa-lock input-icon"></i>
+          <input type="password" class="form-control" id="loginPass" placeholder="Masukkan password">
+        </div>
+      </div>
+      <button class="btn-login" onclick="doLogin()">
+        <i class="fas fa-sign-in-alt"></i> Masuk ke Sistem
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     APP SHELL
+     ============================================================ -->
+<div class="app hidden" id="appShell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-brand">
+      <div class="sb-brand-icon"><i class="fas fa-graduation-cap"></i></div>
+      <div>
+        <div class="sb-brand-name">EduManage</div>
+        <div class="sb-brand-sub">Sistem Manajemen Sekolah</div>
+      </div>
+    </div>
+    <div class="sb-user">
+      <div class="sb-avatar" id="sbAvatar">B</div>
+      <div>
+        <div class="sb-user-name" id="sbName">Budi Santoso</div>
+        <div class="sb-user-role" id="sbRole">Admin / Guru</div>
+      </div>
+    </div>
+    <nav class="sb-nav" id="sidebarNav"><!-- diisi JS --></nav>
+    <div class="sb-footer">
+      <button class="nav-item" onclick="doLogout()" style="color:#fca5a5;">
+        <i class="fas fa-sign-out-alt"></i> Keluar
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <header class="topbar">
+      <div class="topbar-title" id="topbarTitle">Dashboard</div>
+      <div class="topbar-right">
+        <span class="topbar-time" id="topbarClock"></span>
+        <div class="topbar-avatar" id="topbarAvatar">B</div>
+      </div>
+    </header>
+    <div class="page-content" id="pageContent"><!-- halaman diisi JS --></div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  STATE
+// ============================================================
+let currentUser = null; // { name, role, username }
+let currentPage = 'dashboard';
+
+// ============================================================
+//  STATIC DATA
+// ============================================================
+const CLASSROOMS = [
+  { id:1, name:'10A', grade:'Kelas 10', year:'2024/2025', teacher:'Budi Santoso', type:'regular',  count:28 },
+  { id:2, name:'11A', grade:'Kelas 11', year:'2024/2025', teacher:'Sari Dewi',    type:'regular',  count:25 },
+  { id:3, name:'11B', grade:'Kelas 11', year:'2024/2025', teacher:'Eko Prasetyo', type:'regular',  count:26 },
+  { id:4, name:'12A', grade:'Kelas 12', year:'2024/2025', teacher:'Budi Santoso', type:'regular',  count:24 },
+  { id:5, name:'Pramuka', grade:'Ekstra', year:'2024/2025', teacher:'Eko Prasetyo', type:'extracurricular', count:32 },
+];
+
+const STUDENTS = [
+  { id:1, nis:'2024001', name:'Ahmad Fauzi',    class:'11A', email:'ahmad@sekolah.com', parent:'Budi F',    phone:'0812-0001', birth:'Jakarta, 12 Jan 2006', status:'aktif' },
+  { id:2, nis:'2024002', name:'Siti Rahayu',    class:'11A', email:'siti@sekolah.com',  parent:'Eko R',     phone:'0812-0002', birth:'Surabaya, 5 Mar 2006', status:'aktif' },
+  { id:3, nis:'2024003', name:'Bela Pertiwi',   class:'11A', email:'bela@sekolah.com',  parent:'Hadi P',    phone:'0812-0003', birth:'Bandung, 20 Jul 2006',  status:'aktif' },
+  { id:4, nis:'2024004', name:'Rizky Pratama',  class:'11A', email:'rizky@sekolah.com', parent:'Doni P',    phone:'0812-0004', birth:'Medan, 8 Sep 2006',     status:'aktif' },
+  { id:5, nis:'2024005', name:'Dewi Lestari',   class:'11B', email:'dewi@sekolah.com',  parent:'Cahyo L',   phone:'0812-0005', birth:'Yogya, 3 Feb 2006',     status:'aktif' },
+  { id:6, nis:'2024006', name:'Farhan Malik',   class:'11B', email:'farhan@sekolah.com',parent:'Malik A',   phone:'0812-0006', birth:'Semarang, 15 Jun 2006', status:'aktif' },
+  { id:7, nis:'2024007', name:'Putri Ayu',      class:'12A', email:'putri@sekolah.com', parent:'Ayu S',     phone:'0812-0007', birth:'Jakarta, 1 Apr 2005',   status:'aktif' },
+  { id:8, nis:'2024008', name:'Hendra Gunawan', class:'12A', email:'hendra@sekolah.com',parent:'Gunawan T', phone:'0812-0008', birth:'Bekasi, 22 Nov 2005',   status:'aktif' },
+];
+
+const SUBJECTS = [
+  { code:'MTK', name:'Matematika' },
+  { code:'BIN', name:'Bahasa Indonesia' },
+  { code:'ENG', name:'Bahasa Inggris' },
+  { code:'IPA', name:'Ilmu Pengetahuan Alam' },
+  { code:'PKK', name:'PKK / Prakarya' },
+];
+
+const ATTENDANCES = [
+  { student:'Ahmad Fauzi',   date:'2024-11-01', subject:'Matematika',   status:'hadir' },
+  { student:'Siti Rahayu',   date:'2024-11-01', subject:'Matematika',   status:'hadir' },
+  { student:'Bela Pertiwi',  date:'2024-11-01', subject:'Matematika',   status:'izin'  },
+  { student:'Rizky Pratama', date:'2024-11-01', subject:'Matematika',   status:'hadir' },
+  { student:'Ahmad Fauzi',   date:'2024-11-04', subject:'Bhs. Indonesia',status:'hadir' },
+  { student:'Siti Rahayu',   date:'2024-11-04', subject:'Bhs. Indonesia',status:'sakit' },
+  { student:'Bela Pertiwi',  date:'2024-11-04', subject:'Bhs. Indonesia',status:'hadir' },
+  { student:'Rizky Pratama', date:'2024-11-04', subject:'Bhs. Indonesia',status:'hadir' },
+  { student:'Ahmad Fauzi',   date:'2024-11-06', subject:'Bhs. Inggris',  status:'alpha' },
+  { student:'Siti Rahayu',   date:'2024-11-06', subject:'Bhs. Inggris',  status:'hadir' },
+];
+
+const GRADES = [
+  { student:'Ahmad Fauzi',  subject:'Matematika',    type:'Ulangan Harian', name:'UH Bab 3', score:88, max:100 },
+  { student:'Ahmad Fauzi',  subject:'Bhs. Indonesia',type:'Tugas',          name:'Tugas 2',  score:92, max:100 },
+  { student:'Ahmad Fauzi',  subject:'Bhs. Inggris',  type:'UTS',            name:'UTS Ganjil',score:76,max:100 },
+  { student:'Siti Rahayu',  subject:'Matematika',    type:'Ulangan Harian', name:'UH Bab 3', score:95, max:100 },
+  { student:'Siti Rahayu',  subject:'Bhs. Indonesia',type:'Tugas',          name:'Tugas 2',  score:89, max:100 },
+  { student:'Bela Pertiwi', subject:'Matematika',    type:'Ulangan Harian', name:'UH Bab 3', score:72, max:100 },
+  { student:'Rizky Pratama',subject:'Matematika',    type:'Ulangan Harian', name:'UH Bab 3', score:83, max:100 },
+  { student:'Dewi Lestari', subject:'IPA',           type:'UTS',            name:'UTS Ganjil',score:91,max:100 },
+];
+
+const MATERIALS = [
+  { id:1, title:'Modul Aljabar Linear Bab 3',         type:'dokumen', subject:'Matematika',      class:'11A', mode:'pdf_viewer',  published:true,  date:'2 Nov 2024', protect:{dl:true,copy:false,rc:false} },
+  { id:2, title:'Video Pembelajaran Sel & Jaringan',  type:'video',   subject:'IPA',             class:'11A', mode:'link',        published:true,  date:'1 Nov 2024', protect:{dl:true,copy:true,rc:true}  },
+  { id:3, title:'Modul Interaktif Python Dasar',      type:'dokumen', subject:'Prakarya',        class:'11B', mode:'html_viewer', published:true,  date:'30 Okt 2024',protect:{dl:false,copy:false,rc:false} },
+  { id:4, title:'Latihan Grammar Bahasa Inggris',     type:'link',    subject:'Bhs. Inggris',    class:'11A', mode:'link',        published:true,  date:'28 Okt 2024',protect:{dl:true,copy:true,rc:true}  },
+  { id:5, title:'Soal UTS Matematika 2024',           type:'dokumen', subject:'Matematika',      class:'12A', mode:'download',    published:false, date:'25 Okt 2024',protect:{dl:true,copy:true,rc:true}  },
+  { id:6, title:'Rangkuman Sejarah Indonesia Bab 5',  type:'dokumen', subject:'Bhs. Indonesia',  class:'11B', mode:'pdf_viewer',  published:true,  date:'22 Okt 2024',protect:{dl:false,copy:false,rc:true} },
+];
+
+// ============================================================
+//  LOGIN / LOGOUT
+// ============================================================
+function fillLogin(user, pass, name, role) {
+  document.getElementById('loginUser').value = user;
+  document.getElementById('loginPass').value = pass;
+}
+
+function doLogin() {
+  const u = document.getElementById('loginUser').value.trim();
+  const p = document.getElementById('loginPass').value.trim();
+  const accounts = {
+    'budi.santoso':  { name:'Budi Santoso', role:'admin',   pass:'guru123'  },
+    'sari.dewi':     { name:'Sari Dewi',    role:'admin',   pass:'guru123'  },
+    'ahmad.fauzi':   { name:'Ahmad Fauzi',  role:'student', pass:'siswa123' },
+    'siti.rahayu':   { name:'Siti Rahayu',  role:'student', pass:'siswa123' },
+  };
+  const acc = accounts[u];
+  if (!acc || acc.pass !== p) {
+    alert('Username atau password salah.\n\nCoba: budi.santoso / guru123');
+    return;
+  }
+  currentUser = { ...acc, username: u };
+  document.getElementById('loginPage').classList.add('hidden');
+  document.getElementById('appShell').classList.remove('hidden');
+  initApp();
+}
+
+function doLogout() {
+  currentUser = null;
+  document.getElementById('appShell').classList.add('hidden');
+  document.getElementById('loginPage').classList.remove('hidden');
+  document.getElementById('loginUser').value = '';
+  document.getElementById('loginPass').value = '';
+}
+
+// ============================================================
+//  INIT APP
+// ============================================================
+function initApp() {
+  const isAdmin = currentUser.role === 'admin';
+  const initial = currentUser.name.charAt(0).toUpperCase();
+
+  document.getElementById('sbAvatar').textContent   = initial;
+  document.getElementById('sbName').textContent     = currentUser.name;
+  document.getElementById('sbRole').textContent     = isAdmin ? 'Admin / Guru' : 'Siswa';
+  document.getElementById('topbarAvatar').textContent = initial;
+
+  buildSidebar(isAdmin);
+  navigateTo('dashboard');
+  startClock();
+}
+
+function startClock() {
+  function tick() {
+    const now = new Date();
+    document.getElementById('topbarClock').textContent =
+      now.toLocaleTimeString('id-ID', {hour:'2-digit',minute:'2-digit'});
+  }
+  tick(); setInterval(tick, 60000);
+}
+
+// ============================================================
+//  SIDEBAR
+// ============================================================
+function buildSidebar(isAdmin) {
+  const nav = document.getElementById('sidebarNav');
+  const isA = isAdmin;
+  nav.innerHTML = `
+    <button class="nav-item" data-page="dashboard" onclick="navigateTo('dashboard')"><i class="fas fa-th-large"></i> Dashboard</button>
+    ${isA ? `
+    <div class="sb-section">Manajemen</div>
+    <button class="nav-item" data-page="students" onclick="navigateTo('students')"><i class="fas fa-user-graduate"></i> Data Siswa</button>
+    <button class="nav-item" data-page="classrooms" onclick="navigateTo('classrooms')"><i class="fas fa-door-open"></i> Kelas</button>
+    <button class="nav-item" data-page="subjects" onclick="navigateTo('subjects')"><i class="fas fa-book-open"></i> Mata Pelajaran</button>
+    <div class="sb-section">Akademik</div>
+    <button class="nav-item" data-page="attendance" onclick="navigateTo('attendance')"><i class="fas fa-calendar-check"></i> Absensi</button>
+    <button class="nav-item" data-page="grades" onclick="navigateTo('grades')"><i class="fas fa-star"></i> Penilaian</button>
+    <button class="nav-item" data-page="materials" onclick="navigateTo('materials')"><i class="fas fa-file-alt"></i> Materi</button>
+    <div class="sb-section">Kepegawaian</div>
+    <button class="nav-item" data-page="leave" onclick="navigateTo('leave')"><i class="fas fa-calendar-minus"></i> Arsip Izin Saya</button>
+    <div class="sb-section">Data & Laporan</div>
+    <button class="nav-item" data-page="export" onclick="navigateTo('export')"><i class="fas fa-file-export"></i> Ekspor & Impor</button>
+    ` : `
+    <div class="sb-section">Pembelajaran</div>
+    <button class="nav-item" data-page="materials" onclick="navigateTo('materials')"><i class="fas fa-file-alt"></i> Materi Pelajaran</button>
+    `}
+    <div class="sb-section">Akun</div>
+    <button class="nav-item" data-page="profile" onclick="navigateTo('profile')"><i class="fas fa-user-circle"></i> Profil Saya</button>
+  `;
+}
+
+function navigateTo(page, extra) {
+  currentPage = page;
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.classList.toggle('active', el.getAttribute('data-page') === page);
+  });
+  const titles = {
+    dashboard:'Dashboard', students:'Data Siswa', classrooms:'Kelas',
+    subjects:'Mata Pelajaran', attendance:'Absensi', grades:'Penilaian',
+    materials:'Materi', leave:'Arsip Izin', export:'Ekspor & Impor', profile:'Profil Saya',
+  };
+  const t = titles[page] || page;
+  document.getElementById('topbarTitle').innerHTML = t;
+  const pageContent = document.getElementById('pageContent');
+  const isAdmin = currentUser.role === 'admin';
+  switch(page) {
+    case 'dashboard':   pageContent.innerHTML = isAdmin ? renderAdminDashboard() : renderStudentDashboard(); break;
+    case 'students':    pageContent.innerHTML = extra ? renderStudentsByClass(extra) : renderStudentClasses(); break;
+    case 'classrooms':  pageContent.innerHTML = renderClassrooms(); break;
+    case 'subjects':    pageContent.innerHTML = renderSubjects(); break;
+    case 'attendance':  pageContent.innerHTML = extra ? renderAttendanceByClass(extra) : renderAttendanceClasses(); break;
+    case 'grades':      pageContent.innerHTML = renderGrades(); break;
+    case 'materials':   pageContent.innerHTML = renderMaterials(); break;
+    case 'leave':       pageContent.innerHTML = renderLeave(); break;
+    case 'export':      pageContent.innerHTML = renderExport(); break;
+    case 'profile':     pageContent.innerHTML = renderProfile(); break;
+    default: pageContent.innerHTML = '<p>Halaman tidak ditemukan.</p>';
+  }
+}
+
+// ============================================================
+//  HELPERS
+// ============================================================
+const COLORS = [
+  'hsl(240,65%,55%)', 'hsl(200,70%,48%)', 'hsl(160,60%,40%)',
+  'hsl(35,80%,48%)',  'hsl(320,60%,50%)', 'hsl(280,55%,50%)',
+];
+function avatarColor(i) { return COLORS[i % COLORS.length]; }
+function grade(score, max) {
+  const p = score/max*100;
+  return p>=90?'A':p>=80?'B':p>=70?'C':p>=60?'D':'E';
+}
+function gradeClass(g) { return {A:'gl-A',B:'gl-B',C:'gl-C',D:'gl-D',E:'gl-D'}[g]||'gl-D'; }
+function statusBadge(s) {
+  const m = {hadir:'b-success Hadir',izin:'b-info Izin',sakit:'b-warning Sakit',alpha:'b-danger Alpha'};
+  const [cls, label] = (m[s]||'b-gray '+s).split(' ');
+  return `<span class="badge ${cls}">${label}</span>`;
+}
+function modeBadge(m) {
+  const map = {download:'b-info Unduh File',pdf_viewer:'b-warning PDF Viewer',html_viewer:'b-success Modul Interaktif',link:'b-purple Tautan'};
+  const [cls, ...rest] = (map[m]||'b-gray '+m).split(' ');
+  return `<span class="badge ${cls}">${rest.join(' ')}</span>`;
+}
+function typeBadge(t) {
+  const map = {dokumen:'b-info Dokumen',video:'b-danger Video',link:'b-success Tautan',gambar:'b-purple Gambar'};
+  const [cls, ...rest] = (map[t]||'b-gray '+t).split(' ');
+  return `<span class="badge ${cls}">${rest.join(' ')}</span>`;
+}
+function typeIcon(t) {
+  const m = {dokumen:{bg:'#e0f2fe',c:'#0284c7',i:'fa-file-pdf'},video:{bg:'#fee2e2',c:'#dc2626',i:'fa-video'},link:{bg:'#dcfce7',c:'#16a34a',i:'fa-link'},gambar:{bg:'#f3e8ff',c:'#9333ea',i:'fa-image'}};
+  const d = m[t]||{bg:'#f1f5f9',c:'#64748b',i:'fa-file'};
+  return `<div class="mat-card-icon" style="background:${d.bg};color:${d.c};"><i class="fas ${d.i}"></i></div>`;
+}
+
+// ============================================================
+//  PAGES — ADMIN DASHBOARD
+// ============================================================
+function renderAdminDashboard() {
+  return `
+  <div class="hero-banner">
+    <div style="z-index:1;">
+      <div class="hero-greeting">👋 Selamat Pagi, Guru</div>
+      <div class="hero-name">${currentUser.name}</div>
+      <div class="hero-meta"><i class="fas fa-calendar-alt" style="margin-right:6px;opacity:0.6;"></i>Senin, 4 November 2024 &nbsp;·&nbsp; <i class="fas fa-users" style="margin-right:6px;opacity:0.6;"></i>103 siswa aktif</div>
+    </div>
+    <div class="hero-actions">
+      <button class="hero-btn hb-white" onclick="navigateTo('attendance')"><i class="fas fa-clipboard-check"></i> Isi Absensi</button>
+      <button class="hero-btn hb-ghost" onclick="navigateTo('grades')"><i class="fas fa-table"></i> Input Nilai</button>
+      <button class="hero-btn hb-ghost" onclick="navigateTo('materials')"><i class="fas fa-upload"></i> Upload Materi</button>
+    </div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-icon si-blue"><i class="fas fa-user-graduate"></i></div><div><div class="stat-value">103</div><div class="stat-label">Siswa Aktif</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-purple"><i class="fas fa-door-open"></i></div><div><div class="stat-value">5</div><div class="stat-label">Kelas</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-green"><i class="fas fa-book-open"></i></div><div><div class="stat-value">5</div><div class="stat-label">Mata Pelajaran</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-orange"><i class="fas fa-file-alt"></i></div><div><div class="stat-value">6</div><div class="stat-label">Materi Tersedia</div></div></div>
+  </div>
+
+  <div class="quick-grid">
+    <button class="qa-btn" onclick="navigateTo('attendance')">
+      <div class="qa-icon" style="background:#f0fdf4;color:#10b981;"><i class="fas fa-clipboard-list"></i></div> Isi Absensi
+    </button>
+    <button class="qa-btn" onclick="navigateTo('grades')">
+      <div class="qa-icon" style="background:#eff6ff;color:#3b82f6;"><i class="fas fa-star"></i></div> Input Nilai
+    </button>
+    <button class="qa-btn" onclick="navigateTo('materials')">
+      <div class="qa-icon" style="background:#fffbeb;color:#f59e0b;"><i class="fas fa-upload"></i></div> Upload Materi
+    </button>
+    <button class="qa-btn" onclick="navigateTo('students')">
+      <div class="qa-icon" style="background:#fdf4ff;color:#a855f7;"><i class="fas fa-user-plus"></i></div> Tambah Siswa
+    </button>
+    <button class="qa-btn" onclick="navigateTo('export')">
+      <div class="qa-icon" style="background:var(--primary-l);color:var(--primary);"><i class="fas fa-file-export"></i></div> Ekspor Data
+    </button>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title"><i class="fas fa-user-graduate" style="color:var(--primary);margin-right:7px;"></i>Siswa Terbaru</div>
+        <button class="btn btn-outline btn-sm" onclick="navigateTo('students')">Lihat Semua</button>
+      </div>
+      ${STUDENTS.slice(0,5).map((s,i) => `
+      <a style="display:flex;align-items:center;gap:13px;padding:13px 20px;border-bottom:1px solid #f1f5f9;text-decoration:none;color:inherit;transition:background 0.12s;cursor:pointer;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background=''">
+        <div class="avatar" style="width:38px;height:38px;font-size:14px;background:linear-gradient(135deg,${avatarColor(i)},${avatarColor(i+2)});">${s.name.charAt(0)}</div>
+        <div style="flex:1;"><div style="font-weight:700;font-size:13.5px;">${s.name}</div><div style="font-size:11.5px;color:var(--text-m);">NIS ${s.nis} · Kelas ${s.class}</div></div>
+        <span class="badge b-success" style="font-size:10.5px;">Aktif</span>
+      </a>`).join('')}
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:18px;">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><i class="fas fa-file-alt" style="color:var(--primary);margin-right:7px;"></i>Materi Terbaru</div>
+          <button class="btn btn-outline btn-sm" onclick="navigateTo('materials')">Semua</button>
+        </div>
+        ${MATERIALS.slice(0,3).map(m => `
+        <div style="display:flex;gap:11px;align-items:flex-start;padding:13px 20px;border-bottom:1px solid #f1f5f9;">
+          ${typeIcon(m.type)}
+          <div style="flex:1;min-width:0;">
+            <div style="font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${m.title}</div>
+            <div style="font-size:11.5px;color:var(--text-m);margin-top:2px;">${m.subject} · ${m.class}</div>
+          </div>
+          ${m.published ? '<span class="badge b-success" style="font-size:10.5px;">Publik</span>' : '<span class="badge b-gray" style="font-size:10.5px;">Draft</span>'}
+        </div>`).join('')}
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-title"><i class="fas fa-chart-bar" style="color:var(--primary);margin-right:7px;"></i>Siswa per Kelas</div></div>
+        ${CLASSROOMS.map(c => `
+        <div style="display:flex;align-items:center;gap:12px;padding:11px 20px;border-bottom:1px solid #f1f5f9;">
+          <div style="font-weight:700;font-size:13px;min-width:65px;">${c.name}</div>
+          <div style="flex:1;"><div class="progress"><div class="progress-bar pb-blue" style="width:${Math.round(c.count/32*100)}%;"></div></div></div>
+          <div style="font-size:12.5px;color:var(--text-m);min-width:55px;text-align:right;"><strong style="color:var(--text);">${c.count}</strong> siswa</div>
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+// STUDENT DASHBOARD
+function renderStudentDashboard() {
+  return `
+  <div style="background:linear-gradient(135deg,#0f0e1a,#1e1b4b,#4f46e5);border-radius:16px;padding:26px 30px;margin-bottom:22px;display:flex;align-items:center;gap:18px;position:relative;overflow:hidden;">
+    <div class="avatar" style="width:60px;height:60px;font-size:22px;border:3px solid rgba(255,255,255,0.25);flex-shrink:0;">${currentUser.name.charAt(0)}</div>
+    <div>
+      <div style="font-size:19px;font-weight:800;color:white;margin-bottom:4px;">Selamat Datang, ${currentUser.name.split(' ')[0]}!</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.6);display:flex;gap:16px;">
+        <span><i class="fas fa-id-card" style="margin-right:4px;"></i>NIS: 2024001</span>
+        <span><i class="fas fa-door-open" style="margin-right:4px;"></i>Kelas 11A</span>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><i class="fas fa-file-alt" style="color:var(--primary);margin-right:7px;"></i>Materi Terbaru untuk Kelas Saya</div>
+      <button class="btn btn-primary btn-sm" onclick="navigateTo('materials')"><i class="fas fa-arrow-right"></i> Lihat Semua</button>
+    </div>
+    <div class="mat-grid">
+      ${MATERIALS.filter(m=>m.published).slice(0,4).map(m => `
+      <div class="mat-card">
+        <div class="mat-card-top">
+          ${typeIcon(m.type)}
+          <div class="mat-card-title">${m.title}</div>
+          <div class="mat-card-desc">${m.subject}</div>
+        </div>
+        <div class="mat-card-footer">
+          <span style="font-size:12px;color:var(--text-m);"><i class="fas fa-calendar" style="margin-right:4px;"></i>${m.date}</span>
+          ${modeBadge(m.mode)}
+        </div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+// STUDENT CLASSES (per kelas)
+function renderStudentClasses() {
+  const colors = ['c0','c1','c2','c3','c4'];
+  return `
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
+    <div>
+      <div class="section-title"><i class="fas fa-users" style="color:var(--primary);margin-right:9px;"></i>Data Siswa per Kelas</div>
+      <p style="font-size:13.5px;color:var(--text-m);margin-top:3px;">Total 103 siswa aktif dalam ${CLASSROOMS.length} kelas</p>
+    </div>
+    <button class="btn btn-primary" onclick="alert('Form tambah siswa')"><i class="fas fa-user-plus"></i> Tambah Siswa</button>
+  </div>
+  <div class="class-grid">
+    ${CLASSROOMS.map((c,i) => `
+    <div class="class-card ${colors[i%5]}" onclick="navigateTo('students','${c.name}')">
+      <div class="cc-strip"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon"><i class="fas ${c.type==='extracurricular'?'fa-star':'fa-door-open'}"></i></div>
+          <span class="badge b-gray" style="font-size:10.5px;">${c.year}</span>
+        </div>
+        <div class="cc-name">${c.name}</div>
+        <div class="cc-sub">${c.grade}${c.type==='extracurricular'?' · Ekstrakulikuler':''}</div>
+        <div class="cc-divider"></div>
+        <div class="cc-meta">
+          <div><div class="cc-meta-label">Siswa</div><div class="cc-meta-val">${c.count}</div></div>
+          <div><div class="cc-meta-label">Wali/Pembina</div><div class="cc-meta-val" style="font-size:12px;">${c.teacher}</div></div>
+        </div>
+      </div>
+      <div class="cc-footer">
+        <span style="font-size:12px;color:var(--text-m);"><i class="fas fa-mouse-pointer" style="margin-right:5px;opacity:0.4;"></i>Klik untuk lihat siswa</span>
+        <div class="cc-arrow"><i class="fas fa-arrow-right"></i></div>
+      </div>
+    </div>`).join('')}
+  </div>`;
+}
+
+// STUDENTS BY CLASS
+function renderStudentsByClass(cls) {
+  const list = STUDENTS.filter(s => s.class === cls);
+  return `
+  <div class="breadcrumb">
+    <a onclick="navigateTo('students')"><i class="fas fa-users"></i> Data Siswa</a>
+    <span class="sep">›</span><span>Kelas ${cls}</span>
+  </div>
+  <div style="background:linear-gradient(135deg,#1e1b4b,#4f46e5);border-radius:14px;padding:20px 26px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;">
+    <div>
+      <div style="font-size:10px;font-weight:700;color:#a5b4fc;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Kelas</div>
+      <div style="font-size:22px;font-weight:900;color:white;">${cls}</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.6);margin-top:3px;">2024/2025 · Budi Santoso</div>
+    </div>
+    <button class="hero-btn hb-white"><i class="fas fa-user-plus"></i> Tambah Siswa</button>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><i class="fas fa-users" style="color:var(--primary);margin-right:7px;"></i>Daftar Siswa Kelas ${cls}</div>
+      <span class="badge b-info">${list.length} siswa</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;padding:20px;">
+      ${list.length ? list.map((s,i) => `
+      <div style="border:1.5px solid var(--border);border-radius:14px;overflow:hidden;transition:all 0.2s;background:white;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='var(--shadow-lg)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <div style="padding:20px 16px 14px;text-align:center;background:linear-gradient(160deg,hsl(${200+i*30}deg,60%,94%),hsl(${240+i*30}deg,65%,89%));">
+          <div class="avatar" style="width:60px;height:60px;font-size:22px;margin:0 auto 10px;border:3px solid white;background:linear-gradient(135deg,${avatarColor(i)},${avatarColor(i+2)});">${s.name.charAt(0)}</div>
+          <div style="font-weight:800;font-size:13.5px;margin-bottom:3px;">${s.name}</div>
+          <div style="font-size:11.5px;color:var(--text-m);">NIS ${s.nis}</div>
+        </div>
+        <div style="padding:12px 16px 10px;font-size:12px;color:var(--text-m);">
+          <div style="margin-bottom:5px;"><i class="fas fa-users" style="width:14px;margin-right:5px;opacity:0.5;"></i>${s.parent}</div>
+          <div><i class="fas fa-phone" style="width:14px;margin-right:5px;opacity:0.5;"></i>${s.phone}</div>
+        </div>
+        <div style="display:flex;border-top:1px solid #f1f5f9;">
+          <button style="flex:1;padding:9px 6px;font-size:11.5px;font-weight:600;border:none;background:none;cursor:pointer;color:var(--primary);transition:background 0.12s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background=''"><i class="fas fa-eye"></i> Detail</button>
+          <button style="flex:1;padding:9px 6px;font-size:11.5px;font-weight:600;border:none;background:none;cursor:pointer;color:#d97706;border-left:1px solid #f1f5f9;transition:background 0.12s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background=''"><i class="fas fa-edit"></i> Edit</button>
+        </div>
+      </div>`).join('') : '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-m);">Tidak ada siswa di kelas ini</div>'}
+    </div>
+  </div>`;
+}
+
+// CLASSROOMS
+function renderClassrooms() {
+  return `
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><i class="fas fa-door-open" style="color:var(--primary);margin-right:7px;"></i>Daftar Kelas</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-outline btn-sm"><i class="fas fa-arrow-circle-up"></i> Naik Kelas</button>
+        <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Tambah Kelas</button>
+      </div>
+    </div>
+    <div style="padding:12px 22px 6px;background:#f8fafc;border-bottom:1px solid var(--border);">
+      <span style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--primary);">
+        <i class="fas fa-door-open" style="margin-right:5px;"></i>Kelas Reguler
+      </span>
+    </div>
+    <div class="table-responsive">
+      <table>
+        <thead><tr><th>Nama Kelas</th><th>Tingkat</th><th>Tahun Ajaran</th><th>Wali Kelas</th><th style="text-align:center;">Siswa</th><th>Aksi</th></tr></thead>
+        <tbody>
+          ${CLASSROOMS.filter(c=>c.type==='regular').map(c => `
+          <tr>
+            <td style="font-weight:700;font-size:15px;">${c.name}</td>
+            <td>${c.grade}</td>
+            <td>${c.year}</td>
+            <td>${c.teacher}</td>
+            <td style="text-align:center;"><span class="badge b-info">${c.count} siswa</span></td>
+            <td><div style="display:flex;gap:5px;">
+              <button class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> Edit</button>
+              <button class="btn btn-sm btn-primary" onclick="navigateTo('students','${c.name}')"><i class="fas fa-users"></i> Siswa</button>
+            </div></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div style="padding:12px 22px 6px;background:#f8fafc;border-bottom:1px solid var(--border);border-top:1px solid var(--border);">
+      <span style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#7c3aed;">
+        <i class="fas fa-star" style="margin-right:5px;"></i>Ekstrakulikuler
+      </span>
+    </div>
+    <div class="table-responsive">
+      <table>
+        <thead><tr><th>Nama</th><th>Tingkat</th><th>Tahun Ajaran</th><th>Pembina</th><th style="text-align:center;">Peserta</th><th>Aksi</th></tr></thead>
+        <tbody>
+          ${CLASSROOMS.filter(c=>c.type==='extracurricular').map(c => `
+          <tr>
+            <td style="font-weight:700;">${c.name}</td>
+            <td>${c.grade}</td>
+            <td>${c.year}</td>
+            <td>${c.teacher}</td>
+            <td style="text-align:center;"><span class="badge b-purple">${c.count} peserta</span></td>
+            <td><div style="display:flex;gap:5px;">
+              <button class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> Edit</button>
+              <button class="btn btn-sm btn-primary"><i class="fas fa-users"></i> Peserta</button>
+            </div></td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+// SUBJECTS
+function renderSubjects() {
+  return `
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><i class="fas fa-book-open" style="color:var(--primary);margin-right:7px;"></i>Daftar Mata Pelajaran</div>
+      <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Tambah</button>
+    </div>
+    <div class="table-responsive">
+      <table>
+        <thead><tr><th>Kode</th><th>Nama</th><th>Guru</th></tr></thead>
+        <tbody>
+          ${SUBJECTS.map(s => `
+          <tr>
+            <td><span class="badge b-primary" style="font-size:13px;padding:4px 12px;">${s.code}</span></td>
+            <td style="font-weight:600;">${s.name}</td>
+            <td>Budi Santoso</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+// ATTENDANCE CLASSES
+function renderAttendanceClasses() {
+  const colors = ['c0','c1','c2','c3','c4'];
+  return `
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
+    <div>
+      <div class="section-title"><i class="fas fa-calendar-check" style="color:var(--success);margin-right:9px;"></i>Rekap Absensi</div>
+      <p style="font-size:13.5px;color:var(--text-m);margin-top:3px;">Pilih kelas untuk melihat rekap kehadiran</p>
+    </div>
+    <button class="btn btn-primary" onclick="alert('Form isi absensi')"><i class="fas fa-clipboard-list"></i> Isi Absensi</button>
+  </div>
+  <div class="class-grid">
+    ${CLASSROOMS.map((c,i) => {
+      const pct = [92,87,78,95,85][i];
+      return `
+    <div class="class-card ${colors[i%5]}" onclick="navigateTo('attendance','${c.name}')">
+      <div class="cc-strip"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon"><i class="fas fa-calendar-check"></i></div>
+          <span class="badge b-gray" style="font-size:10.5px;">${c.count} siswa</span>
+        </div>
+        <div class="cc-name">${c.name}</div>
+        <div class="cc-sub">${c.grade} · ${c.year}</div>
+        <div class="cc-divider"></div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="flex:1;"><div class="progress"><div class="progress-bar ${pct>=75?'pb-green':pct>=50?'pb-orange':'pb-red'}" style="width:${pct}%;"></div></div></div>
+          <span style="font-size:14px;font-weight:900;color:${pct>=75?'var(--success)':pct>=50?'var(--warning)':'var(--danger)'};">${pct}%</span>
+        </div>
+      </div>
+      <div class="cc-footer">
+        <span style="font-size:12px;color:var(--text-m);">Kehadiran rata-rata</span>
+        <div class="cc-arrow"><i class="fas fa-arrow-right"></i></div>
+      </div>
+    </div>`}).join('')}
+  </div>`;
+}
+
+// ATTENDANCE BY CLASS
+function renderAttendanceByClass(cls) {
+  const students = STUDENTS.filter(s=>['11A','11B'].includes(s.class)).slice(0,4);
+  const dates = ['01 Nov','04 Nov','06 Nov','08 Nov','11 Nov'];
+  const statusGrid = [
+    ['H','H','A','H','H'],['H','S','H','H','I'],
+    ['I','H','H','I','H'],['H','H','H','H','H'],
+  ];
+  return `
+  <div class="breadcrumb">
+    <a onclick="navigateTo('attendance')"><i class="fas fa-calendar-check"></i> Absensi</a>
+    <span class="sep">›</span><span>Kelas ${cls}</span>
+  </div>
+  <div style="background:linear-gradient(135deg,#1e1b4b,#4f46e5);border-radius:14px;padding:20px 26px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;">
+    <div>
+      <div style="font-size:10px;font-weight:700;color:#a5b4fc;text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Kelas</div>
+      <div style="font-size:22px;font-weight:900;color:white;">${cls}</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.6);">2024/2025 · Budi Santoso</div>
+    </div>
+    <button class="hero-btn hb-white"><i class="fas fa-clipboard-list"></i> Isi Absensi</button>
+  </div>
+  <div style="display:flex;gap:3px;margin-bottom:-1px;position:relative;z-index:1;">
+    <div id="tabSum" onclick="switchAttTab('sum')" style="padding:10px 20px;border:1px solid var(--border);border-bottom:none;border-radius:10px 10px 0 0;background:white;font-weight:700;font-size:13px;cursor:pointer;color:var(--primary);">
+      <i class="fas fa-chart-bar"></i> Ringkasan
+    </div>
+    <div id="tabDaily" onclick="switchAttTab('daily')" style="padding:10px 20px;border:1px solid var(--border);border-bottom:none;border-radius:10px 10px 0 0;background:#f8fafc;font-weight:600;font-size:13px;cursor:pointer;color:var(--text-m);">
+      <i class="fas fa-calendar-alt"></i> Per Tanggal
+    </div>
+  </div>
+  <div id="panelSum" class="card" style="border-radius:0 12px 12px 12px;">
+    <div class="table-responsive">
+      <table>
+        <thead><tr><th>#</th><th>Siswa</th><th style="text-align:center;">Total</th><th style="text-align:center;"><span style="color:var(--success);">●</span> Hadir</th><th style="text-align:center;"><span style="color:#0ea5e9;">●</span> Izin</th><th style="text-align:center;"><span style="color:var(--warning);">●</span> Sakit</th><th style="text-align:center;"><span style="color:var(--danger);">●</span> Alpha</th><th>Kehadiran</th><th>Status</th></tr></thead>
+        <tbody>
+          ${students.map((s,i)=>{
+            const h=[4,3,3,5][i],iz=[0,1,1,0][i],sk=[0,1,0,0][i],al=[1,0,1,0][i],tot=5;
+            const pct=Math.round(h/tot*100);
+            return `<tr>
+              <td style="color:var(--text-m);">${i+1}</td>
+              <td><div style="display:flex;align-items:center;gap:9px;"><div class="avatar" style="width:32px;height:32px;font-size:12px;background:linear-gradient(135deg,${avatarColor(i)},${avatarColor(i+2)});">${s.name.charAt(0)}</div><div><div style="font-weight:700;font-size:13px;">${s.name}</div><div style="font-size:11px;color:var(--text-m);">${s.nis}</div></div></div></td>
+              <td style="text-align:center;font-weight:700;">${tot}</td>
+              <td style="text-align:center;color:var(--success);font-weight:700;">${h}</td>
+              <td style="text-align:center;color:#0369a1;font-weight:700;">${iz}</td>
+              <td style="text-align:center;color:var(--warning);font-weight:700;">${sk}</td>
+              <td style="text-align:center;color:var(--danger);font-weight:700;">${al}</td>
+              <td style="min-width:150px;"><div style="display:flex;align-items:center;gap:9px;"><div class="sum-bar" style="flex:1;"><div class="sb-h" style="width:${h/tot*100}%;"></div><div class="sb-i" style="width:${iz/tot*100}%;"></div><div class="sb-s" style="width:${sk/tot*100}%;"></div><div class="sb-a" style="width:${al/tot*100}%;"></div></div><span style="font-weight:800;font-size:13px;color:${pct>=75?'var(--success)':pct>=50?'var(--warning)':'var(--danger)'};">${pct}%</span></div></td>
+              <td><span class="badge ${pct>=75?'b-success':pct>=50?'b-warning':'b-danger'}">${pct>=75?'Baik':pct>=50?'Perhatian':'Kurang'}</span></td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div id="panelDaily" class="card" style="border-radius:0 12px 12px 12px;display:none;">
+    <div class="table-responsive">
+      <table>
+        <thead><tr><th style="text-align:left;min-width:170px;padding:11px 16px;">Siswa</th>${dates.map(d=>`<th style="text-align:center;min-width:65px;font-size:11px;">${d}</th>`).join('')}</tr></thead>
+        <tbody>
+          ${students.map((s,i)=>`<tr>
+            <td><div style="display:flex;align-items:center;gap:8px;"><div class="avatar" style="width:26px;height:26px;font-size:10px;background:linear-gradient(135deg,${avatarColor(i)},${avatarColor(i+2)});">${s.name.charAt(0)}</div><span style="font-size:13px;font-weight:600;">${s.name}</span></div></td>
+            ${statusGrid[i].map(st=>`<td style="text-align:center;"><span class="att-badge att-${st}">${st}</span></td>`).join('')}
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div style="padding:10px 18px;background:#fafafa;border-top:1px solid var(--border);font-size:12px;color:var(--text-m);display:flex;gap:14px;">
+      <span><span class="att-badge att-H" style="width:20px;height:20px;">H</span> Hadir</span>
+      <span><span class="att-badge att-I" style="width:20px;height:20px;">I</span> Izin</span>
+      <span><span class="att-badge att-S" style="width:20px;height:20px;">S</span> Sakit</span>
+      <span><span class="att-badge att-A" style="width:20px;height:20px;">A</span> Alpha</span>
+    </div>
+  </div>`;
+}
+
+function switchAttTab(tab) {
+  const sum = document.getElementById('panelSum');
+  const daily = document.getElementById('panelDaily');
+  const ts = document.getElementById('tabSum');
+  const td = document.getElementById('tabDaily');
+  if (!sum) return;
+  if (tab==='sum') {
+    sum.style.display='block'; daily.style.display='none';
+    ts.style.background='white'; ts.style.color='var(--primary)'; ts.style.fontWeight='700';
+    td.style.background='#f8fafc'; td.style.color='var(--text-m)'; td.style.fontWeight='600';
+  } else {
+    sum.style.display='none'; daily.style.display='block';
+    td.style.background='white'; td.style.color='var(--primary)'; td.style.fontWeight='700';
+    ts.style.background='#f8fafc'; ts.style.color='var(--text-m)'; ts.style.fontWeight='600';
+  }
+}
+
+// GRADES
+function renderGrades() {
+  const colors = ['c0','c1','c2','c3','c4'];
+  return `
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
+    <div>
+      <div class="section-title"><i class="fas fa-star" style="color:var(--warning);margin-right:9px;"></i>Data Penilaian</div>
+      <p style="font-size:13.5px;color:var(--text-m);margin-top:3px;">Pilih kelas untuk melihat atau mengelola penilaian</p>
+    </div>
+    <button class="btn btn-primary"><i class="fas fa-plus"></i> Buat Penilaian Baru</button>
+  </div>
+  <div class="class-grid">
+    ${CLASSROOMS.map((c,i) => `
+    <div class="class-card ${colors[i%5]}">
+      <div class="cc-strip"></div>
+      <div class="cc-body">
+        <div class="cc-top">
+          <div class="cc-icon"><i class="fas fa-chalkboard"></i></div>
+          <span class="badge b-gray" style="font-size:10.5px;">${c.year}</span>
+        </div>
+        <div class="cc-name">${c.name}</div>
+        <div class="cc-sub">${c.grade}</div>
+        <div class="cc-divider"></div>
+        <div class="cc-meta">
+          <div><div class="cc-meta-label">Sesi</div><div class="cc-meta-val">${[4,6,3,7,2][i]}</div></div>
+          <div><div class="cc-meta-label">Wali</div><div class="cc-meta-val" style="font-size:12px;">${c.teacher.split(' ')[0]}</div></div>
+        </div>
+      </div>
+      <div class="cc-footer">
+        <span style="font-size:12px;color:var(--text-m);">Klik untuk lihat penilaian</span>
+        <div class="cc-arrow"><i class="fas fa-arrow-right"></i></div>
+      </div>
+    </div>`).join('')}
+  </div>
+  <div class="card" style="margin-top:22px;">
+    <div class="card-header">
+      <div class="card-title"><i class="fas fa-table" style="color:var(--warning);margin-right:7px;"></i>Sesi Penilaian Terbaru</div>
+    </div>
+    <div class="table-responsive">
+      <table>
+        <thead><tr><th>Nama Sesi</th><th>Kelas</th><th>Mata Pelajaran</th><th>Jenis</th><th>Kategori</th><th>Aksi</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:700;">UH Aljabar Linear Bab 3</td><td><span class="badge b-primary">11A</span></td><td>Matematika</td><td><span class="badge b-warning">Ulangan Harian</span></td><td><span class="badge b-gray">1 kategori</span></td><td><div style="display:flex;gap:5px;"><button class="btn btn-sm btn-primary"><i class="fas fa-eye"></i></button><button class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button></div></td></tr>
+          <tr><td style="font-weight:700;">Ujian Praktik Memasak</td><td><span class="badge b-primary">11B</span></td><td>PKK</td><td><span class="badge b-success">Praktik</span></td><td><span class="badge b-info">3 kategori</span></td><td><div style="display:flex;gap:5px;"><button class="btn btn-sm btn-primary"><i class="fas fa-eye"></i></button><button class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button></div></td></tr>
+          <tr><td style="font-weight:700;">UTS Ganjil 2024</td><td><span class="badge b-primary">12A</span></td><td>Matematika</td><td><span class="badge b-danger">UTS</span></td><td><span class="badge b-gray">1 kategori</span></td><td><div style="display:flex;gap:5px;"><button class="btn btn-sm btn-primary"><i class="fas fa-eye"></i></button><button class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button></div></td></tr>
+          <tr><td style="font-weight:700;">Proyek Sains Semester 1</td><td><span class="badge b-primary">10A</span></td><td>IPA</td><td><span class="badge b-purple">Proyek</span></td><td><span class="badge b-info">4 kategori</span></td><td><div style="display:flex;gap:5px;"><button class="btn btn-sm btn-primary"><i class="fas fa-eye"></i></button><button class="btn btn-sm btn-success"><i class="fas fa-edit"></i></button></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+// MATERIALS
+function renderMaterials() {
+  const isAdmin = currentUser.role === 'admin';
+  let viewMode = 'table';
+  const html = `
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><i class="fas fa-file-alt" style="color:var(--primary);margin-right:7px;"></i>${isAdmin ? 'Daftar Materi' : 'Materi Pelajaran Saya'}</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <div style="display:flex;gap:4px;">
+          <button id="btnList" onclick="switchMatView('list')" style="width:34px;height:34px;border-radius:7px;border:1.5px solid var(--border);background:var(--primary);border-color:var(--primary);color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all 0.15s;"><i class="fas fa-list"></i></button>
+          <button id="btnGrid" onclick="switchMatView('grid')" style="width:34px;height:34px;border-radius:7px;border:1.5px solid var(--border);background:white;color:var(--text-m);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all 0.15s;"><i class="fas fa-th"></i></button>
+        </div>
+        ${isAdmin ? '<button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Upload Materi</button>' : ''}
+      </div>
+    </div>
+    <div class="filter-bar">
+      <div class="form-group"><label class="form-label-sm">Mata Pelajaran</label><select class="fc"><option>Semua</option>${SUBJECTS.map(s=>`<option>${s.name}</option>`).join('')}</select></div>
+      ${isAdmin ? '<div class="form-group"><label class="form-label-sm">Kelas</label><select class="fc"><option>Semua Kelas</option>'+CLASSROOMS.map(c=>`<option>${c.name}</option>`).join('')+'</select></div>' : ''}
+    </div>
+
+    <div id="matViewList">
+      <div class="table-responsive">
+        <table>
+          <thead><tr><th>Judul</th><th>Tipe</th>${isAdmin?'<th>Mapel</th><th>Kelas</th>':''}<th>Mode Tampil</th>${isAdmin?'<th>Proteksi</th>':''}<th>Status</th><th>Aksi</th></tr></thead>
+          <tbody>
+            ${MATERIALS.map(m=>`
+            <tr>
+              <td><div style="font-weight:700;">${m.title}</div></td>
+              <td>${typeBadge(m.type)}</td>
+              ${isAdmin?`<td>${m.subject}</td><td><span class="badge b-primary">${m.class}</span></td>`:''}
+              <td>${modeBadge(m.mode)}</td>
+              ${isAdmin?`<td><div style="display:flex;gap:4px;flex-wrap:wrap;">
+                ${!m.protect.dl?'<span class="badge b-danger" style="font-size:10px;"><i class="fas fa-download"></i> No DL</span>':''}
+                ${!m.protect.copy?'<span class="badge b-warning" style="font-size:10px;"><i class="fas fa-copy"></i> No Copy</span>':''}
+                ${!m.protect.rc?'<span class="badge b-purple" style="font-size:10px;"><i class="fas fa-mouse-pointer"></i> No RC</span>':''}
+                ${m.protect.dl&&m.protect.copy&&m.protect.rc?'<span class="badge b-gray" style="font-size:10px;">Tidak ada</span>':''}
+              </div></td>`:''}
+              <td>${m.published?'<span class="badge b-success">Publik</span>':'<span class="badge b-gray">Draft</span>'}</td>
+              <td><div style="display:flex;gap:5px;">
+                <button class="btn btn-sm btn-primary"><i class="fas fa-eye"></i></button>
+                ${isAdmin?'<button class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></button><button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>':''}
+              </div></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="matViewGrid" style="display:none;">
+      <div class="mat-grid">
+        ${MATERIALS.map(m=>`
+        <div class="mat-card">
+          <div class="mat-card-top">
+            ${typeIcon(m.type)}
+            <div class="mat-card-title">${m.title}</div>
+            <div class="mat-card-desc">${m.subject}${isAdmin?' · '+m.class:''}</div>
+            <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;">
+              ${modeBadge(m.mode)}
+              ${m.published?'<span class="badge b-success" style="font-size:10.5px;">Publik</span>':'<span class="badge b-gray" style="font-size:10.5px;">Draft</span>'}
+            </div>
+          </div>
+          <div class="mat-card-footer">
+            <span style="font-size:12px;color:var(--text-m);"><i class="fas fa-calendar" style="margin-right:4px;"></i>${m.date}</span>
+            <div style="display:flex;gap:4px;">
+              <button class="btn btn-sm btn-primary"><i class="fas fa-eye"></i></button>
+              ${isAdmin?'<button class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></button>':''}
+            </div>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+  return html;
+}
+
+function switchMatView(mode) {
+  const list = document.getElementById('matViewList');
+  const grid = document.getElementById('matViewGrid');
+  const btnL = document.getElementById('btnList');
+  const btnG = document.getElementById('btnGrid');
+  if (!list) return;
+  if (mode==='list') {
+    list.style.display='block'; grid.style.display='none';
+    btnL.style.background='var(--primary)'; btnL.style.borderColor='var(--primary)'; btnL.style.color='white';
+    btnG.style.background='white'; btnG.style.borderColor='var(--border)'; btnG.style.color='var(--text-m)';
+  } else {
+    list.style.display='none'; grid.style.display='block';
+    btnG.style.background='var(--primary)'; btnG.style.borderColor='var(--primary)'; btnG.style.color='white';
+    btnL.style.background='white'; btnL.style.borderColor='var(--border)'; btnL.style.color='var(--text-m)';
+  }
+}
+
+// LEAVE
+function renderLeave() {
+  const leaveData = [
+    { type:'sakit',  date:'12–13 Nov 2024', dur:'2 hari', subj:'Matematika', reason:'Demam dan flu', attach:true  },
+    { type:'tugas',  date:'5 Nov 2024',     dur:'1 hari', subj:'—',          reason:'Seminar pendidikan nasional', attach:true },
+    { type:'izin',   date:'28 Okt 2024',    dur:'1 hari', subj:'Bhs. Inggris',reason:'Keperluan keluarga', attach:false },
+  ];
+  const typeCfg = { sakit:{cls:'b-danger',label:'Sakit',icon:'fa-thermometer-half'}, tugas:{cls:'b-purple',label:'Tugas Dinas',icon:'fa-briefcase'}, izin:{cls:'b-info',label:'Izin',icon:'fa-file-alt'} };
+  return `
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px;">
+    <div class="stat-card"><div class="stat-icon si-blue"><i class="fas fa-archive"></i></div><div><div class="stat-value">3</div><div class="stat-label">Total Arsip</div></div></div>
+    <div class="stat-card"><div class="stat-icon" style="background:#fee2e2;color:#dc2626;"><i class="fas fa-thermometer-half"></i></div><div><div class="stat-value">1</div><div class="stat-label">Sakit</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-purple"><i class="fas fa-briefcase"></i></div><div><div class="stat-value">1</div><div class="stat-label">Tugas Dinas</div></div></div>
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title"><i class="fas fa-folder-open" style="color:var(--primary);margin-right:7px;"></i>Riwayat Ketidakhadiran Saya</div>
+      <button class="btn btn-primary"><i class="fas fa-plus"></i> Catat Baru</button>
+    </div>
+    <div class="table-responsive">
+      <table>
+        <thead><tr><th>Jenis</th><th>Tanggal</th><th>Durasi</th><th>Mata Pelajaran</th><th>Keterangan</th><th>Lampiran</th><th>Aksi</th></tr></thead>
+        <tbody>
+          ${leaveData.map(l=>{
+            const t = typeCfg[l.type];
+            return `<tr>
+              <td><span class="badge ${t.cls}"><i class="fas ${t.icon}"></i> ${t.label}</span></td>
+              <td style="font-weight:600;">${l.date}</td>
+              <td><span class="badge b-gray">${l.dur}</span></td>
+              <td>${l.subj}</td>
+              <td style="color:var(--text-m);max-width:180px;">${l.reason}</td>
+              <td>${l.attach?'<span class="badge b-success"><i class="fas fa-paperclip"></i> Ada</span>':'<span class="badge b-gray">Tidak ada</span>'}</td>
+              <td><div style="display:flex;gap:5px;">
+                <button class="btn btn-sm btn-primary"><i class="fas fa-eye"></i></button>
+                <button class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+              </div></td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+// EXPORT
+function renderExport() {
+  return `
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
+    <div>
+      <div class="section-title"><i class="fas fa-file-export" style="color:var(--primary);margin-right:9px;"></i>Ekspor &amp; Impor Data</div>
+      <p style="font-size:13.5px;color:var(--text-m);margin-top:3px;">Ekspor data ke Excel atau impor siswa dari file Excel</p>
+    </div>
+  </div>
+
+  <h3 style="font-size:14.5px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:7px;"><i class="fas fa-download" style="color:var(--success);"></i> Ekspor Data</h3>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:28px;">
+    ${[
+      {icon:'fa-user-graduate',color:'#eff6ff',c:'#2563eb',title:'Data Siswa',desc:'Ekspor daftar siswa lengkap beserta info pribadi dan akun.',btnClass:'btn-primary',btnText:'Download Excel Siswa'},
+      {icon:'fa-calendar-check',color:'#f0fdf4',c:'#16a34a',title:'Data Absensi',desc:'Ekspor rekap kehadiran. 2 sheet: detail per hari & rekap per siswa.',btnClass:'btn-success',btnText:'Download Excel Absensi'},
+      {icon:'fa-star',color:'#fffbeb',c:'#d97706',title:'Data Nilai',desc:'Ekspor penilaian siswa. 2 sheet: detail nilai & rata-rata per mapel.',btnClass:'btn-warning',btnText:'Download Excel Nilai'},
+    ].map(e=>`
+    <div class="card">
+      <div style="padding:18px 20px 14px;border-bottom:1px solid var(--border);">
+        <div style="width:44px;height:44px;border-radius:12px;background:${e.color};color:${e.c};display:flex;align-items:center;justify-content:center;font-size:19px;margin-bottom:11px;"><i class="fas ${e.icon}"></i></div>
+        <div style="font-size:15px;font-weight:800;margin-bottom:5px;">${e.title}</div>
+        <div style="font-size:12.5px;color:var(--text-m);line-height:1.5;">${e.desc}</div>
+      </div>
+      <div style="padding:16px 20px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+          <div><label class="form-label-sm">Kelas</label><select class="fc" style="width:100%;"><option>Semua</option>${CLASSROOMS.map(c=>`<option>${c.name}</option>`).join('')}</select></div>
+          <div><label class="form-label-sm">Mapel</label><select class="fc" style="width:100%;"><option>Semua</option>${SUBJECTS.map(s=>`<option>${s.name}</option>`).join('')}</select></div>
+        </div>
+        <button class="btn ${e.btnClass}" style="width:100%;justify-content:center;" onclick="alert('Demo: file Excel akan terdownload di sistem nyata')"><i class="fas fa-file-excel"></i> ${e.btnText}</button>
+      </div>
+    </div>`).join('')}
+  </div>
+
+  <h3 style="font-size:14.5px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:7px;"><i class="fas fa-upload" style="color:var(--primary);"></i> Impor Siswa</h3>
+  <div class="card" style="max-width:600px;">
+    <div style="padding:18px 20px 14px;border-bottom:1px solid var(--border);">
+      <div style="width:44px;height:44px;border-radius:12px;background:#f5f3ff;color:#7c3aed;display:flex;align-items:center;justify-content:center;font-size:19px;margin-bottom:11px;"><i class="fas fa-file-import"></i></div>
+      <div style="font-size:15px;font-weight:800;margin-bottom:5px;">Impor Siswa dari Excel</div>
+      <div style="font-size:12.5px;color:var(--text-m);line-height:1.5;">Upload file Excel berisi data siswa baru. Sistem akan membuat akun user dan data siswa secara otomatis.</div>
+    </div>
+    <div style="padding:16px 20px;">
+      <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:#f0fdf4;border-radius:9px;border:1px solid #bbf7d0;margin-bottom:14px;">
+        <i class="fas fa-file-excel" style="color:var(--success);font-size:20px;"></i>
+        <div style="flex:1;"><div style="font-weight:700;font-size:13px;">Download Template Excel</div><div style="font-size:12px;color:var(--text-m);">Gunakan template ini agar format data sesuai</div></div>
+        <button class="btn btn-success btn-sm" onclick="alert('Demo: template.xlsx akan terdownload')"><i class="fas fa-download"></i> Download</button>
+      </div>
+      <div style="border:2px dashed var(--border);border-radius:11px;padding:28px 20px;text-align:center;background:#fafbff;cursor:pointer;" onclick="alert('Demo: dialog pilih file akan muncul')">
+        <span style="font-size:30px;display:block;margin-bottom:9px;">📊</span>
+        <div style="font-size:14px;font-weight:700;margin-bottom:4px;">Klik atau seret file Excel ke sini</div>
+        <div style="font-size:12px;color:var(--text-m);">Format: .xlsx atau .xls · Maks 10MB</div>
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:12px;opacity:0.5;cursor:not-allowed;"><i class="fas fa-upload"></i> Pilih file terlebih dahulu</button>
+    </div>
+  </div>`;
+}
+
+// PROFILE
+function renderProfile() {
+  const isAdmin = currentUser.role === 'admin';
+  return `
+  <div style="display:grid;grid-template-columns:260px 1fr;gap:20px;max-width:880px;">
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="card">
+        <div style="text-align:center;padding:26px 20px;">
+          <div class="avatar" style="width:72px;height:72px;font-size:26px;margin:0 auto 13px;background:linear-gradient(135deg,#4f46e5,#0ea5e9);">${currentUser.name.charAt(0)}</div>
+          <div style="font-size:17px;font-weight:800;margin-bottom:3px;">${currentUser.name}</div>
+          <div style="font-size:12.5px;color:var(--text-m);margin-bottom:11px;">@${currentUser.username}</div>
+          <span class="badge ${isAdmin?'b-primary':'b-success'}">${isAdmin?'Admin / Guru':'Siswa'}</span>
+        </div>
+      </div>
+      <div class="card">
+        <div style="padding:8px;">
+          <button id="tp1" onclick="switchProfileTab(1)" style="display:flex;align-items:center;gap:8px;width:100%;padding:10px 13px;border:none;background:var(--primary-l);color:var(--primary);border-radius:7px;cursor:pointer;font-size:13.5px;font-weight:700;font-family:inherit;margin-bottom:2px;"><i class="fas fa-user-edit"></i> Edit Profil</button>
+          <button id="tp2" onclick="switchProfileTab(2)" style="display:flex;align-items:center;gap:8px;width:100%;padding:10px 13px;border:none;background:transparent;color:var(--text-m);border-radius:7px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;margin-bottom:2px;"><i class="fas fa-at"></i> Ganti Username</button>
+          <button id="tp3" onclick="switchProfileTab(3)" style="display:flex;align-items:center;gap:8px;width:100%;padding:10px 13px;border:none;background:transparent;color:var(--text-m);border-radius:7px;cursor:pointer;font-size:13.5px;font-weight:600;font-family:inherit;"><i class="fas fa-lock"></i> Ganti Password</button>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div id="pp1" class="card">
+        <div class="card-header"><div class="card-title"><i class="fas fa-user-edit" style="color:var(--primary);margin-right:7px;"></i>Edit Informasi Profil</div></div>
+        <div class="card-body">
+          <div class="grid-2">
+            <div class="form-group"><label class="form-label-sm">Nama Depan</label><input type="text" class="fc" value="${currentUser.name.split(' ')[0]}" style="width:100%;"></div>
+            <div class="form-group"><label class="form-label-sm">Nama Belakang</label><input type="text" class="fc" value="${currentUser.name.split(' ').slice(1).join(' ')}" style="width:100%;"></div>
+            <div class="form-group"><label class="form-label-sm">Email</label><input type="email" class="fc" value="${currentUser.username}@sekolah.com" style="width:100%;"></div>
+            <div class="form-group"><label class="form-label-sm">No. HP</label><input type="text" class="fc" value="0812-3456-7890" style="width:100%;"></div>
+          </div>
+          <button class="btn btn-primary" style="min-width:160px;" onclick="alert('Profil tersimpan!')"><i class="fas fa-save"></i> Simpan Profil</button>
+        </div>
+      </div>
+      <div id="pp2" class="card" style="display:none;">
+        <div class="card-header"><div class="card-title"><i class="fas fa-at" style="color:var(--primary);margin-right:7px;"></i>Ganti Username</div></div>
+        <div class="card-body">
+          <div class="alert alert-warning"><i class="fas fa-exclamation-triangle"></i> Setelah ganti username, gunakan username baru untuk login berikutnya.</div>
+          <div class="form-group"><label class="form-label-sm">Username Saat Ini</label><input type="text" class="fc" value="${currentUser.username}" disabled style="width:100%;background:#f8fafc;color:var(--text-m);"></div>
+          <div class="form-group"><label class="form-label-sm">Username Baru</label><input type="text" class="fc" placeholder="Masukkan username baru" style="width:100%;"></div>
+          <button class="btn btn-primary" style="min-width:160px;" onclick="alert('Username tersimpan!')"><i class="fas fa-check"></i> Simpan Username Baru</button>
+        </div>
+      </div>
+      <div id="pp3" class="card" style="display:none;">
+        <div class="card-header"><div class="card-title"><i class="fas fa-lock" style="color:var(--primary);margin-right:7px;"></i>Ganti Password</div></div>
+        <div class="card-body">
+          <div class="form-group"><label class="form-label-sm">Password Lama</label><input type="password" class="fc" placeholder="••••••••" style="width:100%;"></div>
+          <div class="form-group"><label class="form-label-sm">Password Baru</label><input type="password" class="fc" placeholder="Minimal 8 karakter" style="width:100%;"></div>
+          <div class="form-group"><label class="form-label-sm">Konfirmasi Password</label><input type="password" class="fc" placeholder="Ulangi password baru" style="width:100%;"></div>
+          <div class="alert alert-info"><i class="fas fa-shield-alt"></i> Password minimal 8 karakter. Kombinasi huruf dan angka.</div>
+          <button class="btn btn-primary" style="min-width:160px;" onclick="alert('Password tersimpan!')"><i class="fas fa-key"></i> Simpan Password Baru</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function switchProfileTab(n) {
+  [1,2,3].forEach(i=>{
+    const panel = document.getElementById('pp'+i);
+    const tab   = document.getElementById('tp'+i);
+    if (!panel||!tab) return;
+    if (i===n) {
+      panel.style.display='block';
+      tab.style.background='var(--primary-l)';
+      tab.style.color='var(--primary)';
+      tab.style.fontWeight='700';
+    } else {
+      panel.style.display='none';
+      tab.style.background='transparent';
+      tab.style.color='var(--text-m)';
+      tab.style.fontWeight='600';
+    }
+  });
+}
+</script>
+</body>
+</html>

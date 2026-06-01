@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Keuanganku - Demo</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --primary:#2563eb;--success:#16a34a;--danger:#dc2626;--warning:#f59e0b;--purple:#7c3aed;
+  --sidebar-bg:#1e293b;--sidebar-text:#cbd5e1;--sidebar-hover:#334155;--sidebar-border:#334155;
+  --bg:#f1f5f9;--card-bg:#ffffff;--border:#e2e8f0;--text:#0f172a;--text-muted:#64748b;
+  --badge-masuk-bg:#dcfce7;--badge-masuk-text:#15803d;
+  --badge-keluar-bg:#fee2e2;--badge-keluar-text:#dc2626;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+
+/* ========== SIDEBAR ========== */
+.sidebar{width:235px;min-height:100vh;background:var(--sidebar-bg);position:fixed;top:0;left:0;z-index:100;display:flex;flex-direction:column}
+.sidebar-brand{padding:1.25rem 1rem;border-bottom:1px solid var(--sidebar-border);color:#fff;font-size:1rem;font-weight:600;display:flex;align-items:center;gap:8px}
+.nav-section{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#64748b;padding:.875rem 1.25rem .3rem;font-weight:600}
+.nav-link{display:flex;align-items:center;gap:8px;padding:.65rem 1.1rem;color:var(--sidebar-text);border-radius:8px;margin:.1rem .5rem;cursor:pointer;font-size:13px;transition:background .15s;border:none;background:none;width:calc(100% - 1rem);text-align:left}
+.nav-link:hover,.nav-link.active{background:var(--sidebar-hover);color:#fff}
+.nav-link i{font-size:15px;width:18px;text-align:center}
+.nav-link.danger{color:#f87171}
+.nav-link.danger:hover{background:#7f1d1d;color:#fca5a5}
+.sidebar-footer{margin-top:auto;padding:.875rem 1rem;border-top:1px solid var(--sidebar-border);font-size:11px;color:#64748b;text-align:center;line-height:1.5}
+
+/* ========== MAIN ========== */
+.main{margin-left:235px;padding:1.25rem;min-height:100vh;display:flex;flex-direction:column}
+.topbar{background:var(--card-bg);border-radius:12px;padding:.875rem 1.5rem;margin-bottom:1.25rem;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 3px rgba(0,0,0,.06);border:1px solid var(--border)}
+.topbar-title{font-size:15px;font-weight:700;color:var(--text)}
+.topbar-sub{font-size:12px;color:var(--text-muted);margin-top:1px}
+.topbar-user{font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:6px}
+
+/* ========== PAGE ========== */
+.page{display:none;flex:1}
+.page.active{display:flex;flex-direction:column}
+
+/* ========== CARDS ========== */
+.card{background:var(--card-bg);border-radius:12px;border:1px solid var(--border);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.card-header{padding:.75rem 1.25rem;border-bottom:1px solid var(--border);font-size:13px;font-weight:600;display:flex;justify-content:space-between;align-items:center;background:var(--card-bg)}
+.card-body{padding:1rem 1.25rem}
+
+/* ========== STAT CARDS ========== */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.875rem;margin-bottom:1.25rem}
+.stat-card{border-radius:12px;padding:1.1rem;color:#fff}
+.stat-card.hijau{background:linear-gradient(135deg,#16a34a,#4ade80)}
+.stat-card.merah{background:linear-gradient(135deg,#dc2626,#f87171)}
+.stat-card.biru{background:linear-gradient(135deg,#2563eb,#60a5fa)}
+.stat-card.ungu{background:linear-gradient(135deg,#7c3aed,#a78bfa)}
+.stat-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.4rem}
+.stat-label{font-size:11px;font-weight:600;opacity:.9}
+.stat-icon{font-size:1.2rem;opacity:.85}
+.stat-amount{font-size:1.15rem;font-weight:700;line-height:1.2}
+.stat-sub{font-size:10px;opacity:.75;margin-top:.25rem}
+
+/* ========== TABLES ========== */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+thead th{padding:.55rem .875rem;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);font-weight:600;background:#f8fafc;border-bottom:1px solid var(--border)}
+tbody td{padding:.55rem .875rem;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:#f8fafc}
+
+/* ========== BADGES ========== */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-masuk{background:var(--badge-masuk-bg);color:var(--badge-masuk-text)}
+.badge-keluar{background:var(--badge-keluar-bg);color:var(--badge-keluar-text)}
+.badge-neutral{background:#f1f5f9;color:#475569}
+
+/* ========== AMOUNTS ========== */
+.amt-masuk{color:var(--success);font-weight:600}
+.amt-keluar{color:var(--danger);font-weight:600}
+.amt-saldo{color:var(--primary);font-weight:600}
+.amt-ungu{color:var(--purple);font-weight:700}
+
+/* ========== BUTTONS ========== */
+.btn{padding:5px 14px;border-radius:8px;font-size:12px;cursor:pointer;border:1px solid var(--border);background:var(--card-bg);color:var(--text);font-family:inherit;display:inline-flex;align-items:center;gap:5px;transition:all .15s}
+.btn:hover{background:#f1f5f9}
+.btn-primary{background:var(--primary);color:#fff;border-color:var(--primary)}
+.btn-primary:hover{background:#1d4ed8}
+.btn-success{background:var(--success);color:#fff;border-color:var(--success)}
+.btn-success:hover{background:#15803d}
+.btn-warning{background:var(--warning);color:#fff;border-color:var(--warning)}
+.btn-danger-outline{color:var(--danger);border-color:#fca5a5}
+.btn-danger-outline:hover{background:#fee2e2}
+.btn-sm{padding:3px 10px;font-size:11px;border-radius:6px}
+
+/* ========== FILTER BAR ========== */
+.filter-bar{background:var(--card-bg);border-radius:12px;border:1px solid var(--border);padding:.875rem 1.25rem;margin-bottom:1rem;display:flex;gap:.75rem;align-items:flex-end;flex-wrap:wrap}
+.filter-group{display:flex;flex-direction:column;gap:4px}
+.filter-group label{font-size:11px;font-weight:600;color:var(--text-muted)}
+.filter-group select,.filter-group input{padding:5px 10px;border-radius:7px;border:1px solid var(--border);background:var(--card-bg);color:var(--text);font-size:12px;font-family:inherit}
+
+/* ========== FORMS ========== */
+.form-wrap{max-width:580px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:.875rem}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group.full{grid-column:1/-1}
+.form-group label{font-size:12px;font-weight:600;color:var(--text-muted)}
+.form-group label .req{color:var(--danger)}
+.form-group input,.form-group select,.form-group textarea{padding:7px 11px;border-radius:8px;border:1px solid var(--border);background:var(--card-bg);color:var(--text);font-size:13px;font-family:inherit;transition:border .15s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.form-group textarea{resize:vertical;min-height:65px}
+.form-hint{font-size:11px;color:var(--text-muted);margin-top:2px}
+.form-actions{display:flex;gap:.5rem;margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border)}
+
+/* ========== DONUT CHARTS ========== */
+.donut-wrap{display:flex;align-items:center;gap:1rem}
+.donut-legend{flex:1}
+.legend-item{display:flex;align-items:center;gap:7px;margin-bottom:6px;font-size:11.5px}
+.legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.legend-label{flex:1;color:var(--text-muted)}
+.legend-val{font-weight:600;font-size:11px}
+
+/* ========== MEMO ========== */
+.memo-box{background:#fffbeb;border-left:3px solid #f59e0b;border-radius:0 8px 8px 0;padding:.75rem 1rem;font-size:12px;line-height:1.7;color:#92400e;white-space:pre-wrap}
+.memo-item{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1rem 1.25rem;display:flex;gap:.875rem;margin-bottom:.75rem;transition:box-shadow .15s}
+.memo-item:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.memo-item:last-child{margin-bottom:0}
+.memo-icon{width:42px;height:42px;background:#fef9c3;border:1.5px solid #fde047;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem;color:#d97706}
+.memo-content{flex:1;min-width:0}
+.memo-period{font-size:13px;font-weight:600;margin-bottom:.2rem;display:flex;align-items:center;gap:.5rem}
+.memo-preview{font-size:12px;color:var(--text-muted);line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:.3rem}
+.memo-date{font-size:11px;color:var(--text-muted)}
+.memo-actions{display:flex;gap:.375rem;align-items:flex-start;flex-shrink:0}
+
+/* ========== ARSIP ========== */
+.arsip-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.875rem;margin-bottom:1.25rem}
+.arsip-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:1.1rem}
+.arsip-period{font-size:13px;font-weight:600;margin-bottom:.875rem;display:flex;align-items:center;gap:6px;color:var(--text)}
+.arsip-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:12px}
+.arsip-row span:first-child{color:var(--text-muted)}
+.arsip-divider{border:none;border-top:1px solid var(--border);margin:.6rem 0}
+.arsip-total{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:13px}
+
+/* ========== KATEGORI ========== */
+.kategori-wrap{display:grid;grid-template-columns:1.5fr 1fr;gap:.875rem;align-items:start}
+
+/* ========== INFO BAR ========== */
+.info-bar{background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:.5rem 1rem;font-size:12px;color:#1d4ed8;margin-bottom:.875rem;display:flex;align-items:center;gap:.5rem}
+
+/* ========== TENTANG ========== */
+.tentang-hero{background:linear-gradient(135deg,#1e293b,#334155);border-radius:12px;padding:2.5rem;text-align:center;color:#fff;margin-bottom:1.25rem}
+.tentang-hero-icon{font-size:3rem;margin-bottom:.875rem}
+.tentang-hero h2{font-size:20px;font-weight:700;margin-bottom:.375rem}
+.tentang-hero p{font-size:12px;opacity:.7;margin-bottom:.875rem}
+.version-badge{background:rgba(255,255,255,.15);color:#fff;padding:3px 14px;border-radius:20px;font-size:11px;font-weight:600}
+.tentang-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:.875rem;margin-bottom:1.25rem}
+.fitur-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem}
+.fitur-item{background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:.875rem}
+.fitur-icon{font-size:1.4rem;margin-bottom:.4rem}
+.fitur-name{font-size:12px;font-weight:600;margin-bottom:.2rem}
+.fitur-desc{font-size:11px;color:var(--text-muted);line-height:1.5}
+.stat-list{display:flex;flex-direction:column}
+.stat-list-item{display:flex;justify-content:space-between;padding:.55rem 1.25rem;border-bottom:1px solid var(--border);font-size:12px}
+.stat-list-item:last-child{border-bottom:none}
+.stat-list-item span:first-child{color:var(--text-muted)}
+.stat-list-item strong{color:var(--primary)}
+.tech-badges{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.75rem}
+.tech-badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.panduan-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem}
+.panduan-item{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:.875rem;text-align:center}
+.panduan-num{width:32px;height:32px;background:var(--success);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;margin:0 auto .5rem}
+.panduan-title{font-size:12px;font-weight:600;margin-bottom:.25rem}
+.panduan-desc{font-size:11px;color:var(--text-muted);line-height:1.5}
+
+/* ========== LOGIN ========== */
+.login-wrap{min-height:100vh;background:linear-gradient(135deg,#1e293b 0%,#334155 100%);display:flex;align-items:center;justify-content:center}
+.login-card{background:#fff;border-radius:16px;padding:2rem 2.25rem;width:380px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.login-logo{text-align:center;margin-bottom:1.5rem}
+.login-logo-icon{font-size:3rem;margin-bottom:.5rem}
+.login-logo h2{font-size:20px;font-weight:700;color:#0f172a;margin-bottom:.25rem}
+.login-logo p{font-size:12px;color:#64748b}
+.login-demo-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:.875rem 1rem;margin-bottom:1.25rem}
+.login-demo-box h6{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#64748b;font-weight:700;margin-bottom:.5rem}
+.login-cred{display:flex;justify-content:space-between;padding:2px 0;font-size:12px}
+.login-cred span:first-child{color:#64748b}
+.login-cred span:last-child{font-weight:600;color:#0f172a;font-family:monospace}
+.login-field{margin-bottom:.875rem}
+.login-field label{display:block;font-size:12px;font-weight:600;color:#374151;margin-bottom:4px}
+.login-field input{width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;font-family:inherit;transition:border .15s}
+.login-field input:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.login-error{color:#dc2626;font-size:12px;margin-top:.375rem;display:none}
+.login-btn{width:100%;padding:9px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;font-weight:600;margin-top:.5rem;display:flex;align-items:center;justify-content:center;gap:6px;transition:background .15s}
+.login-btn:hover{background:#1d4ed8}
+
+/* ========== FOOTER ========== */
+.footer{margin-top:auto;padding:1rem 0;border-top:1px solid var(--border);text-align:center;font-size:11px;color:var(--text-muted);display:flex;justify-content:center;align-items:center;gap:.875rem;flex-wrap:wrap}
+.footer a{color:var(--text-muted);text-decoration:none}
+.footer a:hover{color:var(--primary)}
+
+/* ========== ALERT ========== */
+.alert{padding:.75rem 1rem;border-radius:8px;font-size:12.5px;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+.alert-success{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d}
+.alert-info{background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8}
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN PAGE ===== -->
+<div id="loginPage" class="login-wrap">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-icon">💰</div>
+      <h2>Keuanganku</h2>
+      <p>Masuk untuk mengelola keuangan Anda</p>
+    </div>
+    <div class="login-demo-box">
+      <h6>Akun Demo</h6>
+      <div class="login-cred"><span>Username</span><span>demo</span></div>
+      <div class="login-cred"><span>Password</span><span>demo123</span></div>
+    </div>
+    <div class="login-field">
+      <label>Username</label>
+      <input type="text" id="loginUser" placeholder="Masukkan username" value="demo">
+    </div>
+    <div class="login-field">
+      <label>Password</label>
+      <input type="password" id="loginPass" placeholder="Masukkan password" value="demo123">
+      <div class="login-error" id="loginErr">Username atau password salah!</div>
+    </div>
+    <button class="login-btn" onclick="doLogin()">
+      <i class="bi bi-box-arrow-in-right"></i> Masuk
+    </button>
+  </div>
+</div>
+
+<!-- ===== MAIN APP ===== -->
+<div id="mainApp" style="display:none">
+  <div class="sidebar">
+    <div class="sidebar-brand"><span>💰</span> Keuanganku</div>
+    <nav style="padding:.5rem 0;flex:1">
+      <div class="nav-section">Menu Utama</div>
+      <button class="nav-link active" onclick="goPage('dashboard',this)"><i class="bi bi-speedometer2"></i> Dashboard</button>
+      <button class="nav-link" onclick="goPage('transaksi',this)"><i class="bi bi-list-ul"></i> Transaksi</button>
+      <button class="nav-link" onclick="goPage('tambah',this)"><i class="bi bi-plus-circle"></i> Catat Transaksi</button>
+      <div class="nav-section">Pengelolaan</div>
+      <button class="nav-link" onclick="goPage('kategori',this)"><i class="bi bi-tags"></i> Kategori</button>
+      <button class="nav-link" onclick="goPage('memo',this)"><i class="bi bi-journal-text"></i> Riwayat Memo</button>
+      <button class="nav-link" onclick="goPage('arsip',this)"><i class="bi bi-archive"></i> Arsip Bulanan</button>
+      <div class="nav-section">Akun</div>
+      <button class="nav-link" onclick="goPage('tentang',this)"><i class="bi bi-info-circle"></i> Tentang Aplikasi</button>
+      <button class="nav-link danger" onclick="doLogout()"><i class="bi bi-box-arrow-right"></i> Keluar</button>
+    </nav>
+    <div class="sidebar-footer">💰 Keuanganku v1.0<br><span style="font-size:10px">Kelola keuangan dengan mudah</span></div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title" id="pageTitle">Dashboard</div>
+        <div class="topbar-sub" id="pageSub">Mei 2026</div>
+      </div>
+      <div class="topbar-user"><i class="bi bi-person-circle"></i> demo</div>
+    </div>
+
+    <!-- ===== DASHBOARD ===== -->
+    <div class="page active" id="p-dashboard">
+      <div class="filter-bar">
+        <div class="filter-group"><label>Bulan</label>
+          <select><option>Januari</option><option>Februari</option><option>Maret</option><option>April</option><option selected>Mei</option><option>Juni</option><option>Juli</option><option>Agustus</option><option>September</option><option>Oktober</option><option>November</option><option>Desember</option></select>
+        </div>
+        <div class="filter-group"><label>Tahun</label>
+          <select><option>2025</option><option selected>2026</option></select>
+        </div>
+        <button class="btn btn-primary"><i class="bi bi-funnel"></i> Tampilkan</button>
+        <button class="btn btn-success" onclick="goPage('tambah',null)" style="margin-left:auto"><i class="bi bi-plus-circle"></i> Catat Transaksi</button>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card hijau">
+          <div class="stat-top"><span class="stat-label">Pemasukan Bulan Ini</span><i class="bi bi-arrow-down-circle stat-icon"></i></div>
+          <div class="stat-amount">Rp 8.500.000</div>
+          <div class="stat-sub">Mei 2026</div>
+        </div>
+        <div class="stat-card merah">
+          <div class="stat-top"><span class="stat-label">Pengeluaran Bulan Ini</span><i class="bi bi-arrow-up-circle stat-icon"></i></div>
+          <div class="stat-amount">Rp 4.230.000</div>
+          <div class="stat-sub">Mei 2026</div>
+        </div>
+        <div class="stat-card biru">
+          <div class="stat-top"><span class="stat-label">Saldo Bulan Ini</span><i class="bi bi-wallet2 stat-icon"></i></div>
+          <div class="stat-amount">Rp 4.270.000</div>
+          <div class="stat-sub">Pemasukan - Pengeluaran</div>
+        </div>
+        <div class="stat-card ungu">
+          <div class="stat-top"><span class="stat-label">Total Tabungan</span><i class="bi bi-piggy-bank stat-icon"></i></div>
+          <div class="stat-amount">Rp 18.750.000</div>
+          <div class="stat-sub">Akumulasi s/d Mei 2026</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:2fr 1.5fr 1fr;gap:.875rem;margin-bottom:1.25rem">
+        <!-- Chart Pengeluaran -->
+        <div class="card">
+          <div class="card-header"><span><i class="bi bi-pie-chart" style="color:var(--danger)"></i> Pengeluaran per Kategori</span></div>
+          <div class="card-body">
+            <div class="donut-wrap">
+              <svg width="100" height="100" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="38" fill="none" stroke="#e2e8f0" stroke-width="16"/>
+                <circle cx="50" cy="50" r="38" fill="none" stroke="#dc2626" stroke-width="16" stroke-dasharray="75 164" stroke-dashoffset="0" transform="rotate(-90 50 50)"/>
+                <circle cx="50" cy="50" r="38" fill="none" stroke="#2563eb" stroke-width="16" stroke-dasharray="49 164" stroke-dashoffset="-75" transform="rotate(-90 50 50)"/>
+                <circle cx="50" cy="50" r="38" fill="none" stroke="#f59e0b" stroke-width="16" stroke-dasharray="25 164" stroke-dashoffset="-124" transform="rotate(-90 50 50)"/>
+                <circle cx="50" cy="50" r="38" fill="none" stroke="#16a34a" stroke-width="16" stroke-dasharray="15 164" stroke-dashoffset="-149" transform="rotate(-90 50 50)"/>
+              </svg>
+              <div class="donut-legend">
+                <div class="legend-item"><div class="legend-dot" style="background:#dc2626"></div><span class="legend-label">Makanan</span><span class="legend-val">Rp 1.770.000</span></div>
+                <div class="legend-item"><div class="legend-dot" style="background:#2563eb"></div><span class="legend-label">Transport</span><span class="legend-val">Rp 1.050.000</span></div>
+                <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div><span class="legend-label">Listrik</span><span class="legend-val">Rp 780.000</span></div>
+                <div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div><span class="legend-label">Lainnya</span><span class="legend-val">Rp 630.000</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Chart Pemasukan -->
+        <div class="card">
+          <div class="card-header"><span><i class="bi bi-pie-chart" style="color:var(--success)"></i> Pemasukan per Kategori</span></div>
+          <div class="card-body">
+            <div class="donut-wrap">
+              <svg width="100" height="100" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="38" fill="none" stroke="#e2e8f0" stroke-width="16"/>
+                <circle cx="50" cy="50" r="38" fill="none" stroke="#16a34a" stroke-width="16" stroke-dasharray="128 164" stroke-dashoffset="0" transform="rotate(-90 50 50)"/>
+                <circle cx="50" cy="50" r="38" fill="none" stroke="#7c3aed" stroke-width="16" stroke-dasharray="36 164" stroke-dashoffset="-128" transform="rotate(-90 50 50)"/>
+              </svg>
+              <div class="donut-legend">
+                <div class="legend-item"><div class="legend-dot" style="background:#16a34a"></div><span class="legend-label">Gaji</span><span class="legend-val">Rp 7.000.000</span></div>
+                <div class="legend-item"><div class="legend-dot" style="background:#7c3aed"></div><span class="legend-label">Bonus</span><span class="legend-val">Rp 1.500.000</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Memo -->
+        <div class="card">
+          <div class="card-header"><span><i class="bi bi-journal-text" style="color:var(--warning)"></i> Memo Mei</span></div>
+          <div class="card-body" style="padding:.875rem">
+            <div class="memo-box">Bulan ini ada bonus dari kantor Rp 1,5jt. Pengeluaran tinggi karena servis motor + beli sepatu. Target bulan depan kurangi makan di luar.</div>
+            <div style="font-size:10px;color:var(--text-muted);margin-top:.5rem">Diedit 28 Mei 2026</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transaksi Terbaru -->
+      <div class="card" style="flex:1">
+        <div class="card-header">
+          <span><i class="bi bi-clock-history" style="color:var(--primary)"></i> Transaksi Terbaru</span>
+          <button class="btn btn-sm" onclick="goPage('transaksi',null)">Lihat Semua</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Tanggal</th><th>Keterangan</th><th>Kategori</th><th>Jenis</th><th style="text-align:right">Jumlah</th></tr></thead>
+            <tbody>
+              <tr><td>28 Mei 2026</td><td>Gaji bulan Mei</td><td><span class="badge badge-neutral">💼 Gaji</span></td><td><span class="badge badge-masuk">↓ Pemasukan</span></td><td style="text-align:right" class="amt-masuk">+Rp 7.000.000</td></tr>
+              <tr><td>25 Mei 2026</td><td>Servis motor</td><td><span class="badge badge-neutral">🚗 Transport</span></td><td><span class="badge badge-keluar">↑ Pengeluaran</span></td><td style="text-align:right" class="amt-keluar">-Rp 450.000</td></tr>
+              <tr><td>23 Mei 2026</td><td>Makan siang kantor</td><td><span class="badge badge-neutral">🍔 Makanan</span></td><td><span class="badge badge-keluar">↑ Pengeluaran</span></td><td style="text-align:right" class="amt-keluar">-Rp 85.000</td></tr>
+              <tr><td>20 Mei 2026</td><td>Bonus proyek Q2</td><td><span class="badge badge-neutral">🎁 Bonus</span></td><td><span class="badge badge-masuk">↓ Pemasukan</span></td><td style="text-align:right" class="amt-masuk">+Rp 1.500.000</td></tr>
+              <tr><td>18 Mei 2026</td><td>Tagihan listrik</td><td><span class="badge badge-neutral">🏠 Listrik</span></td><td><span class="badge badge-keluar">↑ Pengeluaran</span></td><td style="text-align:right" class="amt-keluar">-Rp 780.000</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="footer"><span>💰 <strong>Keuanganku</strong> &copy; 2026</span><span>·</span><a href="#" onclick="goPage('tentang',null)">Tentang</a><span>·</span><a href="#" onclick="goPage('dashboard',null)">Dashboard</a><span>·</span><span>Dibangun dengan Django &amp; SQLite</span></div>
+    </div>
+
+    <!-- ===== TRANSAKSI ===== -->
+    <div class="page" id="p-transaksi">
+      <div class="filter-bar">
+        <div class="filter-group"><label>Bulan</label><select><option selected>Mei</option><option>April</option><option>Maret</option></select></div>
+        <div class="filter-group"><label>Tahun</label><select><option selected>2026</option><option>2025</option></select></div>
+        <div class="filter-group"><label>Jenis</label><select><option selected>Semua</option><option>Pemasukan</option><option>Pengeluaran</option></select></div>
+        <div class="filter-group"><label>Cari</label><input type="text" placeholder="Cari keterangan..." style="width:180px"></div>
+        <button class="btn btn-primary"><i class="bi bi-search"></i> Filter</button>
+        <button class="btn" style="border-color:var(--border)">Reset</button>
+        <button class="btn btn-success" onclick="goPage('tambah',null)" style="margin-left:auto"><i class="bi bi-plus-circle"></i> Tambah</button>
+      </div>
+
+      <div class="stat-grid">
+        <div class="card"><div class="card-body" style="text-align:center;padding:.875rem"><div class="amt-masuk" style="font-size:15px">Rp 8.500.000</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px">Pemasukan Bulan Ini</div></div></div>
+        <div class="card"><div class="card-body" style="text-align:center;padding:.875rem"><div class="amt-keluar" style="font-size:15px">Rp 4.230.000</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px">Pengeluaran Bulan Ini</div></div></div>
+        <div class="card"><div class="card-body" style="text-align:center;padding:.875rem"><div class="amt-saldo" style="font-size:15px">Rp 4.270.000</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px">Saldo Bulan Ini</div></div></div>
+        <div class="card" style="border-left:3px solid var(--purple)"><div class="card-body" style="text-align:center;padding:.875rem"><div class="amt-ungu" style="font-size:15px">Rp 18.750.000</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px">Total Tabungan</div></div></div>
+      </div>
+
+      <div class="info-bar"><i class="bi bi-info-circle"></i><strong>Saldo awal Mei 2026:</strong>&nbsp;<span class="amt-masuk">Rp 14.480.000</span>&nbsp;·&nbsp;Kolom <strong>Saldo Berjalan</strong> menunjukkan saldo setelah setiap transaksi.</div>
+
+      <div class="card" style="flex:1">
+        <div class="card-header"><strong>8 transaksi ditemukan</strong></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Tanggal</th><th>Keterangan</th><th>Kategori</th><th>Jenis</th><th style="text-align:right">Jumlah</th><th style="text-align:right">Saldo Berjalan</th><th style="text-align:center">Aksi</th></tr></thead>
+            <tbody>
+              <tr><td>28 Mei</td><td>Gaji bulan Mei</td><td><span class="badge badge-neutral">💼 Gaji</span></td><td><span class="badge badge-masuk">↓ Pemasukan</span></td><td style="text-align:right" class="amt-masuk">+Rp 7.000.000</td><td style="text-align:right" class="amt-saldo">Rp 18.750.000</td><td style="text-align:center"><button class="btn btn-sm"><i class="bi bi-pencil"></i></button></td></tr>
+              <tr><td>25 Mei</td><td>Servis motor</td><td><span class="badge badge-neutral">🚗 Transport</span></td><td><span class="badge badge-keluar">↑ Pengeluaran</span></td><td style="text-align:right" class="amt-keluar">-Rp 450.000</td><td style="text-align:right" class="amt-saldo">Rp 11.750.000</td><td style="text-align:center"><button class="btn btn-sm"><i class="bi bi-pencil"></i></button></td></tr>
+              <tr><td>23 Mei</td><td>Makan siang kantor</td><td><span class="badge badge-neutral">🍔 Makanan</span></td><td><span class="badge badge-keluar">↑ Pengeluaran</span></td><td style="text-align:right" class="amt-keluar">-Rp 85.000</td><td style="text-align:right" class="amt-saldo">Rp 12.200.000</td><td style="text-align:center"><button class="btn btn-sm"><i class="bi bi-pencil"></i></button></td></tr>
+              <tr><td>20 Mei</td><td>Bonus proyek Q2</td><td><span class="badge badge-neutral">🎁 Bonus</span></td><td><span class="badge badge-masuk">↓ Pemasukan</span></td><td style="text-align:right" class="amt-masuk">+Rp 1.500.000</td><td style="text-align:right" class="amt-saldo">Rp 12.285.000</td><td style="text-align:center"><button class="btn btn-sm"><i class="bi bi-pencil"></i></button></td></tr>
+              <tr><td>18 Mei</td><td>Tagihan listrik</td><td><span class="badge badge-neutral">🏠 Listrik</span></td><td><span class="badge badge-keluar">↑ Pengeluaran</span></td><td style="text-align:right" class="amt-keluar">-Rp 780.000</td><td style="text-align:right" class="amt-saldo">Rp 10.785.000</td><td style="text-align:center"><button class="btn btn-sm"><i class="bi bi-pencil"></i></button></td></tr>
+              <tr><td>15 Mei</td><td>Beli sepatu baru</td><td><span class="badge badge-neutral">🛍️ Belanja</span></td><td><span class="badge badge-keluar">↑ Pengeluaran</span></td><td style="text-align:right" class="amt-keluar">-Rp 320.000</td><td style="text-align:right" class="amt-saldo">Rp 11.565.000</td><td style="text-align:center"><button class="btn btn-sm"><i class="bi bi-pencil"></i></button></td></tr>
+              <tr><td>10 Mei</td><td>Makan malam keluarga</td><td><span class="badge badge-neutral">🍔 Makanan</span></td><td><span class="badge badge-keluar">↑ Pengeluaran</span></td><td style="text-align:right" class="amt-keluar">-Rp 245.000</td><td style="text-align:right" class="amt-saldo">Rp 11.885.000</td><td style="text-align:center"><button class="btn btn-sm"><i class="bi bi-pencil"></i></button></td></tr>
+              <tr><td>5 Mei</td><td>Bensin motor</td><td><span class="badge badge-neutral">🚗 Transport</span></td><td><span class="badge badge-keluar">↑ Pengeluaran</span></td><td style="text-align:right" class="amt-keluar">-Rp 350.000</td><td style="text-align:right" class="amt-saldo">Rp 12.130.000</td><td style="text-align:center"><button class="btn btn-sm"><i class="bi bi-pencil"></i></button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="footer"><span>💰 <strong>Keuanganku</strong> &copy; 2026</span><span>·</span><a href="#" onclick="goPage('tentang',null)">Tentang</a><span>·</span><span>Dibangun dengan Django &amp; SQLite</span></div>
+    </div>
+
+    <!-- ===== TAMBAH TRANSAKSI ===== -->
+    <div class="page" id="p-tambah">
+      <div class="form-wrap">
+        <div class="card">
+          <div class="card-header"><span><i class="bi bi-pencil-square" style="color:var(--primary)"></i> Tambah Transaksi</span></div>
+          <div class="card-body">
+            <div class="alert alert-success" id="alertSimpan" style="display:none"><i class="bi bi-check-circle-fill"></i> Transaksi berhasil ditambahkan!</div>
+            <div class="form-grid">
+              <div class="form-group"><label>Jenis Transaksi <span class="req">*</span></label>
+                <select id="fJenis"><option value="">-- Pilih jenis --</option><option value="pengeluaran">Pengeluaran</option><option value="pemasukan">Pemasukan</option></select>
+              </div>
+              <div class="form-group"><label>Kategori</label>
+                <select id="fKategori"><option>-- Pilih kategori (opsional) --</option><option>🍔 Makanan & Minuman</option><option>🚗 Transport</option><option>🏠 Rumah & Tagihan</option><option>💼 Gaji</option><option>🎁 Bonus</option></select>
+              </div>
+              <div class="form-group"><label>Jumlah (Rp) <span class="req">*</span></label>
+                <input type="text" id="fJumlah" placeholder="Contoh: 1770000" inputmode="numeric">
+                <span class="form-hint">Tulis angka tanpa titik/koma, contoh: 1770000</span>
+              </div>
+              <div class="form-group"><label>Tanggal <span class="req">*</span></label>
+                <input type="date" id="fTanggal" value="2026-05-28">
+              </div>
+              <div class="form-group full"><label>Keterangan <span class="req">*</span></label>
+                <input type="text" id="fKeterangan" placeholder="Keterangan singkat transaksi">
+              </div>
+              <div class="form-group full"><label>Catatan Tambahan</label>
+                <textarea id="fCatatan" placeholder="Catatan opsional..."></textarea>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button class="btn btn-primary" onclick="simpanTransaksi()"><i class="bi bi-check-circle"></i> Simpan</button>
+              <button class="btn" onclick="goPage('transaksi',null)"><i class="bi bi-x-circle"></i> Batal</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer" style="max-width:580px"><span>💰 <strong>Keuanganku</strong> &copy; 2026</span><span>·</span><a href="#" onclick="goPage('tentang',null)">Tentang</a></div>
+    </div>
+
+    <!-- ===== KATEGORI ===== -->
+    <div class="page" id="p-kategori">
+      <div class="kategori-wrap">
+        <div class="card">
+          <div class="card-header">
+            <span><i class="bi bi-tags" style="color:var(--primary)"></i> Daftar Kategori</span>
+            <button class="btn btn-primary btn-sm"><i class="bi bi-plus"></i> Tambah</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Ikon</th><th>Nama</th><th>Jenis</th><th style="text-align:center">Aksi</th></tr></thead>
+              <tbody>
+                <tr><td style="font-size:1.2rem">💼</td><td style="font-weight:600">Gaji</td><td><span class="badge badge-masuk">Pemasukan</span></td><td style="text-align:center"><button class="btn btn-sm btn-danger-outline"><i class="bi bi-trash"></i></button></td></tr>
+                <tr><td style="font-size:1.2rem">🎁</td><td style="font-weight:600">Bonus</td><td><span class="badge badge-masuk">Pemasukan</span></td><td style="text-align:center"><button class="btn btn-sm btn-danger-outline"><i class="bi bi-trash"></i></button></td></tr>
+                <tr><td style="font-size:1.2rem">📈</td><td style="font-weight:600">Investasi</td><td><span class="badge badge-masuk">Pemasukan</span></td><td style="text-align:center"><button class="btn btn-sm btn-danger-outline"><i class="bi bi-trash"></i></button></td></tr>
+                <tr><td style="font-size:1.2rem">🍔</td><td style="font-weight:600">Makanan & Minuman</td><td><span class="badge badge-keluar">Pengeluaran</span></td><td style="text-align:center"><button class="btn btn-sm btn-danger-outline"><i class="bi bi-trash"></i></button></td></tr>
+                <tr><td style="font-size:1.2rem">🚗</td><td style="font-weight:600">Transport</td><td><span class="badge badge-keluar">Pengeluaran</span></td><td style="text-align:center"><button class="btn btn-sm btn-danger-outline"><i class="bi bi-trash"></i></button></td></tr>
+                <tr><td style="font-size:1.2rem">🏠</td><td style="font-weight:600">Rumah & Tagihan</td><td><span class="badge badge-keluar">Pengeluaran</span></td><td style="text-align:center"><button class="btn btn-sm btn-danger-outline"><i class="bi bi-trash"></i></button></td></tr>
+                <tr><td style="font-size:1.2rem">💊</td><td style="font-weight:600">Kesehatan</td><td><span class="badge badge-keluar">Pengeluaran</span></td><td style="text-align:center"><button class="btn btn-sm btn-danger-outline"><i class="bi bi-trash"></i></button></td></tr>
+                <tr><td style="font-size:1.2rem">🛍️</td><td style="font-weight:600">Belanja</td><td><span class="badge badge-keluar">Pengeluaran</span></td><td style="text-align:center"><button class="btn btn-sm btn-danger-outline"><i class="bi bi-trash"></i></button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span><i class="bi bi-plus-circle" style="color:var(--success)"></i> Tambah Kategori Baru</span></div>
+          <div class="card-body">
+            <div class="form-group" style="margin-bottom:.875rem"><label>Nama Kategori <span class="req">*</span></label><input type="text" placeholder="Nama kategori"></div>
+            <div class="form-group" style="margin-bottom:.875rem"><label>Jenis <span class="req">*</span></label><select><option value="">-- Pilih jenis --</option><option>Pemasukan</option><option>Pengeluaran</option></select></div>
+            <div class="form-group" style="margin-bottom:1.25rem">
+              <label>Ikon (Emoji)</label>
+              <input type="text" placeholder="Contoh: 🎮">
+              <span class="form-hint">Salin emoji: 🍔 🚗 🏠 💊 🎓 💻 🎮 💼 💰 📈 🏪 🎁 ✈️ 📱</span>
+            </div>
+            <button class="btn btn-primary"><i class="bi bi-check-circle"></i> Simpan Kategori</button>
+          </div>
+        </div>
+      </div>
+      <div class="footer"><span>💰 <strong>Keuanganku</strong> &copy; 2026</span><span>·</span><a href="#" onclick="goPage('tentang',null)">Tentang</a><span>·</span><span>Dibangun dengan Django &amp; SQLite</span></div>
+    </div>
+
+    <!-- ===== RIWAYAT MEMO ===== -->
+    <div class="page" id="p-memo">
+      <div class="card" style="flex:1">
+        <div class="card-header">
+          <span><i class="bi bi-journal-text" style="color:var(--warning)"></i> Daftar Memo</span>
+          <span class="badge badge-neutral">3 memo tersimpan</span>
+        </div>
+        <div class="card-body">
+          <div class="memo-item">
+            <div class="memo-icon"><i class="bi bi-journal-text"></i></div>
+            <div class="memo-content">
+              <div class="memo-period">Mei 2026 <span class="badge" style="background:#fef9c3;color:#92400e;font-size:10px">Memo</span></div>
+              <div class="memo-preview">Bulan ini ada bonus dari kantor Rp 1,5jt. Pengeluaran lebih tinggi karena servis motor 450rb dan beli sepatu 320rb...</div>
+              <div class="memo-date"><i class="bi bi-clock"></i> Disimpan 28 Mei 2026</div>
+            </div>
+            <div class="memo-actions">
+              <button class="btn btn-sm"><i class="bi bi-eye"></i></button>
+              <button class="btn btn-sm btn-danger-outline"><i class="bi bi-trash"></i></button>
+            </div>
+          </div>
+          <div class="memo-item">
+            <div class="memo-icon"><i class="bi bi-journal-text"></i></div>
+            <div class="memo-content">
+              <div class="memo-period">April 2026 <span class="badge" style="background:#fef9c3;color:#92400e;font-size:10px">Memo</span></div>
+              <div class="memo-preview">April lebih hemat dari bulan lalu. Tidak ada pengeluaran tak terduga. Berhasil menabung lebih banyak dari target...</div>
+              <div class="memo-date"><i class="bi bi-clock"></i> Disimpan 30 Apr 2026</div>
+            </div>
+            <div class="memo-actions">
+              <button class="btn btn-sm"><i class="bi bi-eye"></i></button>
+              <button class="btn btn-sm btn-danger-outline"><i class="bi bi-trash"></i></button>
+            </div>
+          </div>
+          <div class="memo-item">
+            <div class="memo-icon"><i class="bi bi-journal-text"></i></div>
+            <div class="memo-content">
+              <div class="memo-period">Maret 2026 <span class="badge" style="background:#fef9c3;color:#92400e;font-size:10px">Memo</span></div>
+              <div class="memo-preview">Pengeluaran membengkak karena ada acara keluarga besar. Harus lebih disiplin mengatur keuangan bulan depan...</div>
+              <div class="memo-date"><i class="bi bi-clock"></i> Disimpan 31 Mar 2026</div>
+            </div>
+            <div class="memo-actions">
+              <button class="btn btn-sm"><i class="bi bi-eye"></i></button>
+              <button class="btn btn-sm btn-danger-outline"><i class="bi bi-trash"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer"><span>💰 <strong>Keuanganku</strong> &copy; 2026</span><span>·</span><a href="#" onclick="goPage('tentang',null)">Tentang</a><span>·</span><span>Dibangun dengan Django &amp; SQLite</span></div>
+    </div>
+
+    <!-- ===== ARSIP ===== -->
+    <div class="page" id="p-arsip">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:1rem">
+        <button class="btn btn-success"><i class="bi bi-archive"></i> Buat Arsip Baru</button>
+      </div>
+      <div class="arsip-grid">
+        <div class="arsip-card">
+          <div class="arsip-period"><i class="bi bi-calendar3" style="color:var(--primary)"></i> Mei 2026</div>
+          <div class="arsip-row"><span>Total Pemasukan</span><span class="amt-masuk">Rp 8.500.000</span></div>
+          <div class="arsip-row"><span>Total Pengeluaran</span><span class="amt-keluar">Rp 4.230.000</span></div>
+          <hr class="arsip-divider">
+          <div class="arsip-total"><span style="font-weight:600">Saldo</span><span class="amt-saldo" style="font-size:14px">Rp 4.270.000</span></div>
+          <button class="btn btn-sm" style="width:100%;margin-top:.75rem;justify-content:center"><i class="bi bi-eye"></i> Lihat Detail</button>
+        </div>
+        <div class="arsip-card">
+          <div class="arsip-period"><i class="bi bi-calendar3" style="color:var(--primary)"></i> April 2026</div>
+          <div class="arsip-row"><span>Total Pemasukan</span><span class="amt-masuk">Rp 7.500.000</span></div>
+          <div class="arsip-row"><span>Total Pengeluaran</span><span class="amt-keluar">Rp 3.270.000</span></div>
+          <hr class="arsip-divider">
+          <div class="arsip-total"><span style="font-weight:600">Saldo</span><span class="amt-saldo" style="font-size:14px">Rp 4.230.000</span></div>
+          <button class="btn btn-sm" style="width:100%;margin-top:.75rem;justify-content:center"><i class="bi bi-eye"></i> Lihat Detail</button>
+        </div>
+        <div class="arsip-card">
+          <div class="arsip-period"><i class="bi bi-calendar3" style="color:var(--primary)"></i> Maret 2026</div>
+          <div class="arsip-row"><span>Total Pemasukan</span><span class="amt-masuk">Rp 7.000.000</span></div>
+          <div class="arsip-row"><span>Total Pengeluaran</span><span class="amt-keluar">Rp 5.890.000</span></div>
+          <hr class="arsip-divider">
+          <div class="arsip-total"><span style="font-weight:600">Saldo</span><span class="amt-saldo" style="font-size:14px">Rp 1.110.000</span></div>
+          <button class="btn btn-sm" style="width:100%;margin-top:.75rem;justify-content:center"><i class="bi bi-eye"></i> Lihat Detail</button>
+        </div>
+        <div class="arsip-card">
+          <div class="arsip-period"><i class="bi bi-calendar3" style="color:var(--primary)"></i> Februari 2026</div>
+          <div class="arsip-row"><span>Total Pemasukan</span><span class="amt-masuk">Rp 7.000.000</span></div>
+          <div class="arsip-row"><span>Total Pengeluaran</span><span class="amt-keluar">Rp 3.640.000</span></div>
+          <hr class="arsip-divider">
+          <div class="arsip-total"><span style="font-weight:600">Saldo</span><span class="amt-saldo" style="font-size:14px">Rp 3.360.000</span></div>
+          <button class="btn btn-sm" style="width:100%;margin-top:.75rem;justify-content:center"><i class="bi bi-eye"></i> Lihat Detail</button>
+        </div>
+      </div>
+      <div class="footer"><span>💰 <strong>Keuanganku</strong> &copy; 2026</span><span>·</span><a href="#" onclick="goPage('tentang',null)">Tentang</a><span>·</span><span>Dibangun dengan Django &amp; SQLite</span></div>
+    </div>
+
+    <!-- ===== TENTANG ===== -->
+    <div class="page" id="p-tentang">
+      <div class="tentang-hero">
+        <div class="tentang-hero-icon">💰</div>
+        <h2>Keuanganku</h2>
+        <p>Aplikasi pencatatan keuangan pribadi berbasis web yang dibangun dengan Django dan SQLite</p>
+        <span class="version-badge">Versi 1.0.0</span>
+      </div>
+      <div class="tentang-grid">
+        <div>
+          <div class="card" style="margin-bottom:.875rem">
+            <div class="card-header"><span><i class="bi bi-stars" style="color:var(--warning)"></i> Fitur Aplikasi</span></div>
+            <div class="card-body">
+              <div class="fitur-grid">
+                <div class="fitur-item"><div class="fitur-icon">📊</div><div class="fitur-name">Dashboard Interaktif</div><div class="fitur-desc">Ringkasan keuangan bulanan dengan grafik donut per kategori</div></div>
+                <div class="fitur-item"><div class="fitur-icon">💜</div><div class="fitur-name">Total Tabungan</div><div class="fitur-desc">Saldo kumulatif dari semua bulan secara otomatis</div></div>
+                <div class="fitur-item"><div class="fitur-icon">📈</div><div class="fitur-name">Saldo Berjalan</div><div class="fitur-desc">Lihat saldo setelah setiap transaksi dilakukan</div></div>
+                <div class="fitur-item"><div class="fitur-icon">🏷️</div><div class="fitur-name">Kategori Custom</div><div class="fitur-desc">Buat kategori sendiri dengan emoji pilihan</div></div>
+                <div class="fitur-item"><div class="fitur-icon">📝</div><div class="fitur-name">Memo Bulanan</div><div class="fitur-desc">Tulis catatan penting untuk setiap bulan</div></div>
+                <div class="fitur-item"><div class="fitur-icon">📦</div><div class="fitur-name">Arsip Bulanan</div><div class="fitur-desc">Simpan ringkasan keuangan permanen tiap bulan</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><span><i class="bi bi-book" style="color:var(--success)"></i> Panduan Singkat</span></div>
+            <div class="card-body">
+              <div class="panduan-grid">
+                <div class="panduan-item"><div class="panduan-num">1</div><div class="panduan-title">Buat Kategori</div><div class="panduan-desc">Mulai dengan membuat kategori pemasukan dan pengeluaran</div></div>
+                <div class="panduan-item"><div class="panduan-num">2</div><div class="panduan-title">Catat Transaksi</div><div class="panduan-desc">Setiap ada pemasukan atau pengeluaran, langsung catat</div></div>
+                <div class="panduan-item"><div class="panduan-num">3</div><div class="panduan-title">Tulis Memo</div><div class="panduan-desc">Tambahkan catatan bulanan untuk kejadian penting</div></div>
+                <div class="panduan-item"><div class="panduan-num">4</div><div class="panduan-title">Arsipkan</div><div class="panduan-desc">Di akhir bulan, arsipkan untuk ringkasan permanen</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:.875rem">
+            <div class="card-header"><span><i class="bi bi-bar-chart" style="color:var(--primary)"></i> Statistik Anda</span></div>
+            <div class="stat-list">
+              <div class="stat-list-item"><span>Total Transaksi</span><strong>47</strong></div>
+              <div class="stat-list-item"><span>Total Kategori</span><strong>8</strong></div>
+              <div class="stat-list-item"><span>Arsip Tersimpan</span><strong>4</strong></div>
+              <div class="stat-list-item"><span>Memo Tersimpan</span><strong>3</strong></div>
+              <div class="stat-list-item"><span>Transaksi Pertama</span><strong>1 Feb 2026</strong></div>
+              <div class="stat-list-item"><span>Bergabung Sejak</span><strong>1 Feb 2026</strong></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><span><i class="bi bi-cpu" style="color:var(--text-muted)"></i> Info Teknis</span></div>
+            <div class="stat-list">
+              <div class="stat-list-item"><span>Framework</span><span class="badge" style="background:#dcfce7;color:#15803d">Django 6.0</span></div>
+              <div class="stat-list-item"><span>Database</span><span class="badge badge-neutral">SQLite</span></div>
+              <div class="stat-list-item"><span>Python</span><span class="badge" style="background:#e0e7ff;color:#3730a3">Python 3.13</span></div>
+              <div class="stat-list-item"><span>UI Library</span><span class="badge" style="background:#f3e8ff;color:#6b21a8">Bootstrap Icons</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer"><span>💰 <strong>Keuanganku</strong> &copy; 2026</span><span>·</span><span>Dibangun dengan Django &amp; SQLite</span></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const pageMeta={
+  dashboard:{title:'Dashboard',sub:'Mei 2026'},
+  transaksi:{title:'Daftar Transaksi',sub:'Mei 2026'},
+  tambah:{title:'Tambah Transaksi',sub:''},
+  kategori:{title:'Kelola Kategori',sub:''},
+  memo:{title:'Riwayat Memo',sub:'Semua catatan yang pernah disimpan'},
+  arsip:{title:'Arsip Bulanan',sub:'Riwayat keuangan per bulan'},
+  tentang:{title:'Tentang Aplikasi',sub:'Informasi dan panduan penggunaan'}
+};
+
+function goPage(id, el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active'));
+  const p=document.getElementById('p-'+id);
+  if(p) p.classList.add('active');
+  if(el){
+    el.classList.add('active');
+  } else {
+    document.querySelectorAll('.nav-link').forEach(n=>{
+      if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes("'"+id+"'")) n.classList.add('active');
+    });
+  }
+  const meta=pageMeta[id]||{title:id,sub:''};
+  document.getElementById('pageTitle').textContent=meta.title;
+  document.getElementById('pageSub').textContent=meta.sub;
+  window.scrollTo(0,0);
+}
+
+function doLogin(){
+  const u=document.getElementById('loginUser').value.trim();
+  const p=document.getElementById('loginPass').value;
+  const err=document.getElementById('loginErr');
+  if(u==='demo'&&p==='demo123'){
+    document.getElementById('loginPage').style.display='none';
+    document.getElementById('mainApp').style.display='block';
+    err.style.display='none';
+  } else {
+    err.style.display='block';
+  }
+}
+
+function doLogout(){
+  document.getElementById('mainApp').style.display='none';
+  document.getElementById('loginPage').style.display='flex';
+  document.getElementById('loginUser').value='demo';
+  document.getElementById('loginPass').value='demo123';
+}
+
+function simpanTransaksi(){
+  const jenis=document.getElementById('fJenis').value;
+  const jumlah=document.getElementById('fJumlah').value.trim();
+  const ket=document.getElementById('fKeterangan').value.trim();
+  if(!jenis||!jumlah||!ket){alert('Mohon isi semua field wajib (*)');return;}
+  if(isNaN(jumlah.replace(/\./g,'').replace(',','.'))){alert('Jumlah harus berupa angka!');return;}
+  const alert=document.getElementById('alertSimpan');
+  alert.style.display='flex';
+  setTimeout(()=>{ alert.style.display='none'; goPage('transaksi',null); },1800);
+}
+
+document.getElementById('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+document.getElementById('loginUser').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+</script>
+</body>
+</html>
