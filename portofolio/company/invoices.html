@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tagihan — Nusantara Group</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --gold:#C9A84C;--gold-light:#E8C97A;
+      --dark:#0A0A0A;--dark2:#111111;--dark3:#1A1A1A;--dark4:#242424;
+      --mid:#2E2E2E;--text:#D4C5A9;--text-dim:#7A7060;--white:#F8F4EC;
+      --blue:#7EC8E3;--green:#A8D8A8;--red:#E07070;--orange:#E8A87C;
+      --ff-display:'Cormorant Garamond',serif;--ff-body:'Montserrat',sans-serif;--sidebar:260px;
+    }
+    body{background:var(--dark);color:var(--text);font-family:var(--ff-body);font-weight:300;min-height:100vh;display:flex;}
+    .sidebar{width:var(--sidebar);background:var(--dark2);border-right:1px solid rgba(201,168,76,0.1);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:50;}
+    .sidebar-logo{padding:2rem 1.8rem;border-bottom:1px solid rgba(201,168,76,0.1);}
+    .logo-text{font-family:var(--ff-display);font-size:1.4rem;font-weight:600;color:var(--gold);letter-spacing:0.08em;text-decoration:none;display:block;}
+    .logo-text span{color:var(--white);font-weight:300;}
+    .sidebar-role{margin-top:0.4rem;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);background:rgba(201,168,76,0.1);display:inline-block;padding:0.2rem 0.6rem;}
+    .nav-section{padding:1.5rem 1.2rem 0.5rem;}
+    .nav-section-label{font-size:0.58rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--text-dim);padding:0 0.6rem;margin-bottom:0.5rem;}
+    .nav-item{display:flex;align-items:center;gap:0.8rem;padding:0.75rem 0.8rem;color:var(--text-dim);text-decoration:none;font-size:0.8rem;transition:all 0.2s;cursor:pointer;position:relative;}
+    .nav-item:hover,.nav-item.active{color:var(--white);background:rgba(201,168,76,0.08);}
+    .nav-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--gold);}
+    .nav-icon{font-size:1rem;width:20px;text-align:center;}
+    .nav-badge{margin-left:auto;background:var(--gold);color:var(--dark);font-size:0.58rem;font-weight:600;padding:0.15rem 0.5rem;}
+    .sidebar-footer{margin-top:auto;padding:1.5rem;border-top:1px solid rgba(201,168,76,0.1);}
+    .btn-logout{width:100%;background:transparent;border:1px solid rgba(201,168,76,0.2);color:var(--text-dim);padding:0.6rem;font-family:var(--ff-body);font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;transition:all 0.3s;}
+    .btn-logout:hover{border-color:var(--gold);color:var(--gold);}
+    .main{margin-left:var(--sidebar);flex:1;}
+    .topbar{background:var(--dark2);border-bottom:1px solid rgba(201,168,76,0.1);padding:1rem 2.5rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40;}
+    .topbar-title{font-family:var(--ff-display);font-size:1.5rem;color:var(--white);font-weight:300;}
+    .topbar-btn{background:transparent;border:1px solid rgba(201,168,76,0.2);color:var(--text-dim);padding:0.5rem 1.2rem;font-family:var(--ff-body);font-size:0.68rem;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
+    .topbar-btn:hover{border-color:var(--gold);color:var(--gold);}
+    .topbar-btn.primary{background:var(--gold);color:var(--dark);border-color:var(--gold);font-weight:600;}
+    .topbar-btn.primary:hover{background:var(--gold-light);}
+    .content{padding:2.5rem;}
+    .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5px;margin-bottom:2rem;}
+    .kpi-box{background:var(--dark2);padding:1.6rem;}
+    .kpi-lbl{font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.7rem;}
+    .kpi-val{font-family:var(--ff-display);font-size:2.2rem;color:var(--white);line-height:1;margin-bottom:0.4rem;}
+    .kpi-sub{font-size:0.7rem;color:var(--text-dim);}
+    .toolbar{display:flex;gap:1rem;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;}
+    .filter-btn{padding:0.4rem 1rem;background:transparent;border:1px solid rgba(255,255,255,0.07);color:var(--text-dim);font-family:var(--ff-body);font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
+    .filter-btn:hover,.filter-btn.active{border-color:var(--gold);color:var(--gold);}
+    .search-wrap{position:relative;margin-left:auto;}
+    .search-wrap input{background:var(--dark2);border:1px solid rgba(201,168,76,0.12);color:var(--text);padding:0.45rem 1rem 0.45rem 2.2rem;font-family:var(--ff-body);font-size:0.78rem;outline:none;width:220px;transition:border-color 0.3s;}
+    .search-wrap input:focus{border-color:var(--gold);}
+    .search-wrap::before{content:'◎';position:absolute;left:0.7rem;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:0.78rem;}
+    .table-wrap{background:var(--dark2);overflow-x:auto;margin-bottom:1.5px;}
+    table{width:100%;border-collapse:collapse;}
+    thead tr{border-bottom:1px solid rgba(201,168,76,0.1);}
+    th{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);padding:1.2rem 1.5rem;text-align:left;white-space:nowrap;}
+    td{padding:1.1rem 1.5rem;font-size:0.82rem;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle;}
+    tr:last-child td{border-bottom:none;}
+    tbody tr{transition:background 0.2s;cursor:pointer;}
+    tbody tr:hover{background:var(--dark3);}
+    .inv-num{font-weight:600;color:var(--white);font-size:0.85rem;}
+    .inv-project{font-size:0.72rem;color:var(--text-dim);margin-top:0.15rem;}
+    .amount{font-family:var(--ff-display);font-size:1.25rem;color:var(--gold);}
+    .overdue{color:var(--red)!important;}
+    .badge{display:inline-block;padding:0.25rem 0.7rem;font-size:0.62rem;letter-spacing:0.1em;}
+    .badge-green{background:rgba(168,216,168,0.12);color:var(--green);}
+    .badge-orange{background:rgba(232,168,124,0.12);color:var(--orange);}
+    .badge-red{background:rgba(224,112,112,0.12);color:var(--red);}
+    .badge-blue{background:rgba(126,200,227,0.12);color:var(--blue);}
+    .action-btns{display:flex;gap:0.4rem;}
+    .act-btn{background:none;border:1px solid rgba(255,255,255,0.08);color:var(--text-dim);padding:0.28rem 0.65rem;font-family:var(--ff-body);font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+    .act-btn:hover{border-color:var(--gold);color:var(--gold);}
+    .act-btn.approve{border-color:rgba(168,216,168,0.3);color:var(--green);}
+    .act-btn.approve:hover{background:rgba(168,216,168,0.1);}
+    /* PREVIEW TAGIHAN */
+    .preview-panel{background:var(--dark2);padding:2.5rem;border:1px solid rgba(201,168,76,0.15);}
+    .inv-header-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:3rem;}
+    .inv-from{font-size:0.78rem;color:var(--text-dim);line-height:1.8;}
+    .inv-from strong{color:var(--white);display:block;margin-bottom:0.3rem;font-family:var(--ff-display);font-size:1.3rem;}
+    .inv-meta{text-align:right;}
+    .inv-id{font-family:var(--ff-display);font-size:2rem;color:var(--gold);}
+    .inv-dates{font-size:0.72rem;color:var(--text-dim);line-height:1.8;margin-top:0.5rem;}
+    .inv-divider{height:1px;background:rgba(201,168,76,0.12);margin:2rem 0;}
+    .inv-parties{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-bottom:2rem;}
+    .inv-party-label{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:0.5rem;}
+    .inv-party-name{font-size:0.9rem;color:var(--white);font-weight:500;margin-bottom:0.3rem;}
+    .inv-party-detail{font-size:0.75rem;color:var(--text-dim);line-height:1.7;}
+    .inv-total-row{display:flex;justify-content:flex-end;margin-top:1.5rem;}
+    .inv-totals{width:300px;}
+    .total-line{display:flex;justify-content:space-between;padding:0.5rem 0;font-size:0.8rem;border-bottom:1px solid rgba(255,255,255,0.04);}
+    .total-line:last-child{border-bottom:none;font-weight:600;font-size:1rem;color:var(--white);padding-top:0.8rem;}
+    .total-line:last-child .t-val{color:var(--gold);font-family:var(--ff-display);font-size:1.5rem;}
+    .inv-actions{display:flex;gap:1rem;margin-top:2rem;}
+    .inv-btn{padding:0.8rem 2rem;font-family:var(--ff-body);font-size:0.7rem;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;transition:all 0.3s;}
+    .inv-btn-primary{background:var(--gold);border:none;color:var(--dark);}
+    .inv-btn-primary:hover{background:var(--gold-light);}
+    .inv-btn-outline{background:transparent;border:1px solid rgba(201,168,76,0.3);color:var(--gold);}
+    .inv-btn-outline:hover{background:rgba(201,168,76,0.08);}
+    @media(max-width:900px){.sidebar{display:none;}.main{margin-left:0;}.kpi-row{grid-template-columns:repeat(2,1fr);}}
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <a href="index.html" class="logo-text">NUSANTARA<span>Group</span></a>
+    <div class="sidebar-role">Administrator</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Ikhtisar</div>
+    <a href="dashboard-admin.html" class="nav-item"><span class="nav-icon">⬡</span> Dasbor</a>
+    <div class="nav-item"><span class="nav-icon">◈</span> Analitik</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Manajemen</div>
+    <a href="projects.html" class="nav-item"><span class="nav-icon">◇</span> Proyek <span class="nav-badge">12</span></a>
+    <div class="nav-item"><span class="nav-icon">◉</span> Klien <span class="nav-badge">48</span></div>
+    <a href="users.html" class="nav-item"><span class="nav-icon">▣</span> Pengguna</a>
+    <div class="nav-item"><span class="nav-icon">⬟</span> Laporan</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Keuangan</div>
+    <div class="nav-item active"><span class="nav-icon">✦</span> Tagihan <span class="nav-badge">3</span></div>
+    <div class="nav-item"><span class="nav-icon">◎</span> Transaksi</div>
+    <div class="nav-item"><span class="nav-icon">◆</span> Kontrak</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-section-label">Sistem</div>
+    <div class="nav-item"><span class="nav-icon">⬡</span> Pengaturan</div>
+    <div class="nav-item"><span class="nav-icon">◇</span> Log Audit</div>
+  </div>
+  <div class="sidebar-footer">
+    <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:1rem;">
+      <div style="width:38px;height:38px;background:var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--ff-display);font-size:1.1rem;color:var(--dark);">A</div>
+      <div><div style="font-size:0.82rem;color:var(--white);font-weight:500">Ahmad Santoso</div><div style="font-size:0.68rem;color:var(--text-dim)">admin@nusantaragroup.co.id</div></div>
+    </div>
+    <button class="btn-logout" onclick="logout()">Keluar</button>
+  </div>
+</aside>
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-title">Tagihan</div>
+    <div style="display:flex;gap:0.8rem;">
+      <button class="topbar-btn">Ekspor PDF</button>
+      <button class="topbar-btn primary" onclick="alert('Membuat tagihan baru...')">+ Tagihan Baru</button>
+    </div>
+  </div>
+  <div class="content">
+    <!-- KPI -->
+    <div class="kpi-row">
+      <div class="kpi-box"><div class="kpi-lbl">Total Ditagihkan (YTD)</div><div class="kpi-val">Rp 56M</div><div class="kpi-sub">24 tagihan diterbitkan</div></div>
+      <div class="kpi-box"><div class="kpi-lbl">Belum Lunas</div><div class="kpi-val" style="color:var(--orange)">Rp 4,2M</div><div class="kpi-sub">3 tagihan tertunda</div></div>
+      <div class="kpi-box"><div class="kpi-lbl">Jatuh Tempo</div><div class="kpi-val" style="color:var(--red)">Rp 620K</div><div class="kpi-sub">1 tagihan terlambat</div></div>
+      <div class="kpi-box"><div class="kpi-lbl">Terkumpul (Nov)</div><div class="kpi-val" style="color:var(--green)">Rp 6,2M</div><div class="kpi-sub">5 tagihan lunas</div></div>
+    </div>
+    <!-- FILTER -->
+    <div class="toolbar">
+      <button class="filter-btn active" onclick="filterInv(this,'all')">Semua</button>
+      <button class="filter-btn" onclick="filterInv(this,'pending')">Tertunda</button>
+      <button class="filter-btn" onclick="filterInv(this,'paid')">Lunas</button>
+      <button class="filter-btn" onclick="filterInv(this,'overdue')">Jatuh Tempo</button>
+      <div class="search-wrap"><input type="text" placeholder="Cari tagihan..."></div>
+    </div>
+    <!-- TABEL -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Nomor Tagihan</th><th>Klien</th><th>Proyek</th><th>Jumlah</th><th>Tgl Terbit</th><th>Jatuh Tempo</th><th>Status</th><th>Aksi</th></tr>
+        </thead>
+        <tbody>
+          <tr data-status="overdue" onclick="showPreview('TAG-2312')">
+            <td><div class="inv-num">TAG-2312</div></td><td>PT Nexora</td>
+            <td style="font-size:0.75rem;color:var(--text-dim)">Transformasi Digital</td>
+            <td><div class="amount overdue">Rp 620.000</div></td>
+            <td>1 Okt 2025</td><td style="color:var(--red)">31 Okt 2025</td>
+            <td><span class="badge badge-red">Jatuh Tempo</span></td>
+            <td onclick="event.stopPropagation()"><div class="action-btns"><button class="act-btn" onclick="alert('Mengirim pengingat...')">Ingatkan</button><button class="act-btn approve" onclick="alert('Tandai lunas...')">Tandai Lunas</button></div></td>
+          </tr>
+          <tr data-status="pending" onclick="showPreview('TAG-2405')">
+            <td><div class="inv-num">TAG-2405</div></td><td>PT Nexora</td>
+            <td style="font-size:0.75rem;color:var(--text-dim)">Strategi Fase 2</td>
+            <td><div class="amount">Rp 1.720.000</div></td>
+            <td>1 Nov 2025</td><td>1 Des 2025</td>
+            <td><span class="badge badge-orange">Tertunda</span></td>
+            <td onclick="event.stopPropagation()"><div class="action-btns"><button class="act-btn" onclick="alert('Mengirim pengingat...')">Ingatkan</button><button class="act-btn approve" onclick="alert('Tandai lunas...')">Tandai Lunas</button></div></td>
+          </tr>
+          <tr data-status="pending" onclick="showPreview('TAG-2406')">
+            <td><div class="inv-num">TAG-2406</div></td><td>Vantive Indonesia</td>
+            <td style="font-size:0.75rem;color:var(--text-dim)">Redesain Operasi</td>
+            <td><div class="amount">Rp 1.900.000</div></td>
+            <td>15 Nov 2025</td><td>15 Des 2025</td>
+            <td><span class="badge badge-orange">Tertunda</span></td>
+            <td onclick="event.stopPropagation()"><div class="action-btns"><button class="act-btn" onclick="alert('Mengirim pengingat...')">Ingatkan</button><button class="act-btn approve" onclick="alert('Tandai lunas...')">Tandai Lunas</button></div></td>
+          </tr>
+          <tr data-status="paid" onclick="showPreview('TAG-2404')">
+            <td><div class="inv-num">TAG-2404</div></td><td>Orbis Kapital</td>
+            <td style="font-size:0.75rem;color:var(--text-dim)">Strategi Modal</td>
+            <td><div class="amount">Rp 1.400.000</div></td>
+            <td>1 Okt 2025</td><td>31 Okt 2025</td>
+            <td><span class="badge badge-green">Lunas</span></td>
+            <td onclick="event.stopPropagation()"><div class="action-btns"><button class="act-btn" onclick="alert('Mengunduh PDF...')">↓ PDF</button></div></td>
+          </tr>
+          <tr data-status="paid">
+            <td><div class="inv-num">TAG-2403</div></td><td>Meridian Holdings</td>
+            <td style="font-size:0.75rem;color:var(--text-dim)">Penasihat M&A</td>
+            <td><div class="amount">Rp 3.200.000</div></td>
+            <td>15 Sep 2025</td><td>15 Okt 2025</td>
+            <td><span class="badge badge-green">Lunas</span></td>
+            <td><div class="action-btns"><button class="act-btn" onclick="alert('Mengunduh PDF...')">↓ PDF</button></div></td>
+          </tr>
+          <tr data-status="paid">
+            <td><div class="inv-num">TAG-2402</div></td><td>PT Nexora</td>
+            <td style="font-size:0.75rem;color:var(--text-dim)">Transformasi Digital</td>
+            <td><div class="amount">Rp 1.760.000</div></td>
+            <td>1 Ags 2025</td><td>1 Sep 2025</td>
+            <td><span class="badge badge-green">Lunas</span></td>
+            <td><div class="action-btns"><button class="act-btn" onclick="alert('Mengunduh PDF...')">↓ PDF</button></div></td>
+          </tr>
+          <tr data-status="paid">
+            <td><div class="inv-num">TAG-2401</div></td><td>Stratex Global</td>
+            <td style="font-size:0.75rem;color:var(--text-dim)">Transformasi SDM</td>
+            <td><div class="amount">Rp 1.050.000</div></td>
+            <td>1 Jul 2025</td><td>1 Ags 2025</td>
+            <td><span class="badge badge-green">Lunas</span></td>
+            <td><div class="action-btns"><button class="act-btn" onclick="alert('Mengunduh PDF...')">↓ PDF</button></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!-- PREVIEW TAGIHAN -->
+    <div class="preview-panel" id="invoicePreview" style="display:none;">
+      <div style="font-size:0.62rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);margin-bottom:2rem;">Pratinjau Tagihan</div>
+      <div class="inv-header-row">
+        <div class="inv-from">
+          <strong>NUSANTARA Group</strong>
+          Jl. Sudirman No. 88<br>
+          Jakarta Pusat, Indonesia<br>
+          kontak@nusantaragroup.co.id<br>
+          +62 21 5000 8800
+        </div>
+        <div class="inv-meta">
+          <div class="inv-id" id="prevInvNum">TAG-2405</div>
+          <div class="inv-dates">
+            Tgl Terbit: 1 November 2025<br>
+            Jatuh Tempo: 1 Desember 2025<br>
+            Status: <span style="color:var(--orange)">Tertunda</span>
+          </div>
+        </div>
+      </div>
+      <div class="inv-divider"></div>
+      <div class="inv-parties">
+        <div>
+          <div class="inv-party-label">Dari</div>
+          <div class="inv-party-name">PT Nusantara Group</div>
+          <div class="inv-party-detail">Terdaftar di Indonesia<br>NPWP: 01.234.567.8-901.000<br>NIB: 1234567890123</div>
+        </div>
+        <div>
+          <div class="inv-party-label">Kepada</div>
+          <div class="inv-party-name">PT Nexora</div>
+          <div class="inv-party-detail">Up: Joko Hartono (Direktur Utama)<br>Jl. Gatot Subroto No. 450<br>Jakarta Selatan 12190</div>
+        </div>
+      </div>
+      <div style="margin-bottom:1.5rem;">
+        <table>
+          <thead><tr><th style="width:50%">Keterangan</th><th>Jml</th><th>Harga Satuan</th><th>Total</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Fase 2 Strategi — Penemuan & Analisis<br><span style="font-size:0.7rem;color:var(--text-dim)">1 – 31 Okt 2025</span></td>
+              <td>40 jam</td><td>Rp 28.000</td><td style="color:var(--white);font-weight:500">Rp 1.120.000</td>
+            </tr>
+            <tr>
+              <td>Sesi Tinjauan Penasihat Senior<br><span style="font-size:0.7rem;color:var(--text-dim)">Okt 2025</span></td>
+              <td>8 jam</td><td>Rp 50.000</td><td style="color:var(--white);font-weight:500">Rp 400.000</td>
+            </tr>
+            <tr>
+              <td>Riset Pasar & Benchmarking<br><span style="font-size:0.7rem;color:var(--text-dim)">Deliverable</span></td>
+              <td>1</td><td>Rp 150.000</td><td style="color:var(--white);font-weight:500">Rp 150.000</td>
+            </tr>
+            <tr>
+              <td>Biaya Perjalanan & Akomodasi<br><span style="font-size:0.7rem;color:var(--text-dim)">Kwitansi terlampir</span></td>
+              <td>1</td><td>Rp 50.000</td><td style="color:var(--white);font-weight:500">Rp 50.000</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="inv-total-row">
+        <div class="inv-totals">
+          <div class="total-line"><span>Subtotal</span><span class="t-val">Rp 1.720.000</span></div>
+          <div class="total-line"><span>PPN (11%)</span><span class="t-val">Rp 189.200</span></div>
+          <div class="total-line"><span style="font-family:var(--ff-display);font-size:1.1rem;">Total Tagihan</span><span class="t-val">Rp 1.909.200</span></div>
+        </div>
+      </div>
+      <div class="inv-divider"></div>
+      <div style="font-size:0.75rem;color:var(--text-dim);line-height:1.8;">
+        Syarat Pembayaran: Net 30 hari · Bank: BCA · No. Rekening: 123-456-7890 · a.n. PT Nusantara Group · Ref: TAG-2405
+      </div>
+      <div class="inv-actions">
+        <button class="inv-btn inv-btn-primary" onclick="alert('Mengunduh PDF...')">↓ Unduh PDF</button>
+        <button class="inv-btn inv-btn-outline" onclick="alert('Mengirim ke klien...')">✉ Kirim ke Klien</button>
+        <button class="inv-btn inv-btn-outline" onclick="alert('Tandai sebagai lunas...')">✓ Tandai Lunas</button>
+      </div>
+    </div>
+  </div>
+</main>
+<script>
+  function logout(){sessionStorage.removeItem('nusantaraUser');window.location.href='login.html';}
+  function filterInv(btn,status){
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('tbody tr').forEach(row=>{row.style.display=(status==='all'||row.dataset.status===status)?'':'none';});
+  }
+  function showPreview(invNum){
+    const preview=document.getElementById('invoicePreview');
+    document.getElementById('prevInvNum').textContent=invNum;
+    preview.style.display='block';
+    preview.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+</script>
+</body>
+</html>

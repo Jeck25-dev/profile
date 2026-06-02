@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Panduan Demo — Nusantara Group</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --gold:#C9A84C;--dark:#0A0A0A;--dark2:#111111;--dark3:#1A1A1A;
+      --text:#D4C5A9;--text-dim:#7A7060;--white:#F8F4EC;
+      --blue:#7EC8E3;--green:#A8D8A8;--orange:#E8A87C;
+      --ff-display:'Cormorant Garamond',serif;--ff-body:'Montserrat',sans-serif;
+    }
+    body{background:var(--dark);color:var(--text);font-family:var(--ff-body);font-weight:300;min-height:100vh;}
+    a{color:var(--gold);}
+    .wrap{max-width:860px;margin:0 auto;padding:4rem 2rem;}
+    .logo{font-family:var(--ff-display);font-size:1.6rem;font-weight:600;color:var(--gold);letter-spacing:0.08em;margin-bottom:3rem;display:block;text-decoration:none;}
+    .logo span{color:var(--white);font-weight:300;}
+    h1{font-family:var(--ff-display);font-size:clamp(2rem,5vw,3.5rem);font-weight:300;color:var(--white);line-height:1.15;margin-bottom:1rem;}
+    h1 em{color:var(--gold);font-style:italic;}
+    .subtitle{font-size:0.85rem;color:var(--text-dim);margin-bottom:3rem;line-height:1.8;max-width:560px;}
+    .divider{width:50px;height:1px;background:var(--gold);margin:2.5rem 0;}
+    h2{font-family:var(--ff-display);font-size:1.8rem;color:var(--white);font-weight:300;margin-bottom:1.5rem;}
+    .file-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5px;margin-bottom:3rem;}
+    .file-card{background:var(--dark2);padding:1.5rem;transition:background 0.2s;}
+    .file-card:hover{background:var(--dark3);}
+    .file-name{font-family:var(--ff-display);font-size:1.1rem;color:var(--gold);margin-bottom:0.4rem;}
+    .file-path{font-size:0.68rem;letter-spacing:0.1em;color:var(--text-dim);font-family:monospace;background:var(--dark3);padding:0.2rem 0.5rem;display:inline-block;margin-bottom:0.6rem;}
+    .file-desc{font-size:0.78rem;color:var(--text-dim);line-height:1.7;}
+    .file-link{display:inline-block;margin-top:0.8rem;font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(201,168,76,0.3);padding-bottom:0.1rem;transition:border-color 0.2s;}
+    .file-link:hover{border-color:var(--gold);}
+    .accounts-table{width:100%;border-collapse:collapse;margin-bottom:3rem;}
+    .accounts-table thead tr{border-bottom:1px solid rgba(201,168,76,0.15);}
+    .accounts-table th{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-dim);padding:0.8rem 1.2rem;text-align:left;}
+    .accounts-table td{padding:1rem 1.2rem;font-size:0.82rem;border-bottom:1px solid rgba(255,255,255,0.04);}
+    .accounts-table tbody tr{transition:background 0.2s;cursor:pointer;}
+    .accounts-table tbody tr:hover{background:var(--dark2);}
+    .role-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:0.5rem;}
+    .dot-admin{background:var(--gold);}.dot-staff{background:var(--blue);}.dot-user{background:var(--green);}
+    .mono{font-family:monospace;font-size:0.82rem;color:var(--white);background:var(--dark3);padding:0.15rem 0.4rem;}
+    .flow{display:flex;align-items:center;gap:0;margin-bottom:3rem;flex-wrap:wrap;}
+    .flow-step{background:var(--dark2);padding:1.2rem 1.5rem;flex:1;min-width:140px;}
+    .flow-step-num{font-family:var(--ff-display);font-size:2rem;color:rgba(201,168,76,0.2);line-height:1;}
+    .flow-step-label{font-size:0.75rem;color:var(--white);margin-top:0.3rem;}
+    .flow-step-sub{font-size:0.65rem;color:var(--text-dim);margin-top:0.2rem;}
+    .flow-arrow{color:var(--gold);font-size:1rem;padding:0 0.3rem;flex-shrink:0;}
+    .note{background:var(--dark2);border-left:2px solid var(--gold);padding:1.2rem 1.5rem;margin-bottom:1rem;font-size:0.8rem;line-height:1.7;}
+    .note strong{color:var(--white);}
+    .quick-links{display:flex;gap:1rem;flex-wrap:wrap;margin-top:2rem;}
+    .ql{background:var(--gold);color:var(--dark);padding:0.7rem 1.5rem;text-decoration:none;font-size:0.7rem;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;transition:background 0.2s;}
+    .ql:hover{background:#E8C97A;}
+    .ql.outline{background:transparent;border:1px solid rgba(201,168,76,0.3);color:var(--gold);}
+    .ql.outline:hover{background:rgba(201,168,76,0.08);}
+    @media(max-width:600px){.file-grid{grid-template-columns:1fr;}.flow{flex-direction:column;}.flow-arrow{transform:rotate(90deg);}  }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <a href="index.html" class="logo">NUSANTARA<span>Group</span></a>
+
+  <h1>Panduan <em>Demo</em></h1>
+  <p class="subtitle">Panduan lengkap navigasi demo website company profile Nusantara Group. Semua halaman bersifat statis — tidak membutuhkan database atau server.</p>
+
+  <div class="divider"></div>
+
+  <!-- AKSES CEPAT -->
+  <h2>Akses Cepat</h2>
+  <div class="quick-links">
+    <a href="index.html" class="ql">🏠 Company Profile</a>
+    <a href="login.html" class="ql outline">🔐 Halaman Login</a>
+    <a href="dashboard-admin.html" class="ql outline">⚙ Dasbor Admin</a>
+    <a href="dashboard-staff.html" class="ql outline">👔 Dasbor Staf</a>
+    <a href="dashboard-user.html" class="ql outline">👤 Portal Klien</a>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- AKUN DEMO -->
+  <h2>Akun Demo</h2>
+  <p style="font-size:0.82rem;color:var(--text-dim);margin-bottom:1.5rem;">Gunakan akun berikut untuk login di halaman <a href="login.html">login.html</a>. Di halaman login, klik salah satu baris untuk mengisi otomatis.</p>
+  <table class="accounts-table">
+    <thead><tr><th>Peran</th><th>Nama</th><th>Email</th><th>Kata Sandi</th><th>Dasbor</th></tr></thead>
+    <tbody>
+      <tr onclick="window.location.href='dashboard-admin.html'">
+        <td><span class="role-dot dot-admin"></span>Admin</td>
+        <td>Ahmad Santoso</td>
+        <td><span class="mono">admin@nusantaragroup.co.id</span></td>
+        <td><span class="mono">admin123</span></td>
+        <td><a href="dashboard-admin.html" style="font-size:0.72rem;">→ Dasbor Admin</a></td>
+      </tr>
+      <tr onclick="window.location.href='dashboard-staff.html'">
+        <td><span class="role-dot dot-staff"></span>Staf</td>
+        <td>Sari Dewi Putri</td>
+        <td><span class="mono">staf@nusantaragroup.co.id</span></td>
+        <td><span class="mono">staf123</span></td>
+        <td><a href="dashboard-staff.html" style="font-size:0.72rem;">→ Dasbor Staf</a></td>
+      </tr>
+      <tr onclick="window.location.href='dashboard-user.html'">
+        <td><span class="role-dot dot-user"></span>Klien</td>
+        <td>Joko Hartono</td>
+        <td><span class="mono">klien@nusantaragroup.co.id</span></td>
+        <td><span class="mono">klien123</span></td>
+        <td><a href="dashboard-user.html" style="font-size:0.72rem;">→ Portal Klien</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="divider"></div>
+
+  <!-- PETA FILE -->
+  <h2>Peta File</h2>
+  <div class="file-grid">
+    <div class="file-card">
+      <div class="file-name">Company Profile</div>
+      <div class="file-path">index.html</div>
+      <div class="file-desc">Halaman utama: Hero, Tentang, Layanan, Nilai, Tim, Klien, Testimoni, Kontak, Footer. Lengkap dengan animasi scroll reveal dan navigasi mobile.</div>
+      <a href="index.html" class="file-link">Buka Halaman →</a>
+    </div>
+    <div class="file-card">
+      <div class="file-name">Halaman Login</div>
+      <div class="file-path">login.html</div>
+      <div class="file-desc">Halaman masuk dengan panel demo accounts di sisi kiri (klik untuk isi otomatis). Redirect otomatis ke dasbor sesuai peran pengguna.</div>
+      <a href="login.html" class="file-link">Buka Halaman →</a>
+    </div>
+    <div class="file-card">
+      <div class="file-name">Dasbor Admin</div>
+      <div class="file-path">dashboard-admin.html</div>
+      <div class="file-desc">Dasbor akses penuh: kartu KPI, tabel proyek aktif, grafik pendapatan, daftar pengguna, log aktivitas, tindakan tertunda.</div>
+      <a href="dashboard-admin.html" class="file-link">Buka Halaman →</a>
+    </div>
+    <div class="file-card">
+      <div class="file-name">Dasbor Staf</div>
+      <div class="file-path">dashboard-staff.html</div>
+      <div class="file-desc">Dasbor staf: proyek yang ditangani, papan tugas (dikerjakan & selesai), jadwal hari ini, KPI personal.</div>
+      <a href="dashboard-staff.html" class="file-link">Buka Halaman →</a>
+    </div>
+    <div class="file-card">
+      <div class="file-name">Portal Klien</div>
+      <div class="file-path">dashboard-user.html</div>
+      <div class="file-desc">Portal klien: progres proyek, daftar dokumen, tagihan + tombol bayar, informasi tim yang menangani akun.</div>
+      <a href="dashboard-user.html" class="file-link">Buka Halaman →</a>
+    </div>
+    <div class="file-card">
+      <div class="file-name">Manajemen Proyek</div>
+      <div class="file-path">projects.html</div>
+      <div class="file-desc">Halaman proyek: kartu proyek dengan filter status, progress bar, pencarian, dan modal buat proyek baru.</div>
+      <a href="projects.html" class="file-link">Buka Halaman →</a>
+    </div>
+    <div class="file-card">
+      <div class="file-name">Manajemen Pengguna</div>
+      <div class="file-path">users.html</div>
+      <div class="file-desc">Kelola semua pengguna: tabel dengan filter peran & status, matriks izin per peran, modal undang pengguna baru.</div>
+      <a href="users.html" class="file-link">Buka Halaman →</a>
+    </div>
+    <div class="file-card">
+      <div class="file-name">Tagihan</div>
+      <div class="file-path">invoices.html</div>
+      <div class="file-desc">Manajemen tagihan: tabel dengan filter status, KPI keuangan, pratinjau tagihan lengkap dengan rincian item.</div>
+      <a href="invoices.html" class="file-link">Buka Halaman →</a>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ALUR PENGGUNA -->
+  <h2>Alur Demo</h2>
+  <div class="flow">
+    <div class="flow-step"><div class="flow-step-num">01</div><div class="flow-step-label">index.html</div><div class="flow-step-sub">Company Profile</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><div class="flow-step-num">02</div><div class="flow-step-label">login.html</div><div class="flow-step-sub">Pilih peran</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><div class="flow-step-num">03</div><div class="flow-step-label">dashboard-*.html</div><div class="flow-step-sub">Sesuai peran</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><div class="flow-step-num">04</div><div class="flow-step-label">Sub-halaman</div><div class="flow-step-sub">projects / users / invoices</div></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- CATATAN PENTING -->
+  <h2>Catatan Penting</h2>
+  <div class="note"><strong>Semua data bersifat statis.</strong> Tidak ada database, backend, atau server yang dibutuhkan. Semua file bisa langsung dibuka di browser cukup dengan double-click file HTML.</div>
+  <div class="note"><strong>Sesi login menggunakan sessionStorage.</strong> Data sesi tersimpan sementara di browser. Setelah tab atau browser ditutup, sesi otomatis terhapus.</div>
+  <div class="note"><strong>Navigasi sidebar sudah saling terhubung.</strong> Link antar halaman sudah aktif: Dasbor Admin ↔ Proyek ↔ Pengguna ↔ Tagihan.</div>
+  <div class="note"><strong>Font membutuhkan koneksi internet.</strong> Google Fonts (Cormorant Garamond + Montserrat) di-load dari CDN. Untuk demo offline, unduh font terlebih dahulu.</div>
+  <div class="note"><strong>Semua tombol aksi sudah terpasang.</strong> Tombol seperti "Simpan", "Hapus", "Ekspor" menggunakan <code style="font-family:monospace;background:var(--dark3);padding:0.1rem 0.3rem">alert()</code> sebagai placeholder — mudah diganti fungsi nyata.</div>
+  <div class="note"><strong>Mudah dikustomisasi.</strong> Nama perusahaan <strong>"Nusantara Group"</strong> bisa diganti di semua file. Warna utama diatur lewat variabel CSS <code style="font-family:monospace;background:var(--dark3);padding:0.1rem 0.3rem">--gold: #C9A84C</code> di bagian <code style="font-family:monospace;background:var(--dark3);padding:0.1rem 0.3rem">:root</code> di setiap file.</div>
+  <div class="note"><strong>Versi Bahasa Indonesia.</strong> Seluruh konten termasuk label, navigasi, placeholder form, pesan sistem, dan data demo sudah diterjemahkan ke Bahasa Indonesia. Mata uang menggunakan Rupiah (Rp), lokasi Jakarta, dan kontak disesuaikan.</div>
+
+  <div style="margin-top:3rem;padding-top:2rem;border-top:1px solid rgba(255,255,255,0.06);font-size:0.72rem;color:var(--text-dim);">
+    Demo Website © 2025 Nusantara Group · Dibuat dengan HTML & CSS murni · Tanpa framework · Versi Bahasa Indonesia
+  </div>
+</div>
+</body>
+</html>
