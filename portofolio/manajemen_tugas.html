@@ -1,0 +1,2512 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TaskFlow — Sistem Manajemen Tugas</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --bg2: #13161e;
+    --bg3: #1a1e28;
+    --card: #1e2330;
+    --border: #2a2f3e;
+    --border2: #353b50;
+    --accent: #4f7dff;
+    --accent2: #7c5cfc;
+    --accent3: #00d4aa;
+    --danger: #ff4f6a;
+    --warn: #ffb84f;
+    --success: #4fdd8f;
+    --text: #e8eaf2;
+    --text2: #9ba3be;
+    --text3: #5c6480;
+    --radius: 12px;
+    --radius2: 8px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.4);
+    --shadow2: 0 2px 12px rgba(0,0,0,0.3);
+    --font: 'Plus Jakarta Sans', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+    --sidebar-w: 240px;
+    --header-h: 60px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; font-family: var(--font); background: var(--bg); color: var(--text); overflow-x: hidden; max-width: 100%; }
+
+  /* ========== SCROLLBAR ========== */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg2); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
+
+  /* ========== LOGIN ========== */
+  #login-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    position: relative;
+    overflow: hidden;
+  }
+  #login-screen::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(79,125,255,0.12) 0%, transparent 70%);
+    top: -200px; left: -100px;
+    pointer-events: none;
+  }
+  #login-screen::after {
+    content: '';
+    position: absolute;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(124,92,252,0.1) 0%, transparent 70%);
+    bottom: -100px; right: -50px;
+    pointer-events: none;
+  }
+  .login-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: var(--shadow);
+    animation: slideUp 0.5s ease;
+    position: relative;
+    z-index: 1;
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .login-logo {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 28px;
+  }
+  .login-logo-icon {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .login-logo span { font-size: 22px; font-weight: 800; color: var(--text); }
+  .login-logo small { font-size: 11px; color: var(--text3); display: block; font-weight: 400; }
+  .login-title { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+  .login-sub { color: var(--text2); font-size: 13px; margin-bottom: 28px; }
+  .demo-accounts {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius2);
+    padding: 14px;
+    margin-bottom: 24px;
+    font-size: 12px;
+    color: var(--text2);
+  }
+  .demo-accounts strong { color: var(--accent); display: block; margin-bottom: 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .demo-acc-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 6px 0; border-bottom: 1px solid var(--border);
+    cursor: pointer; transition: color 0.2s;
+  }
+  .demo-acc-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .demo-acc-item:hover { color: var(--text); }
+  .demo-acc-item .role-badge {
+    font-size: 10px; padding: 2px 7px; border-radius: 99px; font-weight: 600;
+  }
+  .badge-admin { background: rgba(79,125,255,0.15); color: var(--accent); }
+  .badge-manager { background: rgba(124,92,252,0.15); color: var(--accent2); }
+  .badge-member { background: rgba(0,212,170,0.15); color: var(--accent3); }
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 7px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%; background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius2); color: var(--text); font-family: var(--font);
+    font-size: 14px; padding: 11px 14px; transition: border 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border-color: var(--accent); box-shadow: 0 0 0 3px rgba(79,125,255,0.15);
+  }
+  .form-group textarea { min-height: 80px; resize: vertical; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 10px 18px; border-radius: var(--radius2);
+    font-family: var(--font); font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s; border: none; text-decoration: none;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff; width: 100%; justify-content: center;
+    padding: 13px; font-size: 14px;
+  }
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(79,125,255,0.35); }
+  .btn-ghost { background: transparent; color: var(--text2); border: 1px solid var(--border); }
+  .btn-ghost:hover { background: var(--bg3); color: var(--text); }
+  .btn-danger { background: rgba(255,79,106,0.12); color: var(--danger); border: 1px solid rgba(255,79,106,0.2); }
+  .btn-danger:hover { background: rgba(255,79,106,0.2); }
+  .btn-success { background: rgba(79,221,143,0.12); color: var(--success); border: 1px solid rgba(79,221,143,0.2); }
+  .btn-success:hover { background: rgba(79,221,143,0.2); }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
+  .login-err { color: var(--danger); font-size: 12px; margin-top: 10px; display: none; }
+
+  /* ========== APP LAYOUT ========== */
+  #app { display: none; height: 100vh; overflow: hidden; }
+
+  /* SIDEBAR */
+  #sidebar {
+    position: fixed; top: 0; left: 0; bottom: 0;
+    width: var(--sidebar-w);
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    z-index: 100;
+    transition: transform 0.3s ease;
+  }
+  .sidebar-header {
+    padding: 20px 18px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .sidebar-logo {
+    width: 34px; height: 34px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .sidebar-brand { font-size: 16px; font-weight: 800; }
+  .sidebar-brand small { font-size: 10px; color: var(--text3); display: block; font-weight: 400; }
+  .sidebar-nav { flex: 1; overflow-y: auto; padding: 12px 10px; }
+  .nav-section-title {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.8px; color: var(--text3);
+    padding: 10px 8px 6px;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 10px; border-radius: var(--radius2);
+    cursor: pointer; font-size: 13px; font-weight: 500; color: var(--text2);
+    transition: all 0.15s; margin-bottom: 2px;
+    border: none; background: transparent; width: 100%; text-align: left;
+  }
+  .nav-item:hover { background: var(--bg3); color: var(--text); }
+  .nav-item.active { background: rgba(79,125,255,0.12); color: var(--accent); }
+  .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+  .nav-item .badge {
+    margin-left: auto; font-size: 10px; font-weight: 700;
+    background: var(--accent); color: #fff;
+    border-radius: 99px; padding: 1px 6px;
+  }
+  .sidebar-user {
+    padding: 14px 16px;
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .user-avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; flex-shrink: 0;
+  }
+  .user-info { flex: 1; min-width: 0; }
+  .user-info .name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .user-info .role { font-size: 11px; color: var(--text3); }
+  .sidebar-logout { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 16px; padding: 4px; border-radius: 6px; transition: color 0.2s; }
+  .sidebar-logout:hover { color: var(--danger); }
+
+  /* MAIN */
+  #main {
+    margin-left: var(--sidebar-w);
+    height: 100vh;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* HEADER */
+  #header {
+    height: var(--header-h);
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px;
+    flex-shrink: 0;
+  }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .hamburger { display: none; background: none; border: none; color: var(--text2); font-size: 20px; cursor: pointer; }
+  .page-title { font-size: 18px; font-weight: 700; }
+  .breadcrumb { font-size: 12px; color: var(--text3); }
+  .header-right { display: flex; align-items: center; gap: 10px; }
+  .header-btn {
+    width: 34px; height: 34px; border-radius: var(--radius2);
+    background: var(--bg3); border: 1px solid var(--border);
+    color: var(--text2); font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.2s; position: relative;
+  }
+  .header-btn:hover { background: var(--card); color: var(--text); }
+  .notif-dot {
+    position: absolute; top: 5px; right: 5px;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--danger); border: 2px solid var(--bg2);
+  }
+
+  /* CONTENT */
+  #content {
+    flex: 1; overflow-y: auto;
+    padding: 24px;
+  }
+
+  /* PAGES */
+  .page { display: none; animation: fadeIn 0.3s ease; }
+  .page.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  /* ========== DASHBOARD ========== */
+  .stats-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px; margin-bottom: 24px;
+  }
+  .stat-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px;
+    display: flex; align-items: flex-start; gap: 14px;
+    transition: border 0.2s;
+  }
+  .stat-card:hover { border-color: var(--border2); }
+  .stat-icon {
+    width: 44px; height: 44px; border-radius: 11px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .stat-info .value { font-size: 26px; font-weight: 800; line-height: 1; margin-bottom: 4px; font-family: var(--mono); }
+  .stat-info .label { font-size: 12px; color: var(--text2); margin-bottom: 6px; }
+  .stat-info .change { font-size: 11px; font-weight: 600; }
+  .change-up { color: var(--success); }
+  .change-down { color: var(--danger); }
+
+  .two-col { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 24px; }
+  @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+
+  .section-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px;
+  }
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .section-header h3 { font-size: 14px; font-weight: 700; }
+  .section-header a { font-size: 12px; color: var(--accent); cursor: pointer; text-decoration: none; }
+
+  /* Task rows */
+  .task-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 0; border-bottom: 1px solid var(--border);
+    cursor: pointer; transition: background 0.15s; border-radius: var(--radius2);
+    padding-left: 8px; padding-right: 8px;
+  }
+  .task-row:last-child { border-bottom: none; }
+  .task-row:hover { background: var(--bg3); }
+  .task-check {
+    width: 18px; height: 18px; border-radius: 5px;
+    border: 2px solid var(--border2); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; cursor: pointer; transition: all 0.2s;
+  }
+  .task-check.done { background: var(--success); border-color: var(--success); color: #fff; }
+  .task-row .task-name { flex: 1; font-size: 13px; font-weight: 500; }
+  .task-row .task-name.done { text-decoration: line-through; color: var(--text3); }
+  .priority-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  }
+  .p-high { background: var(--danger); }
+  .p-medium { background: var(--warn); }
+  .p-low { background: var(--success); }
+  .task-row .task-due { font-size: 11px; color: var(--text3); font-family: var(--mono); white-space: nowrap; }
+  .task-assignee {
+    width: 24px; height: 24px; border-radius: 50%;
+    font-size: 10px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* Progress bar */
+  .progress-bar { background: var(--bg2); border-radius: 99px; height: 6px; margin-top: 8px; }
+  .progress-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width 0.6s ease; }
+
+  /* Activity */
+  .activity-item {
+    display: flex; gap: 10px; padding: 8px 0;
+    border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text2);
+  }
+  .activity-item:last-child { border-bottom: none; }
+  .activity-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); margin-top: 4px; flex-shrink: 0; }
+  .activity-item span { color: var(--text); font-weight: 600; }
+  .activity-time { margin-left: auto; color: var(--text3); white-space: nowrap; font-family: var(--mono); font-size: 11px; }
+
+  /* ========== TASKS PAGE ========== */
+  .toolbar {
+    display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center;
+  }
+  .search-input {
+    flex: 1; min-width: 200px; background: var(--card);
+    border: 1px solid var(--border); border-radius: var(--radius2);
+    color: var(--text); font-family: var(--font); font-size: 13px;
+    padding: 9px 14px; outline: none; transition: border 0.2s;
+  }
+  .search-input:focus { border-color: var(--accent); }
+  .search-input::placeholder { color: var(--text3); }
+  select.filter-sel {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius2); color: var(--text2); font-family: var(--font);
+    font-size: 13px; padding: 9px 14px; outline: none; cursor: pointer;
+  }
+  select.filter-sel:focus { border-color: var(--accent); }
+
+  .view-toggle { display: flex; gap: 4px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius2); padding: 3px; }
+  .view-btn { background: none; border: none; padding: 5px 10px; border-radius: 6px; color: var(--text3); cursor: pointer; font-size: 14px; transition: all 0.15s; }
+  .view-btn.active { background: var(--bg2); color: var(--text); }
+
+  /* Table view */
+  .task-table { width: 100%; border-collapse: collapse; }
+  .task-table th {
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+    color: var(--text3); padding: 10px 12px; text-align: left;
+    border-bottom: 1px solid var(--border); white-space: nowrap;
+  }
+  .task-table td {
+    padding: 12px; border-bottom: 1px solid var(--border);
+    font-size: 13px; vertical-align: middle;
+  }
+  .task-table tr:last-child td { border-bottom: none; }
+  .task-table tr:hover td { background: var(--bg3); }
+  .task-table .task-title-cell { font-weight: 500; }
+  .status-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px; font-weight: 600; padding: 3px 9px;
+    border-radius: 99px;
+  }
+  .s-todo { background: rgba(155,163,190,0.12); color: var(--text2); }
+  .s-inprogress { background: rgba(79,125,255,0.12); color: var(--accent); }
+  .s-review { background: rgba(255,184,79,0.12); color: var(--warn); }
+  .s-done { background: rgba(79,221,143,0.12); color: var(--success); }
+  .priority-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11px; font-weight: 600; padding: 3px 9px;
+    border-radius: 99px;
+  }
+  .pr-high { background: rgba(255,79,106,0.12); color: var(--danger); }
+  .pr-medium { background: rgba(255,184,79,0.12); color: var(--warn); }
+  .pr-low { background: rgba(79,221,143,0.12); color: var(--success); }
+
+  /* Kanban */
+  .kanban-board {
+    display: grid; grid-template-columns: repeat(4, minmax(220px, 1fr));
+    gap: 14px; overflow-x: auto; padding-bottom: 10px;
+  }
+  .kanban-col {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px;
+    min-height: 400px;
+  }
+  .kanban-col-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
+  }
+  .kanban-col-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; }
+  .kanban-count {
+    font-size: 11px; font-weight: 700; padding: 2px 7px;
+    border-radius: 99px; background: var(--bg2); color: var(--text2);
+  }
+  .kanban-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius2); padding: 12px; margin-bottom: 8px;
+    cursor: pointer; transition: border 0.2s, box-shadow 0.2s;
+  }
+  .kanban-card:hover { border-color: var(--accent); box-shadow: 0 2px 12px rgba(79,125,255,0.15); }
+  .kanban-card .card-title { font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+  .kanban-card .card-meta { display: flex; align-items: center; justify-content: space-between; }
+  .kanban-card .card-assignees { display: flex; gap: -4px; }
+  .kanban-card .card-due { font-size: 11px; color: var(--text3); font-family: var(--mono); }
+
+  /* ========== PROJECTS ========== */
+  .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+  .project-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px;
+    transition: border 0.2s, box-shadow 0.2s; cursor: pointer;
+  }
+  .project-card:hover { border-color: var(--border2); box-shadow: var(--shadow2); }
+  .project-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+  .project-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+  }
+  .project-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .project-desc { font-size: 12px; color: var(--text2); margin-bottom: 14px; line-height: 1.5; }
+  .project-stats { display: flex; gap: 16px; margin-bottom: 14px; }
+  .project-stat { font-size: 11px; color: var(--text3); }
+  .project-stat strong { font-size: 16px; font-weight: 700; color: var(--text); display: block; font-family: var(--mono); }
+  .project-members { display: flex; }
+  .member-avatar {
+    width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--card);
+    font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+    margin-left: -6px;
+  }
+  .member-avatar:first-child { margin-left: 0; }
+  .member-more {
+    background: var(--bg2); color: var(--text3);
+  }
+
+  /* ========== TEAM PAGE ========== */
+  .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+  .team-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px; text-align: center;
+    transition: border 0.2s;
+  }
+  .team-card:hover { border-color: var(--border2); }
+  .team-avatar {
+    width: 60px; height: 60px; border-radius: 50%;
+    margin: 0 auto 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 700;
+  }
+  .team-name { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .team-email { font-size: 12px; color: var(--text3); margin-bottom: 10px; }
+  .team-stats { display: flex; gap: 12px; justify-content: center; margin-top: 10px; }
+  .team-stat { font-size: 11px; color: var(--text3); }
+  .team-stat strong { display: block; font-size: 16px; font-weight: 700; color: var(--text); font-family: var(--mono); }
+
+  /* ========== REPORTS ========== */
+  .reports-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .chart-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px;
+  }
+  .chart-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .chart-sub { font-size: 12px; color: var(--text3); margin-bottom: 16px; }
+
+  /* Bar chart */
+  .bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 120px; }
+  .bar-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .bar { width: 100%; border-radius: 4px 4px 0 0; transition: height 0.5s ease; }
+  .bar-label { font-size: 10px; color: var(--text3); font-family: var(--mono); }
+
+  /* Donut */
+  .donut-wrap { display: flex; align-items: center; gap: 20px; }
+  .donut-svg { flex-shrink: 0; }
+  .donut-legend { display: flex; flex-direction: column; gap: 8px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text2); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+  .legend-val { margin-left: auto; font-weight: 700; color: var(--text); font-family: var(--mono); }
+
+  /* ========== SETTINGS ========== */
+  .settings-layout { display: grid; grid-template-columns: 200px 1fr; gap: 20px; }
+  @media (max-width: 700px) { .settings-layout { grid-template-columns: 1fr; } }
+  .settings-nav { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px; height: fit-content; }
+  .settings-nav-item {
+    display: flex; align-items: center; gap: 8px; padding: 9px 10px;
+    border-radius: var(--radius2); font-size: 13px; font-weight: 500; color: var(--text2);
+    cursor: pointer; transition: all 0.15s; margin-bottom: 2px;
+  }
+  .settings-nav-item:hover { background: var(--bg3); color: var(--text); }
+  .settings-nav-item.active { background: rgba(79,125,255,0.12); color: var(--accent); }
+  .settings-panel { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+  .settings-panel h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .settings-panel p { font-size: 13px; color: var(--text2); margin-bottom: 24px; }
+  .setting-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 0; border-bottom: 1px solid var(--border);
+  }
+  .setting-row:last-child { border-bottom: none; }
+  .setting-info label { font-size: 13px; font-weight: 600; display: block; margin-bottom: 3px; }
+  .setting-info small { font-size: 12px; color: var(--text3); }
+  .toggle {
+    width: 38px; height: 22px; border-radius: 99px;
+    background: var(--bg2); border: 1px solid var(--border2); cursor: pointer;
+    position: relative; transition: background 0.2s; flex-shrink: 0;
+  }
+  .toggle.on { background: var(--accent); border-color: var(--accent); }
+  .toggle::after {
+    content: ''; position: absolute; top: 3px; left: 3px;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: #fff; transition: transform 0.2s;
+  }
+  .toggle.on::after { transform: translateX(16px); }
+
+  /* ========== MODAL ========== */
+  .modal-backdrop {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+    z-index: 200; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 16px; padding: 28px; width: 100%; max-width: 500px;
+    animation: scaleIn 0.2s ease; max-height: 90vh; overflow-y: auto;
+  }
+  @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+  .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .modal-header h3 { font-size: 16px; font-weight: 700; }
+  .modal-close { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 20px; line-height: 1; transition: color 0.2s; }
+  .modal-close:hover { color: var(--text); }
+  .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+  /* ========== NOTIFICATION DROPDOWN ========== */
+  .notif-panel {
+    display: none; position: fixed;
+    top: var(--header-h); right: 16px;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); width: 320px; max-height: 400px;
+    overflow-y: auto; box-shadow: var(--shadow); z-index: 150;
+    animation: dropDown 0.2s ease;
+  }
+  .notif-panel.open { display: block; }
+  @keyframes dropDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+  .notif-header { padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 700; }
+  .notif-item { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 12px; color: var(--text2); display: flex; gap: 10px; cursor: pointer; transition: background 0.15s; }
+  .notif-item:hover { background: var(--bg3); }
+  .notif-item.unread { background: rgba(79,125,255,0.05); }
+  .notif-item .notif-icon { font-size: 16px; }
+  .notif-item .notif-text strong { color: var(--text); }
+  .notif-item .notif-time { font-size: 10px; color: var(--text3); margin-top: 3px; font-family: var(--mono); }
+
+  /* ========== RESPONSIVE ========== */
+
+  /* Base: semua elemen tidak overflow horizontal */
+  #app, #main, #content, .page { width: 100%; min-width: 0; box-sizing: border-box; }
+  #content { overflow-x: hidden; }
+  .stats-grid, .two-col, .projects-grid, .team-grid, .reports-grid,
+  .section-card, .chart-card, .project-card, .team-card, .toolbar {
+    width: 100%; min-width: 0; box-sizing: border-box;
+  }
+  /* Tabel selalu dalam wrapper scrollable */
+  #list-view { overflow-x: auto; width: 100%; }
+  .task-table { min-width: 600px; }
+  .admin-table-wrap { overflow-x: auto; width: 100%; }
+  .users-table { min-width: 560px; }
+
+  /* ---- Tablet <= 1024px ---- */
+  @media (max-width: 1024px) {
+    :root { --sidebar-w: 210px; }
+    .reports-grid { grid-template-columns: 1fr 1fr !important; }
+  }
+
+  /* ---- Mobile <= 768px ---- */
+  @media (max-width: 768px) {
+    :root { --sidebar-w: 0px; }
+    #sidebar { transform: translateX(-240px); width: 240px; z-index: 300; }
+    #sidebar.open { transform: translateX(0); }
+    #main { margin-left: 0 !important; width: 100vw !important; max-width: 100vw; }
+    #content { padding: 14px !important; overflow-x: hidden; }
+    .hamburger { display: flex !important; }
+    .breadcrumb { display: none; }
+    #header { padding: 0 14px !important; }
+    .page-title { font-size: 15px !important; }
+
+    .stats-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
+    .two-col { grid-template-columns: 1fr !important; }
+    .projects-grid { grid-template-columns: 1fr !important; }
+    .reports-grid { grid-template-columns: 1fr !important; }
+    .team-grid { grid-template-columns: repeat(2, 1fr) !important; }
+    .settings-layout { grid-template-columns: 1fr !important; }
+
+    .settings-nav { display: flex !important; flex-wrap: wrap; gap: 4px; height: auto !important; }
+    .settings-nav-item { flex: 1 1 auto; text-align: center; justify-content: center; font-size: 12px; }
+
+    .toolbar { flex-wrap: wrap; gap: 8px; }
+    .toolbar .search-input { width: 100% !important; min-width: unset !important; flex: unset !important; }
+
+    .kanban-board { grid-template-columns: repeat(4, 240px) !important; overflow-x: auto !important; }
+
+    .modal { padding: 20px !important; }
+    .modal-backdrop { padding: 12px !important; }
+    .detail-body { grid-template-columns: 1fr !important; }
+    .notif-panel { right: 8px !important; left: 8px !important; width: auto !important; }
+    #toast-container { right: 10px !important; left: 10px !important; }
+    .toast { min-width: unset !important; width: 100%; }
+
+    .timeline-label { width: 110px !important; font-size: 11px !important; }
+    .tl-months { margin-left: 110px !important; }
+  }
+
+  /* ---- Small mobile <= 480px ---- */
+  @media (max-width: 480px) {
+    #content { padding: 10px !important; }
+    .stats-grid { gap: 8px !important; }
+    .stat-card { padding: 12px !important; gap: 10px !important; }
+    .stat-icon { width: 34px !important; height: 34px !important; font-size: 15px !important; }
+    .stat-info .value { font-size: 20px !important; }
+    .team-grid { grid-template-columns: 1fr !important; }
+    .kanban-board { grid-template-columns: repeat(4, 78vw) !important; }
+    .modal-backdrop { padding: 0 !important; align-items: flex-end !important; }
+    .modal { border-radius: 16px 16px 0 0 !important; max-height: 93vh !important; }
+    .login-box { padding: 22px 16px !important; margin: 10px !important; }
+    .projects-grid { grid-template-columns: 1fr !important; }
+  }
+
+  /* Overlay for mobile sidebar */
+  #sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; }
+  #sidebar-overlay.open { display: block; }
+
+  /* Permission badge */
+  .perm-badge {
+    font-size: 10px; font-weight: 700; padding: 2px 8px;
+    border-radius: 99px; text-transform: uppercase; letter-spacing: 0.4px;
+    display: inline-block;
+  }
+
+  /* ========== ADMIN PAGE ========== */
+  .admin-warning {
+    background: rgba(255,184,79,0.08); border: 1px solid rgba(255,184,79,0.2);
+    border-radius: var(--radius); padding: 14px 16px; margin-bottom: 20px;
+    font-size: 13px; color: var(--warn); display: flex; align-items: center; gap: 10px;
+  }
+  .users-table { width: 100%; border-collapse: collapse; }
+  .users-table th {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    color: var(--text3); padding: 10px 12px; text-align: left;
+    border-bottom: 1px solid var(--border); letter-spacing: 0.5px;
+  }
+  .users-table td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .users-table tr:last-child td { border-bottom: none; }
+  .users-table tr:hover td { background: var(--bg3); }
+
+  /* Access denied */
+  .access-denied {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    height: 60vh; text-align: center; color: var(--text3);
+  }
+  .access-denied .icon { font-size: 60px; margin-bottom: 16px; }
+  .access-denied h3 { font-size: 20px; font-weight: 700; color: var(--text2); margin-bottom: 8px; }
+  .access-denied p { font-size: 14px; max-width: 300px; }
+
+  /* Reports grid specific */
+  @media (max-width: 900px) {
+    .reports-grid { grid-template-columns: 1fr 1fr !important; }
+    .reports-bar-chart { grid-column: span 2 !important; }
+    .reports-top-stats { grid-template-columns: repeat(3, 1fr) !important; }
+  }
+  @media (max-width: 768px) {
+    .reports-grid { grid-template-columns: 1fr !important; }
+    .reports-bar-chart { grid-column: span 1 !important; }
+    .reports-top-stats { grid-template-columns: 1fr !important; }
+    .bar-chart { height: 100px !important; }
+    .donut-wrap { flex-direction: column; align-items: flex-start; gap: 12px; }
+  }
+
+  /* Form grid responsive */
+  @media (max-width: 520px) {
+    .form-grid-2 { grid-template-columns: 1fr !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ========== LOGIN SCREEN ========== -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-icon">📋</div>
+      <div>
+        <span>TaskFlow</span>
+        <small>Sistem Manajemen Tugas</small>
+      </div>
+    </div>
+    <div class="login-title">Selamat Datang</div>
+    <div class="login-sub">Masuk ke akun Anda untuk melanjutkan</div>
+
+    <div class="demo-accounts">
+      <strong>🎯 Akun Demo — Klik untuk isi otomatis</strong>
+      <div class="demo-acc-item" onclick="fillDemo('admin@taskflow.id','admin123')">
+        <div>
+          <div style="font-weight:600;color:var(--text)">Budi Santoso</div>
+          <div>admin@taskflow.id</div>
+        </div>
+        <span class="role-badge badge-admin">Admin</span>
+      </div>
+      <div class="demo-acc-item" onclick="fillDemo('dewi@taskflow.id','manager123')">
+        <div>
+          <div style="font-weight:600;color:var(--text)">Dewi Rahayu</div>
+          <div>dewi@taskflow.id</div>
+        </div>
+        <span class="role-badge badge-manager">Manager</span>
+      </div>
+      <div class="demo-acc-item" onclick="fillDemo('andi@taskflow.id','member123')">
+        <div>
+          <div style="font-weight:600;color:var(--text)">Andi Pratama</div>
+          <div>andi@taskflow.id</div>
+        </div>
+        <span class="role-badge badge-member">Member</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="login-email" placeholder="email@taskflow.id">
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="login-pass" placeholder="Password">
+    </div>
+    <button class="btn btn-primary" onclick="doLogin()">Masuk ke TaskFlow</button>
+    <div class="login-err" id="login-err">⚠️ Email atau password salah</div>
+  </div>
+</div>
+
+<!-- ========== SIDEBAR OVERLAY ========== -->
+<div id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- ========== APP ========== -->
+<div id="app">
+  <!-- SIDEBAR -->
+  <nav id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">📋</div>
+      <div class="sidebar-brand">TaskFlow<small>v1.0 Demo</small></div>
+    </div>
+    <div class="sidebar-nav">
+      <div class="nav-section-title">Menu Utama</div>
+      <button class="nav-item active" onclick="showPage('dashboard',this)">
+        <span class="icon">🏠</span> Dashboard
+      </button>
+      <button class="nav-item" onclick="showPage('tasks',this)">
+        <span class="icon">✅</span> Tugas Saya
+        <span class="badge" id="task-badge">5</span>
+      </button>
+      <button class="nav-item" onclick="showPage('projects',this)">
+        <span class="icon">📁</span> Proyek
+      </button>
+      <button class="nav-item" onclick="showPage('team',this)">
+        <span class="icon">👥</span> Tim
+      </button>
+      <div class="nav-section-title">Laporan</div>
+      <button class="nav-item" onclick="showPage('reports',this)">
+        <span class="icon">📊</span> Laporan
+      </button>
+      <div class="nav-section-title">Pengaturan</div>
+      <button class="nav-item" id="admin-nav" onclick="showPage('admin',this)" style="display:none">
+        <span class="icon">⚙️</span> Admin Panel
+      </button>
+      <button class="nav-item" onclick="showPage('settings',this)">
+        <span class="icon">🔧</span> Pengaturan
+      </button>
+    </div>
+    <div class="sidebar-user">
+      <div class="user-avatar" id="sidebar-avatar"></div>
+      <div class="user-info">
+        <div class="name" id="sidebar-name"></div>
+        <div class="role" id="sidebar-role"></div>
+      </div>
+      <button class="sidebar-logout" onclick="doLogout()" title="Keluar">🚪</button>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <div id="main">
+    <!-- HEADER -->
+    <header id="header">
+      <div class="header-left">
+        <button class="hamburger" onclick="toggleSidebar()">☰</button>
+        <div>
+          <div class="page-title" id="header-title">Dashboard</div>
+          <div class="breadcrumb" id="header-breadcrumb">TaskFlow / Dashboard</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="header-btn" onclick="toggleNotif()" title="Notifikasi">
+          🔔<span class="notif-dot"></span>
+        </div>
+        <div class="header-btn" onclick="openTaskModal()" title="Tambah Tugas">➕</div>
+      </div>
+    </header>
+
+    <!-- NOTIFICATION PANEL -->
+    <div class="notif-panel" id="notif-panel">
+      <div class="notif-header">🔔 Notifikasi</div>
+      <div class="notif-item unread">
+        <span class="notif-icon">📌</span>
+        <div class="notif-text">
+          <div><strong>Tugas baru diberikan</strong> kepada Anda: Revisi Laporan Q4</div>
+          <div class="notif-time">2 menit lalu</div>
+        </div>
+      </div>
+      <div class="notif-item unread">
+        <span class="notif-icon">💬</span>
+        <div class="notif-text">
+          <div><strong>Dewi</strong> mengomentari tugas Anda</div>
+          <div class="notif-time">15 menit lalu</div>
+        </div>
+      </div>
+      <div class="notif-item unread">
+        <span class="notif-icon">⏰</span>
+        <div class="notif-text">
+          <div>Tugas <strong>Desain UI Homepage</strong> jatuh tempo besok</div>
+          <div class="notif-time">1 jam lalu</div>
+        </div>
+      </div>
+      <div class="notif-item">
+        <span class="notif-icon">✅</span>
+        <div class="notif-text">
+          <div><strong>Andi</strong> menyelesaikan tugas Testing API</div>
+          <div class="notif-time">3 jam lalu</div>
+        </div>
+      </div>
+      <div class="notif-item">
+        <span class="notif-icon">🎉</span>
+        <div class="notif-text">
+          <div>Proyek <strong>Website Company</strong> mencapai 80%</div>
+          <div class="notif-time">Kemarin</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div id="content">
+
+      <!-- ===== DASHBOARD ===== -->
+      <div class="page active" id="page-dashboard">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(79,125,255,0.12)">📋</div>
+            <div class="stat-info">
+              <div class="value" style="color:var(--accent)">24</div>
+              <div class="label">Total Tugas</div>
+              <div class="change change-up">↑ 3 minggu ini</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(79,125,255,0.12)">🔄</div>
+            <div class="stat-info">
+              <div class="value" style="color:var(--accent)">8</div>
+              <div class="label">Sedang Berjalan</div>
+              <div class="change change-up">↑ 2 dari kemarin</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(79,221,143,0.12)">✅</div>
+            <div class="stat-info">
+              <div class="value" style="color:var(--success)">13</div>
+              <div class="label">Selesai</div>
+              <div class="change change-up">↑ 5 bulan ini</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:rgba(255,79,106,0.12)">⚠️</div>
+            <div class="stat-info">
+              <div class="value" style="color:var(--danger)">3</div>
+              <div class="label">Terlambat</div>
+              <div class="change change-down">↓ perlu perhatian</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="section-card">
+            <div class="section-header">
+              <h3>Tugas Aktif</h3>
+              <a onclick="showPage('tasks',document.querySelector('[onclick*=\"tasks\"]'))">Lihat Semua →</a>
+            </div>
+            <div id="dash-tasks"></div>
+          </div>
+          <div>
+            <div class="section-card" style="margin-bottom:16px">
+              <div class="section-header"><h3>Progress Proyek</h3></div>
+              <div style="margin-bottom:14px">
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+                  <span>Website Company</span><span style="color:var(--accent);font-weight:700">80%</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width:80%"></div></div>
+              </div>
+              <div style="margin-bottom:14px">
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+                  <span>Aplikasi Mobile</span><span style="color:var(--accent2);font-weight:700">55%</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width:55%;background:linear-gradient(90deg,var(--accent2),#c07bff)"></div></div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+                  <span>Sistem ERP</span><span style="color:var(--accent3);font-weight:700">30%</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width:30%;background:linear-gradient(90deg,var(--accent3),#00c49f)"></div></div>
+              </div>
+            </div>
+            <div class="section-card">
+              <div class="section-header"><h3>Aktivitas Terbaru</h3></div>
+              <div class="activity-item">
+                <div class="activity-dot"></div>
+                <div><span>Andi</span> menyelesaikan tugas Testing API</div>
+                <div class="activity-time">10m</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot" style="background:var(--accent2)"></div>
+                <div><span>Dewi</span> membuat tugas baru di Proyek A</div>
+                <div class="activity-time">1j</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot" style="background:var(--warn)"></div>
+                <div><span>Budi</span> mengubah status: In Progress</div>
+                <div class="activity-time">2j</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot" style="background:var(--success)"></div>
+                <div><span>Sari</span> upload file di Website Co.</div>
+                <div class="activity-time">5j</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot" style="background:var(--danger)"></div>
+                <div><span>Sistem</span> mendeteksi 3 tugas terlambat</div>
+                <div class="activity-time">1h</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== TASKS ===== -->
+      <div class="page" id="page-tasks">
+        <div class="toolbar">
+          <input class="search-input" placeholder="🔍 Cari tugas..." oninput="filterTasks(this.value)">
+          <select class="filter-sel" onchange="filterByStatus(this.value)">
+            <option value="">Semua Status</option>
+            <option value="todo">To Do</option>
+            <option value="inprogress">In Progress</option>
+            <option value="review">Review</option>
+            <option value="done">Selesai</option>
+          </select>
+          <select class="filter-sel" onchange="filterByPriority(this.value)">
+            <option value="">Semua Prioritas</option>
+            <option value="high">Tinggi</option>
+            <option value="medium">Sedang</option>
+            <option value="low">Rendah</option>
+          </select>
+          <div class="view-toggle">
+            <button class="view-btn active" id="btn-list" onclick="switchView('list')">☰</button>
+            <button class="view-btn" id="btn-kanban" onclick="switchView('kanban')">⊞</button>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openTaskModal()">+ Tugas Baru</button>
+        </div>
+
+        <!-- List View -->
+        <div id="list-view" class="section-card" style="overflow:hidden">
+          <table class="task-table" id="task-table">
+            <thead>
+              <tr>
+                <th style="width:30px"></th>
+                <th>Judul Tugas</th>
+                <th>Proyek</th>
+                <th>Status</th>
+                <th>Prioritas</th>
+                <th>Penanggung Jawab</th>
+                <th>Tenggat</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="task-tbody"></tbody>
+          </table>
+        </div>
+
+        <!-- Kanban View -->
+        <div id="kanban-view" style="display:none">
+          <div class="kanban-board">
+            <div class="kanban-col">
+              <div class="kanban-col-header">
+                <span class="kanban-col-title" style="color:var(--text2)">📋 To Do</span>
+                <span class="kanban-count" id="k-count-todo">0</span>
+              </div>
+              <div id="k-todo"></div>
+            </div>
+            <div class="kanban-col">
+              <div class="kanban-col-header">
+                <span class="kanban-col-title" style="color:var(--accent)">🔄 In Progress</span>
+                <span class="kanban-count" id="k-count-inprogress">0</span>
+              </div>
+              <div id="k-inprogress"></div>
+            </div>
+            <div class="kanban-col">
+              <div class="kanban-col-header">
+                <span class="kanban-col-title" style="color:var(--warn)">👀 Review</span>
+                <span class="kanban-count" id="k-count-review">0</span>
+              </div>
+              <div id="k-review"></div>
+            </div>
+            <div class="kanban-col">
+              <div class="kanban-col-header">
+                <span class="kanban-col-title" style="color:var(--success)">✅ Selesai</span>
+                <span class="kanban-count" id="k-count-done">0</span>
+              </div>
+              <div id="k-done"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== PROJECTS ===== -->
+      <div class="page" id="page-projects">
+        <div class="toolbar" style="margin-bottom:20px">
+          <input class="search-input" placeholder="🔍 Cari proyek...">
+          <button class="btn btn-primary btn-sm" id="btn-new-project" onclick="openProjectModal()">+ Proyek Baru</button>
+        </div>
+        <div class="projects-grid" id="projects-grid"></div>
+      </div>
+
+      <!-- ===== TEAM ===== -->
+      <div class="page" id="page-team">
+        <div class="toolbar" style="margin-bottom:20px">
+          <input class="search-input" placeholder="🔍 Cari anggota...">
+          <button class="btn btn-primary btn-sm" id="btn-invite" style="display:none">+ Undang Anggota</button>
+        </div>
+        <div class="team-grid" id="team-grid"></div>
+      </div>
+
+      <!-- ===== REPORTS ===== -->
+      <div class="page" id="page-reports">
+        <div class="toolbar" style="margin-bottom:20px">
+          <select class="filter-sel">
+            <option>Bulan Ini</option>
+            <option>Minggu Ini</option>
+            <option>Kuartal Ini</option>
+            <option>Tahun Ini</option>
+          </select>
+          <select class="filter-sel">
+            <option>Semua Proyek</option>
+            <option>Website Company</option>
+            <option>Aplikasi Mobile</option>
+            <option>Sistem ERP</option>
+          </select>
+          <button class="btn btn-ghost btn-sm">⬇️ Export PDF</button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px" class="reports-top-stats">
+          <div class="section-card" style="text-align:center">
+            <div style="font-size:32px;font-weight:800;color:var(--success);font-family:var(--mono)">87%</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:4px">Tingkat Penyelesaian</div>
+          </div>
+          <div class="section-card" style="text-align:center">
+            <div style="font-size:32px;font-weight:800;color:var(--accent);font-family:var(--mono)">4.2</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:4px">Hari Rata-rata Selesai</div>
+          </div>
+          <div class="section-card" style="text-align:center">
+            <div style="font-size:32px;font-weight:800;color:var(--warn);font-family:var(--mono)">3</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:4px">Tugas Overdue</div>
+          </div>
+        </div>
+
+        <div class="reports-grid">
+          <div class="chart-card reports-bar-chart" style="grid-column:span 2">
+            <div class="chart-title">Tugas Diselesaikan per Minggu</div>
+            <div class="chart-sub">4 minggu terakhir</div>
+            <div class="bar-chart">
+              <div class="bar-item">
+                <div class="bar" style="height:40%;background:linear-gradient(180deg,var(--accent),var(--accent2))"></div>
+                <div class="bar-label">M1</div>
+              </div>
+              <div class="bar-item">
+                <div class="bar" style="height:65%;background:linear-gradient(180deg,var(--accent),var(--accent2))"></div>
+                <div class="bar-label">M2</div>
+              </div>
+              <div class="bar-item">
+                <div class="bar" style="height:50%;background:linear-gradient(180deg,var(--accent),var(--accent2))"></div>
+                <div class="bar-label">M3</div>
+              </div>
+              <div class="bar-item">
+                <div class="bar" style="height:80%;background:linear-gradient(180deg,var(--accent),var(--accent2))"></div>
+                <div class="bar-label">M4</div>
+              </div>
+              <div class="bar-item">
+                <div class="bar" style="height:70%;background:linear-gradient(180deg,var(--accent),var(--accent2))"></div>
+                <div class="bar-label">M5</div>
+              </div>
+              <div class="bar-item">
+                <div class="bar" style="height:90%;background:linear-gradient(180deg,var(--accent),var(--accent2))"></div>
+                <div class="bar-label">M6</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-title">Distribusi Status</div>
+            <div class="chart-sub">Semua tugas aktif</div>
+            <div class="donut-wrap">
+              <svg class="donut-svg" width="90" height="90" viewBox="0 0 90 90">
+                <circle cx="45" cy="45" r="35" fill="none" stroke="var(--bg2)" stroke-width="12"/>
+                <circle cx="45" cy="45" r="35" fill="none" stroke="var(--accent)" stroke-width="12"
+                  stroke-dasharray="88 132" stroke-dashoffset="0" transform="rotate(-90 45 45)"/>
+                <circle cx="45" cy="45" r="35" fill="none" stroke="var(--warn)" stroke-width="12"
+                  stroke-dasharray="40 180" stroke-dashoffset="-88" transform="rotate(-90 45 45)"/>
+                <circle cx="45" cy="45" r="35" fill="none" stroke="var(--success)" stroke-width="12"
+                  stroke-dasharray="52 168" stroke-dashoffset="-128" transform="rotate(-90 45 45)"/>
+              </svg>
+              <div class="donut-legend">
+                <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>In Progress<span class="legend-val">8</span></div>
+                <div class="legend-item"><div class="legend-dot" style="background:var(--warn)"></div>Review<span class="legend-val">4</span></div>
+                <div class="legend-item"><div class="legend-dot" style="background:var(--success)"></div>Selesai<span class="legend-val">13</span></div>
+                <div class="legend-item"><div class="legend-dot" style="background:var(--text3)"></div>To Do<span class="legend-val">5</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-title">Performa Tim</div>
+            <div class="chart-sub">Tugas diselesaikan per anggota</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+                  <span>Budi Santoso</span><span style="color:var(--accent);font-family:var(--mono)">12 tugas</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width:80%"></div></div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+                  <span>Dewi Rahayu</span><span style="color:var(--accent2);font-family:var(--mono)">9 tugas</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width:60%;background:linear-gradient(90deg,var(--accent2),#c07bff)"></div></div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+                  <span>Andi Pratama</span><span style="color:var(--accent3);font-family:var(--mono)">7 tugas</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width:47%;background:linear-gradient(90deg,var(--accent3),#00c49f)"></div></div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+                  <span>Sari Wulandari</span><span style="color:var(--warn);font-family:var(--mono)">5 tugas</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width:33%;background:linear-gradient(90deg,var(--warn),#ffd080)"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-title">Tugas per Prioritas</div>
+            <div class="chart-sub">Bulan ini</div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+                  <span style="color:var(--danger)">🔴 Tinggi</span><span>7</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width:58%;background:linear-gradient(90deg,var(--danger),#ff7b93)"></div></div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+                  <span style="color:var(--warn)">🟡 Sedang</span><span>10</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width:83%;background:linear-gradient(90deg,var(--warn),#ffd080)"></div></div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+                  <span style="color:var(--success)">🟢 Rendah</span><span>7</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" style="width:58%;background:linear-gradient(90deg,var(--success),#80ffbd)"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== ADMIN ===== -->
+      <div class="page" id="page-admin">
+        <div id="admin-content"></div>
+      </div>
+
+      <!-- ===== SETTINGS ===== -->
+      <div class="page" id="page-settings">
+        <div class="settings-layout">
+          <div class="settings-nav">
+            <div class="settings-nav-item active" onclick="switchSettings('profile',this)">👤 Profil</div>
+            <div class="settings-nav-item" onclick="switchSettings('notif',this)">🔔 Notifikasi</div>
+            <div class="settings-nav-item" onclick="switchSettings('security',this)">🔒 Keamanan</div>
+            <div class="settings-nav-item" onclick="switchSettings('appearance',this)">🎨 Tampilan</div>
+          </div>
+          <div>
+            <!-- Profile -->
+            <div class="settings-panel" id="s-profile">
+              <h3>Profil Saya</h3>
+              <p>Kelola informasi profil Anda</p>
+              <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px">
+                <div class="user-avatar" id="settings-avatar" style="width:64px;height:64px;font-size:24px;border-radius:50%"></div>
+                <button class="btn btn-ghost btn-sm">📷 Ganti Foto</button>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px" class="form-grid-2">
+                <div class="form-group"><label>Nama Lengkap</label><input id="s-name" type="text"></div>
+                <div class="form-group"><label>Email</label><input id="s-email" type="email"></div>
+                <div class="form-group"><label>Jabatan</label><input type="text" placeholder="e.g. Software Developer"></div>
+                <div class="form-group"><label>Departemen</label><input type="text" placeholder="e.g. Engineering"></div>
+              </div>
+              <div class="form-group"><label>Bio</label><textarea placeholder="Ceritakan tentang diri Anda..."></textarea></div>
+              <button class="btn btn-primary" style="width:auto">💾 Simpan Perubahan</button>
+            </div>
+            <!-- Notification -->
+            <div class="settings-panel" id="s-notif" style="display:none">
+              <h3>Pengaturan Notifikasi</h3>
+              <p>Atur notifikasi yang ingin Anda terima</p>
+              <div class="setting-row">
+                <div class="setting-info"><label>Tugas Baru</label><small>Notifikasi saat ada tugas baru untuk Anda</small></div>
+                <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info"><label>Deadline Mendekat</label><small>Pengingat 1 hari sebelum tenggat</small></div>
+                <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info"><label>Komentar & Balasan</label><small>Notifikasi saat ada komentar baru</small></div>
+                <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info"><label>Update Proyek</label><small>Perubahan status proyek</small></div>
+                <div class="toggle" onclick="this.classList.toggle('on')"></div>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info"><label>Email Digest Harian</label><small>Ringkasan harian via email</small></div>
+                <div class="toggle" onclick="this.classList.toggle('on')"></div>
+              </div>
+            </div>
+            <!-- Security -->
+            <div class="settings-panel" id="s-security" style="display:none">
+              <h3>Keamanan Akun</h3>
+              <p>Kelola password dan keamanan akun Anda</p>
+              <div class="form-group"><label>Password Lama</label><input type="password" placeholder="••••••••"></div>
+              <div class="form-group"><label>Password Baru</label><input type="password" placeholder="••••••••"></div>
+              <div class="form-group"><label>Konfirmasi Password</label><input type="password" placeholder="••••••••"></div>
+              <button class="btn btn-primary" style="width:auto;margin-bottom:24px">🔒 Update Password</button>
+              <hr style="border:none;border-top:1px solid var(--border);margin-bottom:20px">
+              <h4 style="margin-bottom:14px;font-size:14px">Sesi Aktif</h4>
+              <div class="setting-row">
+                <div class="setting-info"><label>Chrome · Surabaya, ID</label><small>Saat ini — Aktif sekarang</small></div>
+                <span style="font-size:11px;color:var(--success)">● Aktif</span>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info"><label>Firefox · Jakarta, ID</label><small>2 hari lalu</small></div>
+                <button class="btn btn-danger btn-sm">Hapus</button>
+              </div>
+            </div>
+            <!-- Appearance -->
+            <div class="settings-panel" id="s-appearance" style="display:none">
+              <h3>Tampilan</h3>
+              <p>Sesuaikan tampilan aplikasi</p>
+              <div class="setting-row">
+                <div class="setting-info"><label>Tema Gelap</label><small>Gunakan tema gelap (aktif saat ini)</small></div>
+                <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info"><label>Animasi</label><small>Aktifkan animasi antarmuka</small></div>
+                <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info"><label>Sidebar Compact</label><small>Tampilkan sidebar lebih kecil</small></div>
+                <div class="toggle" onclick="this.classList.toggle('on')"></div>
+              </div>
+              <div class="form-group" style="margin-top:16px"><label>Bahasa</label>
+                <select><option>Bahasa Indonesia</option><option>English</option></select>
+              </div>
+              <div class="form-group"><label>Zona Waktu</label>
+                <select><option>WIB (UTC+7)</option><option>WITA (UTC+8)</option><option>WIT (UTC+9)</option></select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ========== TASK MODAL ========== -->
+<div class="modal-backdrop" id="task-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="task-modal-title">➕ Tugas Baru</h3>
+      <button class="modal-close" onclick="closeModal('task-modal')">✕</button>
+    </div>
+    <div class="form-group"><label>Judul Tugas *</label><input type="text" id="m-title" placeholder="Masukkan judul tugas..."></div>
+    <div class="form-group"><label>Deskripsi</label><textarea id="m-desc" placeholder="Detail tugas..."></textarea></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px" class="form-grid-2">
+      <div class="form-group"><label>Proyek *</label>
+        <select id="m-project">
+          <option value="Website Company">Website Company</option>
+          <option value="Aplikasi Mobile">Aplikasi Mobile</option>
+          <option value="Sistem ERP">Sistem ERP</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Status</label>
+        <select id="m-status">
+          <option value="todo">To Do</option>
+          <option value="inprogress">In Progress</option>
+          <option value="review">Review</option>
+          <option value="done">Selesai</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Prioritas</label>
+        <select id="m-priority">
+          <option value="high">🔴 Tinggi</option>
+          <option value="medium">🟡 Sedang</option>
+          <option value="low">🟢 Rendah</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Tenggat Waktu</label>
+        <input type="date" id="m-due">
+      </div>
+    </div>
+    <div class="form-group"><label>Penanggung Jawab</label>
+      <select id="m-assignee">
+        <option value="BS">Budi Santoso</option>
+        <option value="DR">Dewi Rahayu</option>
+        <option value="AP">Andi Pratama</option>
+        <option value="SW">Sari Wulandari</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('task-modal')">Batal</button>
+      <button class="btn btn-primary" style="width:auto" onclick="saveTask()">💾 Simpan Tugas</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PROJECT MODAL ========== -->
+<div class="modal-backdrop" id="project-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>📁 Proyek Baru</h3>
+      <button class="modal-close" onclick="closeModal('project-modal')">✕</button>
+    </div>
+    <div class="form-group"><label>Nama Proyek *</label><input type="text" id="pm-name" placeholder="Nama proyek..."></div>
+    <div class="form-group"><label>Deskripsi</label><textarea id="pm-desc" placeholder="Deskripsi proyek..."></textarea></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px" class="form-grid-2">
+      <div class="form-group"><label>Tanggal Mulai</label><input type="date" id="pm-start"></div>
+      <div class="form-group"><label>Target Selesai</label><input type="date" id="pm-end"></div>
+    </div>
+    <div class="form-group"><label>Manager Proyek</label>
+      <select><option>Dewi Rahayu</option><option>Budi Santoso</option></select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('project-modal')">Batal</button>
+      <button class="btn btn-primary" style="width:auto" onclick="saveProject()">💾 Buat Proyek</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SCRIPT ========== -->
+<script>
+// ======================== DATA ========================
+const USERS = {
+  'admin@taskflow.id': { pass: 'admin123', name: 'Budi Santoso', role: 'admin', init: 'BS', color: '#4f7dff' },
+  'dewi@taskflow.id':  { pass: 'manager123', name: 'Dewi Rahayu', role: 'manager', init: 'DR', color: '#7c5cfc' },
+  'andi@taskflow.id':  { pass: 'member123', name: 'Andi Pratama', role: 'member', init: 'AP', color: '#00d4aa' },
+};
+const ROLES = { admin: 'Administrator', manager: 'Manager', member: 'Anggota Tim' };
+const ROLE_COLORS = { admin: 'badge-admin', manager: 'badge-manager', member: 'badge-member' };
+
+let currentUser = null;
+let tasks = [
+  { id:1, title:'Desain Halaman Beranda', project:'Website Company', status:'inprogress', priority:'high', assignee:'DR', due:'2025-06-15', desc:'Buat mockup untuk halaman utama.' },
+  { id:2, title:'Integrasi API Pembayaran', project:'Aplikasi Mobile', status:'todo', priority:'high', assignee:'AP', due:'2025-06-20', desc:'Integrasi Midtrans payment gateway.' },
+  { id:3, title:'Testing Modul Login', project:'Website Company', status:'done', priority:'medium', assignee:'BS', due:'2025-06-10', desc:'Unit test dan integration test.' },
+  { id:4, title:'Laporan Keuangan Q2', project:'Sistem ERP', status:'review', priority:'medium', assignee:'DR', due:'2025-06-18', desc:'Generate laporan bulanan.' },
+  { id:5, title:'Optimasi Database Query', project:'Sistem ERP', status:'inprogress', priority:'high', assignee:'AP', due:'2025-06-12', desc:'Index dan query optimization.' },
+  { id:6, title:'Update Konten Blog', project:'Website Company', status:'todo', priority:'low', assignee:'SW', due:'2025-06-25', desc:'Update 5 artikel terbaru.' },
+  { id:7, title:'Setup CI/CD Pipeline', project:'Aplikasi Mobile', status:'inprogress', priority:'medium', assignee:'AP', due:'2025-06-14', desc:'GitHub Actions workflow.' },
+  { id:8, title:'Revisi Laporan Q4', project:'Sistem ERP', status:'todo', priority:'high', assignee:'BS', due:'2025-06-11', desc:'Koreksi data keuangan.' },
+  { id:9, title:'Desain Icon App', project:'Aplikasi Mobile', status:'done', priority:'low', assignee:'DR', due:'2025-06-08', desc:'Buat icon 1024x1024.' },
+  { id:10, title:'Dokumentasi API', project:'Website Company', status:'review', priority:'medium', assignee:'BS', due:'2025-06-16', desc:'Swagger documentation.' },
+];
+let projects = [
+  { id:1, name:'Website Company', desc:'Redesign dan pengembangan website perusahaan dengan teknologi terkini dan UX yang modern.', icon:'🌐', color:'rgba(79,125,255,0.12)', tasks:12, done:9, members:['BS','DR','AP','SW'] },
+  { id:2, name:'Aplikasi Mobile', desc:'Pengembangan aplikasi mobile cross-platform untuk iOS dan Android menggunakan React Native.', icon:'📱', color:'rgba(124,92,252,0.12)', tasks:8, done:4, members:['AP','DR','SW'] },
+  { id:3, name:'Sistem ERP', desc:'Implementasi sistem Enterprise Resource Planning untuk manajemen SDM dan keuangan perusahaan.', icon:'⚙️', color:'rgba(0,212,170,0.12)', tasks:15, done:5, members:['BS','DR','AP','SW'] },
+];
+let teamMembers = [
+  { name:'Budi Santoso', email:'admin@taskflow.id', role:'admin', init:'BS', color:'#4f7dff', tasks:12, done:8, dept:'Management' },
+  { name:'Dewi Rahayu', email:'dewi@taskflow.id', role:'manager', init:'DR', color:'#7c5cfc', tasks:9, done:7, dept:'Design' },
+  { name:'Andi Pratama', email:'andi@taskflow.id', role:'member', init:'AP', color:'#00d4aa', tasks:7, done:5, dept:'Engineering' },
+  { name:'Sari Wulandari', email:'sari@taskflow.id', role:'member', init:'SW', color:'#ffb84f', tasks:5, done:3, dept:'Content' },
+];
+const ASSIGNEE_MAP = {
+  BS: { name:'Budi Santoso', color:'#4f7dff' },
+  DR: { name:'Dewi Rahayu', color:'#7c5cfc' },
+  AP: { name:'Andi Pratama', color:'#00d4aa' },
+  SW: { name:'Sari Wulandari', color:'#ffb84f' },
+};
+let taskIdCounter = 11;
+let projectIdCounter = 4;
+
+// ======================== AUTH ========================
+function fillDemo(email, pass) {
+  document.getElementById('login-email').value = email;
+  document.getElementById('login-pass').value = pass;
+}
+function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const user = USERS[email];
+  if (!user || user.pass !== pass) {
+    document.getElementById('login-err').style.display = 'block';
+    return;
+  }
+  currentUser = { ...user, email };
+  document.getElementById('login-err').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  initApp();
+}
+function doLogout() {
+  currentUser = null;
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-pass').value = '';
+}
+document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+// ======================== INIT ========================
+function initApp() {
+  // Sidebar user info
+  const av = document.getElementById('sidebar-avatar');
+  av.textContent = currentUser.init;
+  av.style.background = currentUser.color + '22';
+  av.style.color = currentUser.color;
+  document.getElementById('sidebar-name').textContent = currentUser.name;
+  document.getElementById('sidebar-role').textContent = ROLES[currentUser.role];
+
+  // Role-based UI
+  if (currentUser.role === 'admin') {
+    document.getElementById('admin-nav').style.display = 'flex';
+    document.getElementById('btn-invite').style.display = 'inline-flex';
+  }
+  if (currentUser.role === 'admin' || currentUser.role === 'manager') {
+    document.getElementById('btn-new-project').style.display = 'inline-flex';
+  } else {
+    document.getElementById('btn-new-project').style.display = 'none';
+  }
+
+  // Settings profile
+  document.getElementById('s-name').value = currentUser.name;
+  document.getElementById('s-email').value = currentUser.email;
+  const sav = document.getElementById('settings-avatar');
+  sav.textContent = currentUser.init;
+  sav.style.background = currentUser.color + '22';
+  sav.style.color = currentUser.color;
+
+  renderDashboardTasks();
+  renderTaskTable();
+  renderKanban();
+  renderProjects();
+  renderTeam();
+  updateTaskBadge();
+}
+
+// ======================== NAVIGATION ========================
+function showPage(page, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  if (btn) btn.classList.add('active');
+  const titles = { dashboard:'Dashboard', tasks:'Tugas Saya', projects:'Proyek', team:'Tim', reports:'Laporan', admin:'Admin Panel', settings:'Pengaturan' };
+  document.getElementById('header-title').textContent = titles[page] || page;
+  document.getElementById('header-breadcrumb').textContent = 'TaskFlow / ' + (titles[page] || page);
+  if (page === 'admin') renderAdmin();
+  closeSidebar();
+  closeNotif();
+}
+
+// ======================== SIDEBAR MOBILE ========================
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebar-overlay').classList.toggle('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+}
+
+// ======================== NOTIFICATIONS ========================
+function toggleNotif() {
+  document.getElementById('notif-panel').classList.toggle('open');
+}
+function closeNotif() {
+  document.getElementById('notif-panel').classList.remove('open');
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('#notif-panel') && !e.target.closest('.header-btn')) closeNotif();
+});
+
+// ======================== HELPERS ========================
+function statusBadge(s) {
+  const map = { todo:'s-todo', inprogress:'s-inprogress', review:'s-review', done:'s-done' };
+  const label = { todo:'To Do', inprogress:'In Progress', review:'Review', done:'Selesai' };
+  return `<span class="status-badge ${map[s]}">${label[s]||s}</span>`;
+}
+function priorityBadge(p) {
+  const map = { high:'pr-high', medium:'pr-medium', low:'pr-low' };
+  const label = { high:'🔴 Tinggi', medium:'🟡 Sedang', low:'🟢 Rendah' };
+  return `<span class="priority-badge ${map[p]}">${label[p]||p}</span>`;
+}
+function avatarDiv(init, color, size=26) {
+  return `<div class="task-assignee" style="background:${color}22;color:${color};width:${size}px;height:${size}px;font-size:${Math.floor(size*0.38)}px">${init}</div>`;
+}
+function fmtDate(d) {
+  if (!d) return '—';
+  const dt = new Date(d);
+  return dt.toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' });
+}
+function updateTaskBadge() {
+  const active = tasks.filter(t => t.status !== 'done').length;
+  document.getElementById('task-badge').textContent = active;
+}
+
+// ======================== DASHBOARD ========================
+function renderDashboardTasks() {
+  const el = document.getElementById('dash-tasks');
+  const show = tasks.filter(t => t.status !== 'done').slice(0, 6);
+  el.innerHTML = show.map(t => {
+    const a = ASSIGNEE_MAP[t.assignee] || { name: t.assignee, color: '#888' };
+    return `<div class="task-row" onclick="openEditTask(${t.id})">
+      <div class="priority-dot p-${t.priority}"></div>
+      <div class="task-name">${t.title}</div>
+      ${statusBadge(t.status)}
+      ${avatarDiv(t.assignee, a.color)}
+      <div class="task-due">${fmtDate(t.due)}</div>
+    </div>`;
+  }).join('');
+}
+
+// ======================== TASKS TABLE ========================
+let filteredTasks = [...tasks];
+function renderTaskTable() {
+  const tbody = document.getElementById('task-tbody');
+  tbody.innerHTML = filteredTasks.map(t => {
+    const a = ASSIGNEE_MAP[t.assignee] || { name: t.assignee, color: '#888' };
+    const canEdit = currentUser.role === 'admin' || currentUser.role === 'manager' || currentUser.email === 'andi@taskflow.id';
+    return `<tr>
+      <td><div class="task-check ${t.status==='done'?'done':''}" onclick="toggleTask(${t.id})">${t.status==='done'?'✓':''}</div></td>
+      <td class="task-title-cell" style="${t.status==='done'?'text-decoration:line-through;color:var(--text3)':''}">${t.title}<br><small style="color:var(--text3)">${t.desc||''}</small></td>
+      <td><span style="font-size:12px;color:var(--text2)">${t.project}</span></td>
+      <td>${statusBadge(t.status)}</td>
+      <td>${priorityBadge(t.priority)}</td>
+      <td><div style="display:flex;align-items:center;gap:6px">${avatarDiv(t.assignee, a.color)}<span style="font-size:12px">${a.name}</span></div></td>
+      <td style="font-family:var(--mono);font-size:12px">${fmtDate(t.due)}</td>
+      <td>
+        <div style="display:flex;gap:4px">
+          ${canEdit ? `<button class="btn btn-ghost btn-sm" onclick="openEditTask(${t.id})">✏️</button>` : ''}
+          ${currentUser.role==='admin' ? `<button class="btn btn-danger btn-sm" onclick="deleteTask(${t.id})">🗑️</button>` : ''}
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function filterTasks(val) {
+  filteredTasks = tasks.filter(t => t.title.toLowerCase().includes(val.toLowerCase()) || t.project.toLowerCase().includes(val.toLowerCase()));
+  renderTaskTable();
+  renderKanban();
+}
+function filterByStatus(val) {
+  filteredTasks = val ? tasks.filter(t => t.status === val) : [...tasks];
+  renderTaskTable();
+  renderKanban();
+}
+function filterByPriority(val) {
+  filteredTasks = val ? tasks.filter(t => t.priority === val) : [...tasks];
+  renderTaskTable();
+  renderKanban();
+}
+
+function toggleTask(id) {
+  const t = tasks.find(t => t.id === id);
+  if (t) { t.status = t.status === 'done' ? 'todo' : 'done'; filteredTasks = [...tasks]; renderTaskTable(); renderKanban(); renderDashboardTasks(); updateTaskBadge(); }
+}
+function deleteTask(id) {
+  if (confirm('Hapus tugas ini?')) {
+    tasks = tasks.filter(t => t.id !== id);
+    filteredTasks = [...tasks];
+    renderTaskTable(); renderKanban(); renderDashboardTasks(); updateTaskBadge();
+  }
+}
+
+// ======================== KANBAN ========================
+function switchView(v) {
+  document.getElementById('list-view').style.display = v === 'list' ? 'block' : 'none';
+  document.getElementById('kanban-view').style.display = v === 'kanban' ? 'block' : 'none';
+  document.getElementById('btn-list').classList.toggle('active', v === 'list');
+  document.getElementById('btn-kanban').classList.toggle('active', v === 'kanban');
+}
+function renderKanban() {
+  const cols = { todo: [], inprogress: [], review: [], done: [] };
+  filteredTasks.forEach(t => { if (cols[t.status]) cols[t.status].push(t); });
+  for (const [status, list] of Object.entries(cols)) {
+    document.getElementById('k-' + status).innerHTML = list.map(t => {
+      const a = ASSIGNEE_MAP[t.assignee] || { color: '#888' };
+      return `<div class="kanban-card" onclick="openEditTask(${t.id})">
+        <div class="card-title">${t.title}</div>
+        <div style="font-size:11px;color:var(--text3);margin-bottom:8px">${t.project}</div>
+        <div class="card-meta">
+          ${priorityBadge(t.priority)}
+          <div style="display:flex;align-items:center;gap:6px">
+            ${avatarDiv(t.assignee, a.color)}
+            <span class="card-due">${fmtDate(t.due)}</span>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+    document.getElementById('k-count-' + status).textContent = list.length;
+  }
+}
+
+// ======================== MODALS ========================
+let editingTaskId = null;
+function openTaskModal() {
+  editingTaskId = null;
+  document.getElementById('task-modal-title').textContent = '➕ Tugas Baru';
+  document.getElementById('m-title').value = '';
+  document.getElementById('m-desc').value = '';
+  document.getElementById('m-status').value = 'todo';
+  document.getElementById('m-priority').value = 'medium';
+  document.getElementById('m-due').value = '';
+  document.getElementById('task-modal').classList.add('open');
+}
+function openEditTask(id) {
+  const t = tasks.find(t => t.id === id);
+  if (!t) return;
+  editingTaskId = id;
+  document.getElementById('task-modal-title').textContent = '✏️ Edit Tugas';
+  document.getElementById('m-title').value = t.title;
+  document.getElementById('m-desc').value = t.desc || '';
+  document.getElementById('m-project').value = t.project;
+  document.getElementById('m-status').value = t.status;
+  document.getElementById('m-priority').value = t.priority;
+  document.getElementById('m-due').value = t.due || '';
+  document.getElementById('m-assignee').value = t.assignee;
+  document.getElementById('task-modal').classList.add('open');
+}
+function saveTask() {
+  const title = document.getElementById('m-title').value.trim();
+  if (!title) { alert('Judul tugas wajib diisi!'); return; }
+  const data = {
+    title, desc: document.getElementById('m-desc').value,
+    project: document.getElementById('m-project').value,
+    status: document.getElementById('m-status').value,
+    priority: document.getElementById('m-priority').value,
+    due: document.getElementById('m-due').value,
+    assignee: document.getElementById('m-assignee').value,
+  };
+  if (editingTaskId) {
+    const idx = tasks.findIndex(t => t.id === editingTaskId);
+    if (idx > -1) tasks[idx] = { ...tasks[idx], ...data };
+  } else {
+    tasks.push({ id: taskIdCounter++, ...data });
+  }
+  filteredTasks = [...tasks];
+  renderTaskTable(); renderKanban(); renderDashboardTasks(); updateTaskBadge();
+  closeModal('task-modal');
+}
+function openProjectModal() {
+  document.getElementById('project-modal').classList.add('open');
+}
+function saveProject() {
+  const name = document.getElementById('pm-name').value.trim();
+  if (!name) { alert('Nama proyek wajib diisi!'); return; }
+  projects.push({
+    id: projectIdCounter++, name, desc: document.getElementById('pm-desc').value || 'Proyek baru',
+    icon: '📌', color: 'rgba(79,125,255,0.12)', tasks: 0, done: 0, members: ['BS']
+  });
+  renderProjects();
+  closeModal('project-modal');
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+// Close modal on backdrop click
+document.querySelectorAll('.modal-backdrop').forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('open'); });
+});
+
+// ======================== PROJECTS ========================
+function renderProjects() {
+  const el = document.getElementById('projects-grid');
+  el.innerHTML = projects.map(p => {
+    const pct = p.tasks > 0 ? Math.round((p.done / p.tasks) * 100) : 0;
+    const memberAv = p.members.slice(0,4).map(m => {
+      const info = ASSIGNEE_MAP[m] || { color: '#888' };
+      return `<div class="member-avatar" style="background:${info.color}22;color:${info.color}">${m}</div>`;
+    }).join('');
+    const extra = p.members.length > 4 ? `<div class="member-avatar member-more">+${p.members.length-4}</div>` : '';
+    return `<div class="project-card">
+      <div class="project-header">
+        <div class="project-icon" style="background:${p.color}">${p.icon}</div>
+        ${currentUser.role==='admin'||currentUser.role==='manager' ? `<button class="btn btn-ghost btn-sm" onclick="event.stopPropagation()">⋯</button>` : ''}
+      </div>
+      <div class="project-title">${p.name}</div>
+      <div class="project-desc">${p.desc}</div>
+      <div class="project-stats">
+        <div class="project-stat"><strong>${p.tasks}</strong>Total Tugas</div>
+        <div class="project-stat"><strong>${p.done}</strong>Selesai</div>
+        <div class="project-stat"><strong>${pct}%</strong>Progress</div>
+      </div>
+      <div class="progress-bar" style="margin-bottom:12px"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div class="project-members">${memberAv}${extra}</div>
+        <span style="font-size:11px;color:var(--text3)">Tim: ${p.members.length} orang</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ======================== TEAM ========================
+function renderTeam() {
+  const el = document.getElementById('team-grid');
+  el.innerHTML = teamMembers.map(m => `
+    <div class="team-card">
+      <div class="team-avatar" style="background:${m.color}22;color:${m.color}">${m.init}</div>
+      <div class="team-name">${m.name}</div>
+      <div class="team-email">${m.email}</div>
+      <span class="role-badge ${ROLE_COLORS[m.role]}">${ROLES[m.role]}</span>
+      <div style="margin-top:8px;font-size:11px;color:var(--text3)">Departemen: ${m.dept}</div>
+      <div class="team-stats">
+        <div class="team-stat"><strong>${m.tasks}</strong>Tugas</div>
+        <div class="team-stat"><strong>${m.done}</strong>Selesai</div>
+        <div class="team-stat"><strong>${Math.round((m.done/m.tasks)*100)||0}%</strong>Rate</div>
+      </div>
+      ${currentUser.role==='admin' ? `<div style="margin-top:12px;display:flex;gap:6px;justify-content:center">
+        <button class="btn btn-ghost btn-sm">✏️ Edit</button>
+        <button class="btn btn-danger btn-sm">🗑️</button>
+      </div>` : ''}
+    </div>
+  `).join('');
+}
+
+// ======================== ADMIN ========================
+function renderAdmin() {
+  const el = document.getElementById('admin-content');
+  if (currentUser.role !== 'admin') {
+    el.innerHTML = `<div class="access-denied"><div class="icon">🔒</div><h3>Akses Ditolak</h3><p>Halaman ini hanya dapat diakses oleh Administrator.</p></div>`;
+    return;
+  }
+  el.innerHTML = `
+    <div class="admin-warning">⚠️ <span>Panel Admin — Hanya untuk Administrator. Perubahan akan langsung diterapkan.</span></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px">
+      <div class="section-card" style="text-align:center">
+        <div style="font-size:30px;font-weight:800;color:var(--accent);font-family:var(--mono)">${teamMembers.length}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:4px">Total User</div>
+      </div>
+      <div class="section-card" style="text-align:center">
+        <div style="font-size:30px;font-weight:800;color:var(--accent2);font-family:var(--mono)">${projects.length}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:4px">Total Proyek</div>
+      </div>
+      <div class="section-card" style="text-align:center">
+        <div style="font-size:30px;font-weight:800;color:var(--success);font-family:var(--mono)">${tasks.length}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:4px">Total Tugas</div>
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="section-header" style="margin-bottom:16px">
+        <h3>👥 Manajemen User</h3>
+        <button class="btn btn-primary btn-sm">+ Tambah User</button>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="users-table">
+          <thead><tr><th>User</th><th>Email</th><th>Role</th><th>Departemen</th><th>Tugas</th><th>Status</th><th>Aksi</th></tr></thead>
+          <tbody>
+            ${teamMembers.map(m => `<tr>
+              <td><div style="display:flex;align-items:center;gap:10px">
+                <div style="width:32px;height:32px;border-radius:50%;background:${m.color}22;color:${m.color};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700">${m.init}</div>
+                <span style="font-weight:600">${m.name}</span>
+              </div></td>
+              <td style="color:var(--text2)">${m.email}</td>
+              <td><span class="role-badge ${ROLE_COLORS[m.role]}">${ROLES[m.role]}</span></td>
+              <td style="color:var(--text2)">${m.dept}</td>
+              <td><span style="font-family:var(--mono);color:var(--accent)">${m.tasks}</span></td>
+              <td><span style="color:var(--success);font-size:12px">● Aktif</span></td>
+              <td><div style="display:flex;gap:4px">
+                <button class="btn btn-ghost btn-sm">✏️</button>
+                <button class="btn btn-danger btn-sm" ${m.email===currentUser.email?'disabled title="Tidak bisa hapus diri sendiri"':''}>🗑️</button>
+              </div></td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="section-card" style="margin-top:16px">
+      <div class="section-header" style="margin-bottom:16px"><h3>🔧 Pengaturan Sistem</h3></div>
+      <div class="setting-row"><div class="setting-info"><label>Mode Maintenance</label><small>Nonaktifkan akses user sementara</small></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+      <div class="setting-row"><div class="setting-info"><label>Registrasi Terbuka</label><small>Izinkan pendaftaran mandiri</small></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+      <div class="setting-row"><div class="setting-info"><label>Log Aktivitas</label><small>Rekam semua aktivitas user</small></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="setting-row"><div class="setting-info"><label>Backup Otomatis</label><small>Backup data setiap 24 jam</small></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+    </div>`;
+}
+
+// ======================== SETTINGS ========================
+function switchSettings(panel, btn) {
+  document.querySelectorAll('.settings-panel').forEach(p => p.style.display = 'none');
+  document.querySelectorAll('.settings-nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('s-' + panel).style.display = 'block';
+  btn.classList.add('active');
+}
+</script>
+
+<!-- ========== EXTRA CSS ========== -->
+<style>
+/* ===== TASK DETAIL MODAL ===== */
+.detail-modal { max-width: 700px; }
+.detail-header-meta { display:flex; align-items:center; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+.detail-body { display:grid; grid-template-columns:1fr 280px; gap:20px; }
+@media(max-width:600px){ .detail-body{ grid-template-columns:1fr; } }
+.detail-desc { font-size:13px; color:var(--text2); line-height:1.7; margin-bottom:20px; }
+.detail-section-title { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--text3); margin-bottom:10px; }
+
+/* Comments */
+.comment-list { display:flex; flex-direction:column; gap:12px; margin-bottom:16px; max-height:220px; overflow-y:auto; }
+.comment-item { display:flex; gap:10px; }
+.comment-body { flex:1; background:var(--bg3); border-radius:var(--radius2); padding:10px 12px; }
+.comment-meta { display:flex; justify-content:space-between; margin-bottom:5px; }
+.comment-author { font-size:12px; font-weight:700; }
+.comment-time { font-size:11px; color:var(--text3); font-family:var(--mono); }
+.comment-text { font-size:13px; color:var(--text2); line-height:1.5; }
+.comment-input-row { display:flex; gap:8px; }
+.comment-input-row input { flex:1; background:var(--bg3); border:1px solid var(--border); border-radius:var(--radius2); color:var(--text); font-family:var(--font); font-size:13px; padding:9px 12px; outline:none; transition:border 0.2s; }
+.comment-input-row input:focus { border-color:var(--accent); }
+
+/* Detail right panel */
+.detail-meta-panel { display:flex; flex-direction:column; gap:12px; }
+.meta-row { background:var(--bg3); border-radius:var(--radius2); padding:12px; }
+.meta-row .meta-label { font-size:11px; color:var(--text3); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; font-weight:700; }
+.meta-row .meta-val { font-size:13px; font-weight:600; }
+
+/* Sub tasks */
+.subtask-item { display:flex; align-items:center; gap:8px; padding:6px 0; border-bottom:1px solid var(--border); font-size:13px; }
+.subtask-item:last-child { border-bottom:none; }
+.subtask-check { width:16px; height:16px; border-radius:4px; border:2px solid var(--border2); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:9px; transition:all 0.2s; flex-shrink:0; }
+.subtask-check.done { background:var(--success); border-color:var(--success); color:#fff; }
+.subtask-name { flex:1; }
+.subtask-name.done { text-decoration:line-through; color:var(--text3); }
+
+/* Attachment */
+.attach-item { display:flex; align-items:center; gap:8px; padding:7px 0; border-bottom:1px solid var(--border); font-size:12px; color:var(--text2); }
+.attach-item:last-child { border-bottom:none; }
+.attach-icon { font-size:18px; }
+
+/* ===== TOAST ===== */
+#toast-container { position:fixed; bottom:24px; right:24px; z-index:999; display:flex; flex-direction:column-reverse; gap:8px; }
+.toast {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--radius2); padding:12px 16px;
+  font-size:13px; color:var(--text);
+  display:flex; align-items:center; gap:10px;
+  box-shadow:var(--shadow); min-width:260px; max-width:340px;
+  animation:toastIn 0.3s ease;
+}
+.toast.success { border-left:3px solid var(--success); }
+.toast.error { border-left:3px solid var(--danger); }
+.toast.info { border-left:3px solid var(--accent); }
+.toast.warn { border-left:3px solid var(--warn); }
+@keyframes toastIn { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
+@keyframes toastOut { from{opacity:1;transform:translateX(0)} to{opacity:0;transform:translateX(20px)} }
+.toast-icon { font-size:16px; }
+.toast-close { margin-left:auto; background:none; border:none; color:var(--text3); cursor:pointer; font-size:14px; }
+
+/* ===== CONFIRM MODAL ===== */
+.confirm-modal { max-width:380px; text-align:center; }
+.confirm-modal .confirm-icon { font-size:48px; margin-bottom:12px; }
+.confirm-modal h3 { margin-bottom:8px; }
+.confirm-modal p { font-size:13px; color:var(--text2); margin-bottom:0; }
+
+/* ===== CALENDAR ===== */
+.calendar-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
+.cal-header { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:6px; }
+.cal-header div { font-size:11px; font-weight:700; text-align:center; color:var(--text3); padding:6px 0; text-transform:uppercase; letter-spacing:0.5px; }
+.cal-day {
+  min-height:80px; background:var(--card); border:1px solid var(--border);
+  border-radius:var(--radius2); padding:8px; cursor:pointer; transition:border 0.2s;
+}
+.cal-day:hover { border-color:var(--border2); }
+.cal-day.today { border-color:var(--accent); background:rgba(79,125,255,0.05); }
+.cal-day.other-month { opacity:0.4; }
+.cal-day .day-num { font-size:13px; font-weight:700; margin-bottom:4px; font-family:var(--mono); }
+.cal-day.today .day-num { color:var(--accent); }
+.cal-event { font-size:10px; font-weight:600; padding:2px 5px; border-radius:3px; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.cal-event.high { background:rgba(255,79,106,0.15); color:var(--danger); }
+.cal-event.medium { background:rgba(255,184,79,0.15); color:var(--warn); }
+.cal-event.low { background:rgba(79,221,143,0.15); color:var(--success); }
+
+/* ===== TIMELINE ===== */
+.timeline-row { display:flex; align-items:center; gap:0; margin-bottom:8px; min-height:38px; }
+.timeline-label { width:180px; font-size:12px; font-weight:600; padding-right:12px; flex-shrink:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--text2); }
+.timeline-track { flex:1; background:var(--bg3); border-radius:99px; height:26px; position:relative; overflow:hidden; }
+.timeline-bar {
+  position:absolute; height:100%; border-radius:99px;
+  display:flex; align-items:center; padding:0 8px;
+  font-size:11px; font-weight:700; color:#fff; white-space:nowrap; overflow:hidden;
+  transition:width 0.5s ease;
+}
+.tl-months { display:flex; margin-left:180px; margin-bottom:4px; }
+.tl-month { flex:1; font-size:10px; color:var(--text3); text-align:center; font-weight:700; text-transform:uppercase; }
+
+/* ===== ADD USER MODAL ===== */
+.user-modal { max-width:460px; }
+
+/* ===== EMPTY STATE ===== */
+.empty-state { text-align:center; padding:60px 20px; color:var(--text3); }
+.empty-state .icon { font-size:48px; margin-bottom:12px; }
+.empty-state p { font-size:14px; }
+
+/* ===== BADGE COUNTER on nav ===== */
+.nav-item .badge-warn { background:var(--warn); }
+
+/* ===== SEARCH HIGHLIGHT ===== */
+mark { background:rgba(79,125,255,0.25); color:var(--text); border-radius:2px; }
+</style>
+
+<!-- ========== TASK DETAIL MODAL ========== -->
+<div class="modal-backdrop" id="detail-modal">
+  <div class="modal detail-modal">
+    <div class="modal-header">
+      <h3 id="det-title">Detail Tugas</h3>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn btn-ghost btn-sm" id="det-edit-btn" onclick="editFromDetail()">✏️ Edit</button>
+        <button class="modal-close" onclick="closeModal('detail-modal')">✕</button>
+      </div>
+    </div>
+    <div class="detail-header-meta" id="det-meta"></div>
+    <div class="detail-body">
+      <div>
+        <div class="detail-section-title">Deskripsi</div>
+        <div class="detail-desc" id="det-desc">—</div>
+
+        <div class="detail-section-title">Sub Tugas</div>
+        <div id="det-subtasks" style="margin-bottom:16px"></div>
+        <div style="display:flex;gap:8px;margin-bottom:20px">
+          <input type="text" id="subtask-input" class="search-input" placeholder="Tambah sub tugas..." style="flex:1;min-width:0" onkeydown="if(event.key==='Enter')addSubtask()">
+          <button class="btn btn-ghost btn-sm" onclick="addSubtask()">+ Tambah</button>
+        </div>
+
+        <div class="detail-section-title">Lampiran</div>
+        <div id="det-attachments" style="margin-bottom:16px"></div>
+        <button class="btn btn-ghost btn-sm" style="margin-bottom:20px" onclick="showToast('Fitur upload akan tersedia setelah integrasi backend','info')">📎 Upload File</button>
+
+        <div class="detail-section-title">Komentar (<span id="det-comment-count">0</span>)</div>
+        <div class="comment-list" id="det-comments"></div>
+        <div class="comment-input-row">
+          <div id="comment-avatar" class="task-assignee" style="flex-shrink:0;width:30px;height:30px;font-size:11px"></div>
+          <input type="text" id="comment-input" placeholder="Tulis komentar..." onkeydown="if(event.key==='Enter')addComment()">
+          <button class="btn btn-primary btn-sm" onclick="addComment()">Kirim</button>
+        </div>
+      </div>
+      <div class="detail-meta-panel">
+        <div class="meta-row"><div class="meta-label">Status</div><div class="meta-val" id="det-status-val"></div></div>
+        <div class="meta-row"><div class="meta-label">Prioritas</div><div class="meta-val" id="det-priority-val"></div></div>
+        <div class="meta-row"><div class="meta-label">Proyek</div><div class="meta-val" id="det-project-val"></div></div>
+        <div class="meta-row"><div class="meta-label">Penanggung Jawab</div><div class="meta-val" id="det-assignee-val"></div></div>
+        <div class="meta-row"><div class="meta-label">Tenggat Waktu</div><div class="meta-val" id="det-due-val"></div></div>
+        <div class="meta-row"><div class="meta-label">Dibuat oleh</div><div class="meta-val" id="det-creator-val"></div></div>
+        <div class="meta-row">
+          <div class="meta-label">Progress</div>
+          <div id="det-progress-label" style="font-size:12px;color:var(--accent);font-family:var(--mono);margin-bottom:6px"></div>
+          <div class="progress-bar"><div class="progress-fill" id="det-progress-fill"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== CONFIRM MODAL ========== -->
+<div class="modal-backdrop" id="confirm-modal">
+  <div class="modal confirm-modal">
+    <div class="confirm-icon" id="conf-icon">🗑️</div>
+    <h3 id="conf-title">Hapus Tugas?</h3>
+    <p id="conf-msg">Tindakan ini tidak dapat dibatalkan.</p>
+    <div class="modal-footer" style="justify-content:center;margin-top:20px">
+      <button class="btn btn-ghost" onclick="closeModal('confirm-modal')">Batal</button>
+      <button class="btn btn-danger" id="conf-ok-btn" onclick="">Ya, Hapus</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== ADD USER MODAL ========== -->
+<div class="modal-backdrop" id="user-modal">
+  <div class="modal user-modal">
+    <div class="modal-header">
+      <h3>👤 Tambah User Baru</h3>
+      <button class="modal-close" onclick="closeModal('user-modal')">✕</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px" class="form-grid-2">
+      <div class="form-group"><label>Nama Lengkap *</label><input type="text" id="um-name" placeholder="Nama lengkap..."></div>
+      <div class="form-group"><label>Email *</label><input type="email" id="um-email" placeholder="email@perusahaan.id"></div>
+      <div class="form-group"><label>Password *</label><input type="password" id="um-pass" placeholder="Min. 6 karakter"></div>
+      <div class="form-group"><label>Role</label>
+        <select id="um-role">
+          <option value="member">Anggota Tim</option>
+          <option value="manager">Manager</option>
+          <option value="admin">Administrator</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Departemen</label><input type="text" id="um-dept" placeholder="e.g. Engineering"></div>
+      <div class="form-group"><label>Jabatan</label><input type="text" id="um-position" placeholder="e.g. Developer"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('user-modal')">Batal</button>
+      <button class="btn btn-primary" style="width:auto" onclick="saveUser()">💾 Simpan User</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== TOAST CONTAINER ========== -->
+<div id="toast-container"></div>
+
+<!-- ========== EXTRA PAGES (injected into #content) ========== -->
+<!-- Calendar and Timeline pages are added via JS into content -->
+
+<!-- ========== EXTRA SCRIPT ========== -->
+<script>
+// ======================== EXTRA DATA ========================
+const taskComments = {}; // { taskId: [{author, init, color, text, time}] }
+const taskSubtasks = {}; // { taskId: [{id, text, done}] }
+const taskAttachments = {
+  1: [{name:'mockup-beranda-v2.fig', size:'2.4 MB', icon:'🎨'}, {name:'brief-design.pdf', size:'380 KB', icon:'📄'}],
+  2: [{name:'api-spec.pdf', size:'1.1 MB', icon:'📄'}],
+  5: [{name:'query-analysis.xlsx', size:'540 KB', icon:'📊'}],
+};
+let currentDetailTaskId = null;
+let subtaskCounter = 100;
+
+// Seed some comments
+taskComments[1] = [
+  { author:'Dewi Rahayu', init:'DR', color:'#7c5cfc', text:'Mockup sudah saya upload di folder shared ya.', time:'2 jam lalu' },
+  { author:'Budi Santoso', init:'BS', color:'#4f7dff', text:'Oke, saya review nanti sore.', time:'1 jam lalu' },
+];
+taskComments[5] = [
+  { author:'Andi Pratama', init:'AP', color:'#00d4aa', text:'Index sudah ditambahkan, waktu query berkurang 60%.', time:'30 menit lalu' },
+];
+taskSubtasks[1] = [
+  { id:1, text:'Wireframe layout desktop', done:true },
+  { id:2, text:'Wireframe layout mobile', done:true },
+  { id:3, text:'Desain final warna & tipografi', done:false },
+  { id:4, text:'Presentasi ke klien', done:false },
+];
+taskSubtasks[2] = [
+  { id:5, text:'Setup Midtrans sandbox', done:true },
+  { id:6, text:'Implementasi payment hook', done:false },
+  { id:7, text:'Testing end-to-end', done:false },
+];
+
+// ======================== TOAST ========================
+function showToast(msg, type='info', duration=3500) {
+  const icons = { success:'✅', error:'❌', info:'ℹ️', warn:'⚠️' };
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<span class="toast-icon">${icons[type]||'ℹ️'}</span><span>${msg}</span><button class="toast-close" onclick="this.parentElement.remove()">✕</button>`;
+  c.appendChild(t);
+  setTimeout(() => { t.style.animation='toastOut 0.3s ease forwards'; setTimeout(()=>t.remove(), 300); }, duration);
+}
+
+// ======================== CONFIRM DIALOG ========================
+function showConfirm(title, msg, icon, onOk) {
+  document.getElementById('conf-title').textContent = title;
+  document.getElementById('conf-msg').textContent = msg;
+  document.getElementById('conf-icon').textContent = icon;
+  const btn = document.getElementById('conf-ok-btn');
+  btn.onclick = () => { onOk(); closeModal('confirm-modal'); };
+  document.getElementById('confirm-modal').classList.add('open');
+}
+
+// ======================== OVERRIDE deleteTask ========================
+// Override to use confirm modal + toast
+window.deleteTask = function(id) {
+  const t = tasks.find(t => t.id === id);
+  if (!t) return;
+  showConfirm('Hapus Tugas?', `"${t.title}" akan dihapus permanen.`, '🗑️', () => {
+    tasks = tasks.filter(x => x.id !== id);
+    filteredTasks = [...tasks];
+    renderTaskTable(); renderKanban(); renderDashboardTasks(); updateTaskBadge();
+    showToast('Tugas berhasil dihapus', 'success');
+  });
+};
+
+// ======================== TASK DETAIL ========================
+function openDetailTask(id) {
+  const t = tasks.find(t => t.id === id);
+  if (!t) return;
+  currentDetailTaskId = id;
+  const a = ASSIGNEE_MAP[t.assignee] || { name: t.assignee, color: '#888' };
+
+  document.getElementById('det-title').textContent = t.title;
+  document.getElementById('det-desc').textContent = t.desc || 'Tidak ada deskripsi.';
+  document.getElementById('det-project-val').textContent = t.project;
+  document.getElementById('det-due-val').textContent = fmtDate(t.due);
+  document.getElementById('det-creator-val').textContent = currentUser.name;
+
+  // Meta badges
+  document.getElementById('det-meta').innerHTML = statusBadge(t.status) + priorityBadge(t.priority) +
+    `<span style="font-size:11px;color:var(--text3);font-family:var(--mono)">${t.project}</span>`;
+  document.getElementById('det-status-val').innerHTML = statusBadge(t.status);
+  document.getElementById('det-priority-val').innerHTML = priorityBadge(t.priority);
+  document.getElementById('det-assignee-val').innerHTML = `<div style="display:flex;align-items:center;gap:6px">${avatarDiv(t.assignee,a.color,22)}<span>${a.name}</span></div>`;
+
+  // Progress based on subtasks
+  renderDetailSubtasks(id);
+
+  // Attachments
+  const atts = taskAttachments[id] || [];
+  document.getElementById('det-attachments').innerHTML = atts.length
+    ? atts.map(f => `<div class="attach-item"><span class="attach-icon">${f.icon}</span><span>${f.name}</span><span style="margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--text3)">${f.size}</span><button class="btn btn-ghost btn-sm" style="margin-left:8px">⬇️</button></div>`).join('')
+    : '<div style="font-size:12px;color:var(--text3)">Belum ada lampiran.</div>';
+
+  // Comments
+  renderDetailComments(id);
+
+  // Comment avatar
+  const cav = document.getElementById('comment-avatar');
+  cav.textContent = currentUser.init;
+  cav.style.background = currentUser.color + '22';
+  cav.style.color = currentUser.color;
+
+  document.getElementById('detail-modal').classList.add('open');
+}
+
+function renderDetailSubtasks(id) {
+  const subs = taskSubtasks[id] || [];
+  const done = subs.filter(s => s.done).length;
+  const pct = subs.length ? Math.round((done/subs.length)*100) : 0;
+  document.getElementById('det-subtasks').innerHTML = subs.length
+    ? subs.map(s => `<div class="subtask-item">
+        <div class="subtask-check ${s.done?'done':''}" onclick="toggleSubtask(${id},${s.id})">
+          ${s.done?'✓':''}
+        </div>
+        <span class="subtask-name ${s.done?'done':''}">${s.text}</span>
+        <button onclick="removeSubtask(${id},${s.id})" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;padding:0 4px">✕</button>
+      </div>`).join('')
+    : '<div style="font-size:12px;color:var(--text3);padding:6px 0">Belum ada sub tugas.</div>';
+  document.getElementById('det-progress-label').textContent = `${done}/${subs.length} (${pct}%)`;
+  document.getElementById('det-progress-fill').style.width = pct + '%';
+}
+
+function toggleSubtask(taskId, subId) {
+  if (!taskSubtasks[taskId]) return;
+  const s = taskSubtasks[taskId].find(x => x.id === subId);
+  if (s) s.done = !s.done;
+  renderDetailSubtasks(taskId);
+}
+function removeSubtask(taskId, subId) {
+  if (!taskSubtasks[taskId]) return;
+  taskSubtasks[taskId] = taskSubtasks[taskId].filter(x => x.id !== subId);
+  renderDetailSubtasks(taskId);
+}
+function addSubtask() {
+  const val = document.getElementById('subtask-input').value.trim();
+  if (!val || !currentDetailTaskId) return;
+  if (!taskSubtasks[currentDetailTaskId]) taskSubtasks[currentDetailTaskId] = [];
+  taskSubtasks[currentDetailTaskId].push({ id: subtaskCounter++, text: val, done: false });
+  document.getElementById('subtask-input').value = '';
+  renderDetailSubtasks(currentDetailTaskId);
+}
+
+function renderDetailComments(id) {
+  const comments = taskComments[id] || [];
+  document.getElementById('det-comment-count').textContent = comments.length;
+  document.getElementById('det-comments').innerHTML = comments.length
+    ? comments.map(c => `<div class="comment-item">
+        <div class="task-assignee" style="background:${c.color}22;color:${c.color};width:30px;height:30px;font-size:11px;flex-shrink:0">${c.init}</div>
+        <div class="comment-body">
+          <div class="comment-meta">
+            <span class="comment-author">${c.author}</span>
+            <span class="comment-time">${c.time}</span>
+          </div>
+          <div class="comment-text">${c.text}</div>
+        </div>
+      </div>`).join('')
+    : '<div style="font-size:12px;color:var(--text3);padding:8px 0">Belum ada komentar.</div>';
+}
+
+function addComment() {
+  const val = document.getElementById('comment-input').value.trim();
+  if (!val || !currentDetailTaskId) return;
+  if (!taskComments[currentDetailTaskId]) taskComments[currentDetailTaskId] = [];
+  taskComments[currentDetailTaskId].push({
+    author: currentUser.name,
+    init: currentUser.init,
+    color: currentUser.color,
+    text: val,
+    time: 'Baru saja'
+  });
+  document.getElementById('comment-input').value = '';
+  renderDetailComments(currentDetailTaskId);
+  showToast('Komentar ditambahkan', 'success');
+}
+
+function editFromDetail() {
+  closeModal('detail-modal');
+  if (currentDetailTaskId) openEditTask(currentDetailTaskId);
+}
+
+// Override openEditTask to also show detail on table row click
+// Intercept kanban card & table row to show detail
+const _origOpenEdit = window.openEditTask;
+// We make table rows open detail when clicking outside action buttons
+document.getElementById('task-tbody').addEventListener('click', e => {
+  if (e.target.closest('button')) return;
+  const row = e.target.closest('tr');
+  if (!row) return;
+  const btn = row.querySelector('[onclick*="openEditTask"]');
+  if (btn) {
+    const match = btn.getAttribute('onclick').match(/openEditTask\((\d+)\)/);
+    if (match) openDetailTask(parseInt(match[1]));
+  }
+});
+
+// ======================== OVERRIDE saveTask with toast ========================
+const _origSaveTask = window.saveTask;
+window.saveTask = function() {
+  const title = document.getElementById('m-title').value.trim();
+  if (!title) { showToast('Judul tugas wajib diisi!', 'error'); return; }
+  const isEdit = !!editingTaskId;
+  const data = {
+    title, desc: document.getElementById('m-desc').value,
+    project: document.getElementById('m-project').value,
+    status: document.getElementById('m-status').value,
+    priority: document.getElementById('m-priority').value,
+    due: document.getElementById('m-due').value,
+    assignee: document.getElementById('m-assignee').value,
+  };
+  if (editingTaskId) {
+    const idx = tasks.findIndex(t => t.id === editingTaskId);
+    if (idx > -1) tasks[idx] = { ...tasks[idx], ...data };
+  } else {
+    tasks.push({ id: taskIdCounter++, ...data });
+  }
+  filteredTasks = [...tasks];
+  renderTaskTable(); renderKanban(); renderDashboardTasks(); updateTaskBadge();
+  closeModal('task-modal');
+  showToast(isEdit ? 'Tugas berhasil diperbarui' : 'Tugas baru berhasil ditambahkan', 'success');
+};
+
+// ======================== OVERRIDE saveProject with toast ========================
+window.saveProject = function() {
+  const name = document.getElementById('pm-name').value.trim();
+  if (!name) { showToast('Nama proyek wajib diisi!', 'error'); return; }
+  projects.push({
+    id: projectIdCounter++, name, desc: document.getElementById('pm-desc').value || 'Proyek baru',
+    icon: '📌', color: 'rgba(79,125,255,0.12)', tasks: 0, done: 0, members: [currentUser.init]
+  });
+  renderProjects();
+  closeModal('project-modal');
+  showToast(`Proyek "${name}" berhasil dibuat`, 'success');
+};
+
+// ======================== ADD USER ========================
+function saveUser() {
+  const name = document.getElementById('um-name').value.trim();
+  const email = document.getElementById('um-email').value.trim();
+  const pass = document.getElementById('um-pass').value;
+  const role = document.getElementById('um-role').value;
+  const dept = document.getElementById('um-dept').value || 'Umum';
+  if (!name || !email || !pass) { showToast('Nama, email, dan password wajib diisi!', 'error'); return; }
+  const init = name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+  const color = ['#4f7dff','#7c5cfc','#00d4aa','#ffb84f','#ff4f6a'][Math.floor(Math.random()*5)];
+  teamMembers.push({ name, email, role, init, color, tasks: 0, done: 0, dept });
+  USERS[email] = { pass, name, role, init, color };
+  ASSIGNEE_MAP[init] = { name, color };
+  renderTeam();
+  if (document.getElementById('page-admin').classList.contains('active')) renderAdmin();
+  closeModal('user-modal');
+  showToast(`User "${name}" berhasil ditambahkan`, 'success');
+}
+
+// ======================== CALENDAR PAGE ========================
+function renderCalendarPage() {
+  const now = new Date(2025, 5, 1); // June 2025 (demo)
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const monthNames = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  const days = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+  let calHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <h2 style="font-size:20px;font-weight:800">${monthNames[month]} ${year}</h2>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost btn-sm">◀ Prev</button>
+        <button class="btn btn-ghost btn-sm">Hari Ini</button>
+        <button class="btn btn-ghost btn-sm">Next ▶</button>
+      </div>
+    </div>
+    <div class="cal-header">${days.map(d=>`<div>${d}</div>`).join('')}</div>
+    <div class="calendar-grid">`;
+
+  // Prev month days
+  for (let i = firstDay - 1; i >= 0; i--) {
+    calHTML += `<div class="cal-day other-month"><div class="day-num">${daysInPrevMonth - i}</div></div>`;
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const isToday = d === 4; // demo: June 4 is "today"
+    const dayTasks = tasks.filter(t => {
+      if (!t.due) return false;
+      const td = new Date(t.due);
+      return td.getDate() === d && td.getMonth() === month && td.getFullYear() === year;
+    });
+    const evHTML = dayTasks.slice(0,3).map(t =>
+      `<div class="cal-event ${t.priority}" onclick="openDetailTask(${t.id})" title="${t.title}">${t.title}</div>`
+    ).join('');
+    const more = dayTasks.length > 3 ? `<div style="font-size:10px;color:var(--text3)">+${dayTasks.length-3} lagi</div>` : '';
+    calHTML += `<div class="cal-day ${isToday?'today':''}"><div class="day-num">${d}</div>${evHTML}${more}</div>`;
+  }
+
+  // Next month fill
+  const totalCells = Math.ceil((firstDay + daysInMonth) / 7) * 7;
+  for (let d = 1; d <= totalCells - firstDay - daysInMonth; d++) {
+    calHTML += `<div class="cal-day other-month"><div class="day-num">${d}</div></div>`;
+  }
+  calHTML += `</div>`;
+  return calHTML;
+}
+
+// ======================== TIMELINE PAGE ========================
+function renderTimelinePage() {
+  const colors = ['#4f7dff','#7c5cfc','#00d4aa','#ffb84f','#ff4f6a'];
+  const months = ['Jun','Jul','Agu','Sep','Okt','Nov'];
+  // Project tasks mapped to timeline (start%, width% of 6-month range)
+  const timelineTasks = [
+    { name:'Website Company', sub:'Desain UI/UX', start:0, width:25, color:colors[0] },
+    { name:'Website Company', sub:'Development Frontend', start:20, width:35, color:colors[0] },
+    { name:'Website Company', sub:'Testing & QA', start:50, width:20, color:colors[0] },
+    { name:'Aplikasi Mobile', sub:'Setup & Architecture', start:5, width:20, color:colors[1] },
+    { name:'Aplikasi Mobile', sub:'Core Features', start:22, width:40, color:colors[1] },
+    { name:'Aplikasi Mobile', sub:'Beta Testing', start:60, width:25, color:colors[1] },
+    { name:'Sistem ERP', sub:'Analisis Kebutuhan', start:0, width:15, color:colors[2] },
+    { name:'Sistem ERP', sub:'Implementasi Modul HR', start:13, width:35, color:colors[2] },
+    { name:'Sistem ERP', sub:'Implementasi Keuangan', start:40, width:40, color:colors[2] },
+    { name:'Sistem ERP', sub:'Training & Go-Live', start:78, width:22, color:colors[2] },
+  ];
+
+  return `
+    <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between">
+      <h2 style="font-size:18px;font-weight:800">Timeline Proyek (Jun–Nov 2025)</h2>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost btn-sm">⬇️ Export</button>
+        <select class="filter-sel"><option>Semua Proyek</option><option>Website Company</option><option>Aplikasi Mobile</option><option>Sistem ERP</option></select>
+      </div>
+    </div>
+    <div class="section-card" style="overflow-x:auto">
+      <div class="tl-months">${months.map(m=>`<div class="tl-month">${m}</div>`).join('')}</div>
+      ${timelineTasks.map((t,i) => `
+        <div class="timeline-row">
+          <div class="timeline-label" title="${t.name} — ${t.sub}">
+            <span style="color:${t.color};margin-right:4px">●</span>${t.sub}
+          </div>
+          <div class="timeline-track">
+            <div class="timeline-bar" style="left:${t.start}%;width:${t.width}%;background:linear-gradient(90deg,${t.color}cc,${t.color}88)">
+              ${t.width > 15 ? t.sub : ''}
+            </div>
+          </div>
+        </div>`).join('')}
+    </div>
+    <div style="display:flex;gap:16px;margin-top:12px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)"><div style="width:12px;height:12px;border-radius:3px;background:#4f7dff"></div>Website Company</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)"><div style="width:12px;height:12px;border-radius:3px;background:#7c5cfc"></div>Aplikasi Mobile</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)"><div style="width:12px;height:12px;border-radius:3px;background:#00d4aa"></div>Sistem ERP</div>
+    </div>`;
+}
+
+// ======================== INJECT CALENDAR & TIMELINE PAGES ========================
+function injectExtraPages() {
+  const content = document.getElementById('content');
+
+  // Calendar page
+  const calPage = document.createElement('div');
+  calPage.className = 'page';
+  calPage.id = 'page-calendar';
+  calPage.innerHTML = renderCalendarPage();
+  content.appendChild(calPage);
+
+  // Timeline page
+  const tlPage = document.createElement('div');
+  tlPage.className = 'page';
+  tlPage.id = 'page-timeline';
+  tlPage.innerHTML = renderTimelinePage();
+  content.appendChild(tlPage);
+}
+
+// ======================== ADD EXTRA NAV ITEMS ========================
+function addExtraNav() {
+  const nav = document.querySelector('.sidebar-nav');
+  // Insert before reports section
+  const reportsSection = [...nav.querySelectorAll('.nav-section-title')].find(el => el.textContent === 'Laporan');
+  if (reportsSection) {
+    const calBtn = document.createElement('button');
+    calBtn.className = 'nav-item';
+    calBtn.innerHTML = '<span class="icon">📅</span> Kalender';
+    calBtn.onclick = function() { showPage('calendar', this); };
+    nav.insertBefore(calBtn, reportsSection);
+
+    const tlBtn = document.createElement('button');
+    tlBtn.className = 'nav-item';
+    tlBtn.innerHTML = '<span class="icon">📈</span> Timeline';
+    tlBtn.onclick = function() { showPage('timeline', this); };
+    nav.insertBefore(tlBtn, reportsSection);
+  }
+}
+
+// ======================== PATCH showPage for new pages ========================
+const _origShowPage = window.showPage;
+window.showPage = function(page, btn) {
+  const extras = { calendar:'Kalender', timeline:'Timeline Proyek' };
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const el = document.getElementById('page-' + page);
+  if (el) el.classList.add('active');
+  if (btn) btn.classList.add('active');
+  const titles = { dashboard:'Dashboard', tasks:'Tugas Saya', projects:'Proyek', team:'Tim', reports:'Laporan', admin:'Admin Panel', settings:'Pengaturan', calendar:'Kalender', timeline:'Timeline Proyek' };
+  document.getElementById('header-title').textContent = titles[page] || page;
+  document.getElementById('header-breadcrumb').textContent = 'TaskFlow / ' + (titles[page] || page);
+  if (page === 'admin') renderAdmin();
+  closeSidebar();
+  closeNotif();
+};
+
+// ======================== PATCH initApp ========================
+const _origInitApp = window.initApp;
+window.initApp = function() {
+  _origInitApp();
+  injectExtraPages();
+  addExtraNav();
+
+  // Admin panel add user btn
+  document.addEventListener('click', e => {
+    if (e.target.textContent === '+ Tambah User') {
+      document.getElementById('user-modal').classList.add('open');
+    }
+  });
+
+  showToast(`Selamat datang, ${currentUser.name}! 👋`, 'success', 3000);
+};
+
+// ======================== KEYBOARD SHORTCUTS ========================
+document.addEventListener('keydown', e => {
+  if (!currentUser) return;
+  if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+    e.preventDefault();
+    openTaskModal();
+  }
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-backdrop.open').forEach(m => m.classList.remove('open'));
+    closeNotif();
+  }
+});
+
+// ======================== PATCH doLogout with toast ========================
+const _origLogout = window.doLogout;
+window.doLogout = function() {
+  const name = currentUser?.name;
+  _origLogout();
+  // Toast would be on login screen, skip
+};
+</script>
+</body>
+</html>

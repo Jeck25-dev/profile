@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyHR Portal — Sistem Informasi Karyawan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ============================================================
+     LOGIN PAGE
+============================================================ -->
+<div id="page-login" class="page active">
+  <div class="login-wrap">
+    <div class="login-brand">
+      <div class="brand-logo">
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+          <rect width="36" height="36" rx="10" fill="#3B82F6"/>
+          <path d="M18 8C12.477 8 8 12.477 8 18s4.477 10 10 10 10-4.477 10-10S23.523 8 18 8zm0 4a3 3 0 110 6 3 3 0 010-6zm0 14c-2.67 0-5.03-1.34-6.47-3.38C12.58 20.64 15.18 20 18 20s5.42.64 6.47 1.62C23.03 23.66 20.67 26 18 26z" fill="white"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="brand-name">MyHR Portal</h1>
+        <p class="brand-tagline">Sistem Informasi Karyawan</p>
+      </div>
+    </div>
+
+    <div class="login-card">
+      <h2 class="login-title">Selamat Datang</h2>
+      <p class="login-sub">Masuk ke akun Anda untuk melanjutkan</p>
+
+      <div class="demo-accounts">
+        <p class="demo-label">Akun Demo Tersedia:</p>
+        <div class="demo-list">
+          <button class="demo-btn" onclick="fillLogin('admin@myhr.id','admin123','Admin')">
+            <span class="demo-role admin">Admin</span>
+            <span class="demo-cred">admin@myhr.id / admin123</span>
+          </button>
+          <button class="demo-btn" onclick="fillLogin('manager@myhr.id','manager123','Manager')">
+            <span class="demo-role manager">Manager</span>
+            <span class="demo-cred">manager@myhr.id / manager123</span>
+          </button>
+          <button class="demo-btn" onclick="fillLogin('karyawan@myhr.id','karyawan123','Employee')">
+            <span class="demo-role employee">Karyawan</span>
+            <span class="demo-cred">karyawan@myhr.id / karyawan123</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" id="login-email" class="form-input" placeholder="nama@myhr.id" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <div class="input-wrap">
+          <input type="password" id="login-pass" class="form-input" placeholder="••••••••" />
+          <button class="eye-btn" onclick="togglePass()">👁</button>
+        </div>
+      </div>
+      <div id="login-error" class="login-error hidden">Email atau password salah.</div>
+      <button class="btn btn-primary btn-full" onclick="doLogin()">Masuk</button>
+      <p class="forgot-link">Lupa password? <a href="#">Hubungi IT Support</a></p>
+    </div>
+
+    <p class="login-footer">© 2025 PT Maju Bersama Indonesia · v2.4.1</p>
+  </div>
+</div>
+
+<!-- ============================================================
+     MAIN APP
+============================================================ -->
+<div id="page-app" class="page">
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-brand">
+        <div class="brand-logo sm">
+          <svg width="28" height="28" viewBox="0 0 36 36" fill="none">
+            <rect width="36" height="36" rx="10" fill="#3B82F6"/>
+            <path d="M18 8C12.477 8 8 12.477 8 18s4.477 10 10 10 10-4.477 10-10S23.523 8 18 8zm0 4a3 3 0 110 6 3 3 0 010-6zm0 14c-2.67 0-5.03-1.34-6.47-3.38C12.58 20.64 15.18 20 18 20s5.42.64 6.47 1.62C23.03 23.66 20.67 26 18 26z" fill="white"/>
+          </svg>
+        </div>
+        <span class="brand-name sm">MyHR Portal</span>
+      </div>
+      <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
+    </div>
+
+    <div class="sidebar-user">
+      <div id="sb-avatar" class="avatar md"></div>
+      <div>
+        <p id="sb-name" class="sb-name">-</p>
+        <span id="sb-role-badge" class="role-badge">-</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <p class="nav-section-label">MENU UTAMA</p>
+      <a class="nav-item active" data-page="dashboard" onclick="navigate('dashboard')">
+        <span class="nav-icon">⊞</span> Dashboard
+      </a>
+      <a class="nav-item" data-page="profil" onclick="navigate('profil')">
+        <span class="nav-icon">◉</span> Profil Saya
+      </a>
+      <a class="nav-item" data-page="absensi" onclick="navigate('absensi')">
+        <span class="nav-icon">◷</span> Absensi
+      </a>
+      <a class="nav-item" data-page="cuti" onclick="navigate('cuti')">
+        <span class="nav-icon">✈</span> Pengajuan Cuti
+      </a>
+      <a class="nav-item" data-page="payroll" onclick="navigate('payroll')">
+        <span class="nav-icon">₿</span> Slip Gaji
+      </a>
+      <a class="nav-item" data-page="pengumuman" onclick="navigate('pengumuman')">
+        <span class="nav-icon">📢</span> Pengumuman
+      </a>
+      <a class="nav-item" data-page="direktori" onclick="navigate('direktori')">
+        <span class="nav-icon">👥</span> Direktori Karyawan
+      </a>
+
+      <!-- Admin only -->
+      <div id="nav-admin-section" class="hidden">
+        <p class="nav-section-label">ADMIN</p>
+        <a class="nav-item" data-page="kelola-karyawan" onclick="navigate('kelola-karyawan')">
+          <span class="nav-icon">⚙</span> Kelola Karyawan
+        </a>
+        <a class="nav-item" data-page="laporan" onclick="navigate('laporan')">
+          <span class="nav-icon">📊</span> Laporan & Analitik
+        </a>
+        <a class="nav-item" data-page="pengaturan" onclick="navigate('pengaturan')">
+          <span class="nav-icon">🔧</span> Pengaturan Sistem
+        </a>
+      </div>
+
+      <!-- Manager only -->
+      <div id="nav-manager-section" class="hidden">
+        <p class="nav-section-label">MANAJER</p>
+        <a class="nav-item" data-page="tim" onclick="navigate('tim')">
+          <span class="nav-icon">🏢</span> Tim Saya
+        </a>
+        <a class="nav-item" data-page="approval" onclick="navigate('approval')">
+          <span class="nav-icon">✅</span> Persetujuan Cuti
+          <span class="badge-notif">3</span>
+        </a>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="btn-logout" onclick="doLogout()">
+        <span>⬡</span> Keluar
+      </button>
+    </div>
+  </aside>
+
+  <!-- OVERLAY -->
+  <div id="overlay" class="overlay" onclick="toggleSidebar()"></div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-wrap">
+    <!-- TOP BAR -->
+    <header class="topbar">
+      <button class="hamburger" onclick="toggleSidebar()">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="topbar-title">
+        <h2 id="page-title">Dashboard</h2>
+      </div>
+      <div class="topbar-right">
+        <button class="topbar-btn notif-btn" onclick="navigate('pengumuman')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+          <span class="notif-dot"></span>
+        </button>
+        <div class="topbar-user" onclick="navigate('profil')">
+          <div id="top-avatar" class="avatar sm"></div>
+          <span id="top-name" class="top-name">-</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT AREA -->
+    <main class="content-area">
+
+      <!-- ========== DASHBOARD ========== -->
+      <section id="sec-dashboard" class="sec active">
+        <div id="dash-greeting" class="dash-greeting">
+          <div>
+            <h3 id="greet-text">Selamat Pagi!</h3>
+            <p id="greet-sub">Senin, 9 Juni 2025 · Hari kerja ke-110</p>
+          </div>
+          <button class="btn btn-primary" onclick="navigate('absensi')">🕐 Check-In Sekarang</button>
+        </div>
+
+        <!-- Stat Cards -->
+        <div class="stat-grid">
+          <div class="stat-card blue">
+            <div class="stat-icon">◷</div>
+            <div class="stat-info">
+              <p class="stat-val">22</p>
+              <p class="stat-label">Hari Hadir Bulan Ini</p>
+            </div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-icon">✈</div>
+            <div class="stat-info">
+              <p class="stat-val">8</p>
+              <p class="stat-label">Sisa Cuti Tahunan</p>
+            </div>
+          </div>
+          <div class="stat-card orange">
+            <div class="stat-icon">₿</div>
+            <div class="stat-info">
+              <p class="stat-val">Rp 8,5 Jt</p>
+              <p class="stat-label">Gaji Terakhir</p>
+            </div>
+          </div>
+          <div class="stat-card purple">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-info">
+              <p class="stat-val">4.8</p>
+              <p class="stat-label">Skor Kinerja Q1</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Admin extra stats -->
+        <div id="admin-stats" class="hidden">
+          <h4 class="section-title">Ringkasan Perusahaan</h4>
+          <div class="stat-grid">
+            <div class="stat-card teal">
+              <div class="stat-icon">👥</div>
+              <div class="stat-info">
+                <p class="stat-val">148</p>
+                <p class="stat-label">Total Karyawan Aktif</p>
+              </div>
+            </div>
+            <div class="stat-card red">
+              <div class="stat-icon">🕐</div>
+              <div class="stat-info">
+                <p class="stat-val">5</p>
+                <p class="stat-label">Karyawan Terlambat Hari Ini</p>
+              </div>
+            </div>
+            <div class="stat-card indigo">
+              <div class="stat-icon">📋</div>
+              <div class="stat-info">
+                <p class="stat-val">12</p>
+                <p class="stat-label">Pengajuan Cuti Pending</p>
+              </div>
+            </div>
+            <div class="stat-card yellow">
+              <div class="stat-icon">📢</div>
+              <div class="stat-info">
+                <p class="stat-val">3</p>
+                <p class="stat-label">Pengumuman Aktif</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Two column -->
+        <div class="dash-cols">
+          <div class="dash-col">
+            <div class="card">
+              <div class="card-head">
+                <h4>Kehadiran Minggu Ini</h4>
+                <span class="card-badge green">98%</span>
+              </div>
+              <div class="attend-bars">
+                <div class="attend-row">
+                  <span class="attend-day">Sen</span>
+                  <div class="bar-wrap"><div class="bar full"></div></div>
+                  <span class="attend-status on-time">Tepat Waktu</span>
+                </div>
+                <div class="attend-row">
+                  <span class="attend-day">Sel</span>
+                  <div class="bar-wrap"><div class="bar full"></div></div>
+                  <span class="attend-status on-time">Tepat Waktu</span>
+                </div>
+                <div class="attend-row">
+                  <span class="attend-day">Rab</span>
+                  <div class="bar-wrap"><div class="bar late"></div></div>
+                  <span class="attend-status late">Terlambat 7m</span>
+                </div>
+                <div class="attend-row">
+                  <span class="attend-day">Kam</span>
+                  <div class="bar-wrap"><div class="bar full"></div></div>
+                  <span class="attend-status on-time">Tepat Waktu</span>
+                </div>
+                <div class="attend-row">
+                  <span class="attend-day">Jum</span>
+                  <div class="bar-wrap"><div class="bar empty"></div></div>
+                  <span class="attend-status today">Hari Ini</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="dash-col">
+            <div class="card">
+              <div class="card-head">
+                <h4>Pengumuman Terbaru</h4>
+                <a class="card-link" onclick="navigate('pengumuman')">Lihat Semua →</a>
+              </div>
+              <div class="announce-list">
+                <div class="announce-item">
+                  <span class="announce-dot red"></span>
+                  <div>
+                    <p class="announce-title">Libur Nasional Waisak 2025</p>
+                    <p class="announce-date">6 Juni 2025</p>
+                  </div>
+                </div>
+                <div class="announce-item">
+                  <span class="announce-dot blue"></span>
+                  <div>
+                    <p class="announce-title">Update Kebijakan WFH Q2 2025</p>
+                    <p class="announce-date">1 Juni 2025</p>
+                  </div>
+                </div>
+                <div class="announce-item">
+                  <span class="announce-dot green"></span>
+                  <div>
+                    <p class="announce-title">Family Gathering Tahunan 2025</p>
+                    <p class="announce-date">28 Mei 2025</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick actions -->
+        <div class="card">
+          <div class="card-head"><h4>Akses Cepat</h4></div>
+          <div class="quick-grid">
+            <button class="quick-btn" onclick="navigate('absensi')">
+              <span class="quick-ico">◷</span>
+              <span>Absensi</span>
+            </button>
+            <button class="quick-btn" onclick="navigate('cuti')">
+              <span class="quick-ico">✈</span>
+              <span>Ajukan Cuti</span>
+            </button>
+            <button class="quick-btn" onclick="navigate('payroll')">
+              <span class="quick-ico">📄</span>
+              <span>Slip Gaji</span>
+            </button>
+            <button class="quick-btn" onclick="navigate('direktori')">
+              <span class="quick-ico">👥</span>
+              <span>Direktori</span>
+            </button>
+            <button class="quick-btn" onclick="navigate('profil')">
+              <span class="quick-ico">◉</span>
+              <span>Edit Profil</span>
+            </button>
+            <button class="quick-btn" onclick="navigate('pengumuman')">
+              <span class="quick-ico">📢</span>
+              <span>Pengumuman</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== PROFIL ========== -->
+      <section id="sec-profil" class="sec">
+        <div class="profil-hero">
+          <div id="profil-avatar" class="avatar xl"></div>
+          <div class="profil-info">
+            <h3 id="profil-name">-</h3>
+            <p id="profil-jabatan" class="profil-jabatan">-</p>
+            <span id="profil-role-badge" class="role-badge">-</span>
+          </div>
+          <button class="btn btn-outline ml-auto">✏ Edit Profil</button>
+        </div>
+        <div class="profil-grid">
+          <div class="card">
+            <h4 class="card-section-title">Informasi Pribadi</h4>
+            <div class="info-table">
+              <div class="info-row"><span>Nama Lengkap</span><span id="pf-nama">-</span></div>
+              <div class="info-row"><span>NIK</span><span id="pf-nik">-</span></div>
+              <div class="info-row"><span>Tanggal Lahir</span><span id="pf-lahir">-</span></div>
+              <div class="info-row"><span>Jenis Kelamin</span><span id="pf-gender">-</span></div>
+              <div class="info-row"><span>Agama</span><span id="pf-agama">-</span></div>
+              <div class="info-row"><span>Status Menikah</span><span id="pf-status">-</span></div>
+              <div class="info-row"><span>No. HP</span><span id="pf-hp">-</span></div>
+              <div class="info-row"><span>Email Pribadi</span><span id="pf-email">-</span></div>
+              <div class="info-row"><span>Alamat</span><span id="pf-alamat">-</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <h4 class="card-section-title">Informasi Pekerjaan</h4>
+            <div class="info-table">
+              <div class="info-row"><span>ID Karyawan</span><span id="pf-id">-</span></div>
+              <div class="info-row"><span>Divisi</span><span id="pf-divisi">-</span></div>
+              <div class="info-row"><span>Jabatan</span><span id="pf-pos">-</span></div>
+              <div class="info-row"><span>Atasan</span><span id="pf-atasan">-</span></div>
+              <div class="info-row"><span>Tgl Bergabung</span><span id="pf-join">-</span></div>
+              <div class="info-row"><span>Status Kerja</span><span id="pf-kerja">-</span></div>
+              <div class="info-row"><span>Lokasi Kerja</span><span id="pf-lokasi">-</span></div>
+              <div class="info-row"><span>Email Kantor</span><span id="pf-email-kantor">-</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="card mt-4">
+          <h4 class="card-section-title">Dokumen Karyawan</h4>
+          <div class="doc-grid">
+            <div class="doc-item"><span class="doc-icon">📄</span><span>Kontrak Kerja.pdf</span><button class="btn-dl">Unduh</button></div>
+            <div class="doc-item"><span class="doc-icon">📄</span><span>SK Pengangkatan.pdf</span><button class="btn-dl">Unduh</button></div>
+            <div class="doc-item"><span class="doc-icon">📄</span><span>NPWP Karyawan.pdf</span><button class="btn-dl">Unduh</button></div>
+            <div class="doc-item"><span class="doc-icon">📄</span><span>BPJS Kesehatan.pdf</span><button class="btn-dl">Unduh</button></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== ABSENSI ========== -->
+      <section id="sec-absensi" class="sec">
+        <div class="checkin-card">
+          <div class="checkin-time" id="live-clock">08:47:23</div>
+          <p class="checkin-date" id="live-date">Senin, 9 Juni 2025</p>
+          <div class="checkin-status">
+            <span class="status-dot green"></span>
+            <span>Belum Check-In</span>
+          </div>
+          <div class="checkin-btns">
+            <button class="btn btn-primary btn-lg" onclick="doCheckIn()">Check-In</button>
+            <button class="btn btn-outline btn-lg" onclick="doCheckOut()">Check-Out</button>
+          </div>
+          <p class="checkin-note">Jam Kerja: 08:00 – 17:00 WIB · Toleransi keterlambatan 15 menit</p>
+        </div>
+
+        <div class="card mt-4">
+          <div class="card-head">
+            <h4>Rekap Kehadiran – Juni 2025</h4>
+            <div class="filter-group">
+              <select class="form-select sm">
+                <option>Juni 2025</option>
+                <option>Mei 2025</option>
+                <option>April 2025</option>
+              </select>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Check-In</th>
+                  <th>Check-Out</th>
+                  <th>Durasi</th>
+                  <th>Status</th>
+                  <th>Keterangan</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>09 Jun, Sen</td><td>—</td><td>—</td><td>—</td><td><span class="chip today">Hari Ini</span></td><td>—</td></tr>
+                <tr><td>06 Jun, Jum</td><td>07:58</td><td>17:05</td><td>9j 7m</td><td><span class="chip green">Hadir</span></td><td>Tepat waktu</td></tr>
+                <tr><td>05 Jun, Kam</td><td>08:12</td><td>17:00</td><td>8j 48m</td><td><span class="chip yellow">Terlambat</span></td><td>Terlambat 12 menit</td></tr>
+                <tr><td>04 Jun, Rab</td><td>07:55</td><td>17:02</td><td>9j 7m</td><td><span class="chip green">Hadir</span></td><td>Tepat waktu</td></tr>
+                <tr><td>03 Jun, Sel</td><td>08:00</td><td>17:00</td><td>9j 0m</td><td><span class="chip green">Hadir</span></td><td>Tepat waktu</td></tr>
+                <tr><td>02 Jun, Sen</td><td>08:05</td><td>17:10</td><td>9j 5m</td><td><span class="chip green">Hadir</span></td><td>Tepat waktu</td></tr>
+                <tr><td>30 Mei, Jum</td><td>—</td><td>—</td><td>—</td><td><span class="chip blue">WFH</span></td><td>Bekerja dari rumah</td></tr>
+                <tr><td>29 Mei, Kam</td><td>07:50</td><td>17:15</td><td>9j 25m</td><td><span class="chip green">Hadir</span></td><td>Tepat waktu</td></tr>
+                <tr><td>28 Mei, Rab</td><td>—</td><td>—</td><td>—</td><td><span class="chip red">Sakit</span></td><td>Surat sakit dokter</td></tr>
+                <tr><td>27 Mei, Sel</td><td>08:03</td><td>17:00</td><td>8j 57m</td><td><span class="chip green">Hadir</span></td><td>Tepat waktu</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="attend-summary">
+            <div class="sum-item"><span class="sum-val green">22</span><span>Hadir</span></div>
+            <div class="sum-item"><span class="sum-val yellow">2</span><span>Terlambat</span></div>
+            <div class="sum-item"><span class="sum-val blue">3</span><span>WFH</span></div>
+            <div class="sum-item"><span class="sum-val red">1</span><span>Sakit</span></div>
+            <div class="sum-item"><span class="sum-val gray">0</span><span>Alpha</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== CUTI ========== -->
+      <section id="sec-cuti" class="sec">
+        <div class="cuti-saldo">
+          <div class="saldo-item">
+            <p class="saldo-val">12</p>
+            <p class="saldo-label">Cuti Tahunan Tersisa</p>
+          </div>
+          <div class="saldo-item">
+            <p class="saldo-val">4</p>
+            <p class="saldo-label">Cuti Digunakan</p>
+          </div>
+          <div class="saldo-item">
+            <p class="saldo-val">2</p>
+            <p class="saldo-label">Cuti Menunggu Persetujuan</p>
+          </div>
+          <div class="saldo-item">
+            <p class="saldo-val">90</p>
+            <p class="saldo-label">Cuti Sakit Tersisa</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h4>Ajukan Cuti Baru</h4>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Jenis Cuti</label>
+              <select class="form-select">
+                <option>Cuti Tahunan</option>
+                <option>Cuti Sakit</option>
+                <option>Cuti Melahirkan</option>
+                <option>Cuti Duka</option>
+                <option>Cuti Menikah</option>
+                <option>Izin Khusus</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tanggal Mulai</label>
+              <input type="date" class="form-input" value="2025-06-16" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tanggal Selesai</label>
+              <input type="date" class="form-input" value="2025-06-18" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Pengganti Tugas</label>
+              <select class="form-select">
+                <option>Pilih karyawan...</option>
+                <option>Budi Santoso</option>
+                <option>Sari Dewi</option>
+                <option>Eko Prasetyo</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label class="form-label">Alasan Cuti</label>
+              <textarea class="form-input" rows="3" placeholder="Tuliskan alasan cuti Anda...">Keperluan keluarga di luar kota.</textarea>
+            </div>
+            <div class="form-group full">
+              <label class="form-label">Lampiran Dokumen (opsional)</label>
+              <div class="upload-zone">
+                <span>📎 Klik atau seret file ke sini</span>
+                <span class="upload-hint">PDF, JPG, PNG maks. 5MB</span>
+              </div>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-outline">Batal</button>
+            <button class="btn btn-primary" onclick="showToast('Pengajuan cuti berhasil dikirim! Menunggu persetujuan atasan.')">Kirim Pengajuan</button>
+          </div>
+        </div>
+
+        <div class="card mt-4">
+          <div class="card-head"><h4>Riwayat Pengajuan Cuti</h4></div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr><th>Jenis</th><th>Periode</th><th>Durasi</th><th>Status</th><th>Disetujui Oleh</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Cuti Tahunan</td>
+                  <td>16–18 Jun 2025</td>
+                  <td>3 hari</td>
+                  <td><span class="chip yellow">Pending</span></td>
+                  <td>—</td>
+                </tr>
+                <tr>
+                  <td>Cuti Tahunan</td>
+                  <td>5–7 Mei 2025</td>
+                  <td>3 hari</td>
+                  <td><span class="chip green">Disetujui</span></td>
+                  <td>Ahmad Fauzi</td>
+                </tr>
+                <tr>
+                  <td>Cuti Sakit</td>
+                  <td>28 Mei 2025</td>
+                  <td>1 hari</td>
+                  <td><span class="chip green">Disetujui</span></td>
+                  <td>Ahmad Fauzi</td>
+                </tr>
+                <tr>
+                  <td>Cuti Tahunan</td>
+                  <td>10–11 Mar 2025</td>
+                  <td>2 hari</td>
+                  <td><span class="chip red">Ditolak</span></td>
+                  <td>Ahmad Fauzi</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== PAYROLL ========== -->
+      <section id="sec-payroll" class="sec">
+        <div class="card payroll-summary">
+          <div class="payroll-hero">
+            <div>
+              <p class="payroll-label">Gaji Bersih Terakhir</p>
+              <p class="payroll-amount">Rp 8.547.000</p>
+              <p class="payroll-period">Periode: Mei 2025 · Dibayar: 30 Mei 2025</p>
+            </div>
+            <button class="btn btn-outline" onclick="showToast('Slip gaji sedang diunduh...')">📄 Unduh Slip</button>
+          </div>
+          <div class="payroll-breakdown">
+            <div class="pb-col">
+              <p class="pb-head green">Pendapatan</p>
+              <div class="pb-row"><span>Gaji Pokok</span><span>Rp 7.000.000</span></div>
+              <div class="pb-row"><span>Tunjangan Jabatan</span><span>Rp 1.000.000</span></div>
+              <div class="pb-row"><span>Tunjangan Transport</span><span>Rp 500.000</span></div>
+              <div class="pb-row"><span>Tunjangan Makan</span><span>Rp 400.000</span></div>
+              <div class="pb-row bold"><span>Total Pendapatan</span><span>Rp 8.900.000</span></div>
+            </div>
+            <div class="pb-col">
+              <p class="pb-head red">Potongan</p>
+              <div class="pb-row"><span>BPJS Kesehatan (1%)</span><span>Rp 70.000</span></div>
+              <div class="pb-row"><span>BPJS Ketenagakerjaan</span><span>Rp 140.000</span></div>
+              <div class="pb-row"><span>PPh 21</span><span>Rp 143.000</span></div>
+              <div class="pb-row bold"><span>Total Potongan</span><span>Rp 353.000</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mt-4">
+          <div class="card-head"><h4>Riwayat Slip Gaji</h4></div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr><th>Periode</th><th>Gaji Pokok</th><th>Total Pendapatan</th><th>Total Potongan</th><th>Gaji Bersih</th><th>Aksi</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Mei 2025</td><td>Rp 7.000.000</td><td>Rp 8.900.000</td><td>Rp 353.000</td><td>Rp 8.547.000</td><td><button class="btn-dl" onclick="showToast('Mengunduh slip Mei 2025...')">Unduh</button></td></tr>
+                <tr><td>Apr 2025</td><td>Rp 7.000.000</td><td>Rp 8.900.000</td><td>Rp 353.000</td><td>Rp 8.547.000</td><td><button class="btn-dl" onclick="showToast('Mengunduh slip April 2025...')">Unduh</button></td></tr>
+                <tr><td>Mar 2025</td><td>Rp 7.000.000</td><td>Rp 8.400.000</td><td>Rp 353.000</td><td>Rp 8.047.000</td><td><button class="btn-dl" onclick="showToast('Mengunduh slip Maret 2025...')">Unduh</button></td></tr>
+                <tr><td>Feb 2025</td><td>Rp 7.000.000</td><td>Rp 8.400.000</td><td>Rp 353.000</td><td>Rp 8.047.000</td><td><button class="btn-dl" onclick="showToast('Mengunduh slip Februari 2025...')">Unduh</button></td></tr>
+                <tr><td>Jan 2025</td><td>Rp 7.000.000</td><td>Rp 9.900.000</td><td>Rp 353.000</td><td>Rp 9.547.000</td><td><button class="btn-dl" onclick="showToast('Mengunduh slip Januari 2025...')">Unduh</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== PENGUMUMAN ========== -->
+      <section id="sec-pengumuman" class="sec">
+        <div id="admin-announce-btn" class="hidden mb-4">
+          <button class="btn btn-primary" onclick="showToast('Form buat pengumuman dibuka.')">+ Buat Pengumuman</button>
+        </div>
+        <div class="announce-grid">
+          <div class="announce-card pinned">
+            <div class="announce-card-head">
+              <span class="chip red">Penting</span>
+              <span class="announce-date">6 Jun 2025</span>
+            </div>
+            <h4>Libur Nasional Waisak 2025</h4>
+            <p>Sehubungan dengan Hari Raya Waisak 2569 BE yang jatuh pada Senin, 12 Mei 2025, seluruh operasional kantor dinyatakan libur. Seluruh karyawan diharapkan memanfaatkan waktu libur dengan sebaik-baiknya.</p>
+            <div class="announce-footer">
+              <span>👤 HR Department</span>
+              <button class="btn-text">Baca Selengkapnya</button>
+            </div>
+          </div>
+
+          <div class="announce-card">
+            <div class="announce-card-head">
+              <span class="chip blue">Kebijakan</span>
+              <span class="announce-date">1 Jun 2025</span>
+            </div>
+            <h4>Update Kebijakan Work From Home Q2 2025</h4>
+            <p>Manajemen mengumumkan kebijakan WFH terbaru efektif 1 Juni 2025. Setiap karyawan diizinkan WFH maksimal 2 hari per minggu dengan persetujuan atasan langsung. Karyawan wajib melakukan check-in melalui portal ini.</p>
+            <div class="announce-footer">
+              <span>👤 Direktur HR</span>
+              <button class="btn-text">Baca Selengkapnya</button>
+            </div>
+          </div>
+
+          <div class="announce-card">
+            <div class="announce-card-head">
+              <span class="chip green">Acara</span>
+              <span class="announce-date">28 Mei 2025</span>
+            </div>
+            <h4>Family Gathering Tahunan 2025</h4>
+            <p>Dengan bangga kami mengumumkan Family Gathering PT Maju Bersama Indonesia yang akan diselenggarakan pada Sabtu, 5 Juli 2025 di Taman Bunga Nusantara, Cianjur. Daftarkan keluarga Anda sebelum 20 Juni 2025.</p>
+            <div class="announce-footer">
+              <span>👤 Panitia Gathering</span>
+              <button class="btn-text">Baca Selengkapnya</button>
+            </div>
+          </div>
+
+          <div class="announce-card">
+            <div class="announce-card-head">
+              <span class="chip purple">Training</span>
+              <span class="announce-date">20 Mei 2025</span>
+            </div>
+            <h4>Pelatihan Leadership for New Managers 2025</h4>
+            <p>Program pelatihan kepemimpinan untuk manajer baru akan dilaksanakan 23-25 Juni 2025 di Hotel Westin Surabaya. Peserta yang terdaftar harap konfirmasi kehadiran paling lambat 15 Juni 2025.</p>
+            <div class="announce-footer">
+              <span>👤 Training & Development</span>
+              <button class="btn-text">Baca Selengkapnya</button>
+            </div>
+          </div>
+
+          <div class="announce-card">
+            <div class="announce-card-head">
+              <span class="chip orange">Keuangan</span>
+              <span class="announce-date">15 Mei 2025</span>
+            </div>
+            <h4>Jadwal Pembayaran THR 2025</h4>
+            <p>THR Hari Raya Idul Fitri 1446 H telah dibayarkan kepada seluruh karyawan tetap yang memenuhi syarat pada tanggal 28 Maret 2025. Untuk pertanyaan lebih lanjut, silakan hubungi divisi Payroll.</p>
+            <div class="announce-footer">
+              <span>👤 Payroll Team</span>
+              <button class="btn-text">Baca Selengkapnya</button>
+            </div>
+          </div>
+
+          <div class="announce-card">
+            <div class="announce-card-head">
+              <span class="chip teal">Kesehatan</span>
+              <span class="announce-date">10 Mei 2025</span>
+            </div>
+            <h4>Medical Check-Up Karyawan Tahunan 2025</h4>
+            <p>Program medical check-up tahunan untuk seluruh karyawan akan dimulai pada 1 Juli 2025. Jadwal pemeriksaan akan diinformasikan per divisi. Pemeriksaan dilakukan di Laboratorium Prodia cabang Surabaya.</p>
+            <div class="announce-footer">
+              <span>👤 HR Department</span>
+              <button class="btn-text">Baca Selengkapnya</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== DIREKTORI ========== -->
+      <section id="sec-direktori" class="sec">
+        <div class="search-bar-wrap">
+          <input type="text" class="search-bar" placeholder="🔍  Cari nama, jabatan, atau divisi..." />
+          <select class="form-select">
+            <option>Semua Divisi</option>
+            <option>Teknologi Informasi</option>
+            <option>Human Resources</option>
+            <option>Keuangan</option>
+            <option>Pemasaran</option>
+            <option>Operasional</option>
+          </select>
+        </div>
+        <div class="employee-grid">
+          <div class="emp-card">
+            <div class="emp-avatar" style="background:#3B82F6">AF</div>
+            <h5>Ahmad Fauzi</h5>
+            <p class="emp-pos">General Manager</p>
+            <p class="emp-div">Manajemen</p>
+            <div class="emp-contacts">
+              <span>📧 ahmad.fauzi@myhr.id</span>
+              <span>📱 +62 812-0001-0001</span>
+            </div>
+          </div>
+          <div class="emp-card">
+            <div class="emp-avatar" style="background:#10B981">SR</div>
+            <h5>Sari Rahayu</h5>
+            <p class="emp-pos">HR Manager</p>
+            <p class="emp-div">Human Resources</p>
+            <div class="emp-contacts">
+              <span>📧 sari.rahayu@myhr.id</span>
+              <span>📱 +62 812-0002-0002</span>
+            </div>
+          </div>
+          <div class="emp-card">
+            <div class="emp-avatar" style="background:#8B5CF6">BS</div>
+            <h5>Budi Santoso</h5>
+            <p class="emp-pos">IT Manager</p>
+            <p class="emp-div">Teknologi Informasi</p>
+            <div class="emp-contacts">
+              <span>📧 budi.santoso@myhr.id</span>
+              <span>📱 +62 812-0003-0003</span>
+            </div>
+          </div>
+          <div class="emp-card">
+            <div class="emp-avatar" style="background:#F59E0B">DN</div>
+            <h5>Dewi Nuraini</h5>
+            <p class="emp-pos">Finance Manager</p>
+            <p class="emp-div">Keuangan</p>
+            <div class="emp-contacts">
+              <span>📧 dewi.nuraini@myhr.id</span>
+              <span>📱 +62 812-0004-0004</span>
+            </div>
+          </div>
+          <div class="emp-card">
+            <div class="emp-avatar" style="background:#EF4444">EP</div>
+            <h5>Eko Prasetyo</h5>
+            <p class="emp-pos">Senior Developer</p>
+            <p class="emp-div">Teknologi Informasi</p>
+            <div class="emp-contacts">
+              <span>📧 eko.prasetyo@myhr.id</span>
+              <span>📱 +62 812-0005-0005</span>
+            </div>
+          </div>
+          <div class="emp-card">
+            <div class="emp-avatar" style="background:#06B6D4">RW</div>
+            <h5>Rini Wulandari</h5>
+            <p class="emp-pos">Marketing Executive</p>
+            <p class="emp-div">Pemasaran</p>
+            <div class="emp-contacts">
+              <span>📧 rini.wulandari@myhr.id</span>
+              <span>📱 +62 812-0006-0006</span>
+            </div>
+          </div>
+          <div class="emp-card">
+            <div class="emp-avatar" style="background:#84CC16">HP</div>
+            <h5>Hendra Putra</h5>
+            <p class="emp-pos">Operational Staff</p>
+            <p class="emp-div">Operasional</p>
+            <div class="emp-contacts">
+              <span>📧 hendra.putra@myhr.id</span>
+              <span>📱 +62 812-0007-0007</span>
+            </div>
+          </div>
+          <div class="emp-card">
+            <div class="emp-avatar" style="background:#EC4899">LA</div>
+            <h5>Linda Anggraeni</h5>
+            <p class="emp-pos">HR Staff</p>
+            <p class="emp-div">Human Resources</p>
+            <div class="emp-contacts">
+              <span>📧 linda.anggraeni@myhr.id</span>
+              <span>📱 +62 812-0008-0008</span>
+            </div>
+          </div>
+          <div class="emp-card">
+            <div class="emp-avatar" style="background:#6366F1">YP</div>
+            <h5>Yusuf Pratama</h5>
+            <p class="emp-pos">Accountant</p>
+            <p class="emp-div">Keuangan</p>
+            <div class="emp-contacts">
+              <span>📧 yusuf.pratama@myhr.id</span>
+              <span>📱 +62 812-0009-0009</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== KELOLA KARYAWAN (ADMIN) ========== -->
+      <section id="sec-kelola-karyawan" class="sec">
+        <div class="card-head mb-4">
+          <h4>Manajemen Karyawan</h4>
+          <button class="btn btn-primary">+ Tambah Karyawan Baru</button>
+        </div>
+        <div class="filter-row">
+          <input type="text" class="search-bar flex-1" placeholder="🔍  Cari karyawan..." />
+          <select class="form-select"><option>Semua Divisi</option><option>IT</option><option>HR</option><option>Finance</option></select>
+          <select class="form-select"><option>Semua Status</option><option>Aktif</option><option>Cuti</option><option>Non-Aktif</option></select>
+        </div>
+        <div class="card mt-4">
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr><th>ID</th><th>Nama</th><th>Jabatan</th><th>Divisi</th><th>Status</th><th>Bergabung</th><th>Aksi</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>EMP001</td><td>Ahmad Fauzi</td><td>General Manager</td><td>Manajemen</td><td><span class="chip green">Aktif</span></td><td>2 Jan 2020</td><td><button class="btn-dl" onclick="showToast('Membuka profil Ahmad Fauzi...')">Edit</button></td></tr>
+                <tr><td>EMP002</td><td>Sari Rahayu</td><td>HR Manager</td><td>HR</td><td><span class="chip green">Aktif</span></td><td>5 Mar 2021</td><td><button class="btn-dl" onclick="showToast('Membuka profil Sari Rahayu...')">Edit</button></td></tr>
+                <tr><td>EMP003</td><td>Budi Santoso</td><td>IT Manager</td><td>IT</td><td><span class="chip green">Aktif</span></td><td>10 Jun 2021</td><td><button class="btn-dl" onclick="showToast('Membuka profil Budi Santoso...')">Edit</button></td></tr>
+                <tr><td>EMP004</td><td>Dewi Nuraini</td><td>Finance Manager</td><td>Keuangan</td><td><span class="chip green">Aktif</span></td><td>1 Sep 2019</td><td><button class="btn-dl" onclick="showToast('Membuka profil Dewi Nuraini...')">Edit</button></td></tr>
+                <tr><td>EMP005</td><td>Eko Prasetyo</td><td>Senior Developer</td><td>IT</td><td><span class="chip yellow">Cuti</span></td><td>15 Feb 2022</td><td><button class="btn-dl" onclick="showToast('Membuka profil Eko Prasetyo...')">Edit</button></td></tr>
+                <tr><td>EMP006</td><td>Rini Wulandari</td><td>Marketing Executive</td><td>Marketing</td><td><span class="chip green">Aktif</span></td><td>20 Jul 2022</td><td><button class="btn-dl" onclick="showToast('Membuka profil Rini Wulandari...')">Edit</button></td></tr>
+                <tr><td>EMP007</td><td>Hendra Putra</td><td>Operational Staff</td><td>Operasional</td><td><span class="chip red">Non-Aktif</span></td><td>3 Nov 2020</td><td><button class="btn-dl" onclick="showToast('Membuka profil Hendra Putra...')">Edit</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-footer">
+            <span>Menampilkan 1–7 dari 148 karyawan</span>
+            <div class="pagination">
+              <button class="page-btn">‹</button>
+              <button class="page-btn active">1</button>
+              <button class="page-btn">2</button>
+              <button class="page-btn">3</button>
+              <button class="page-btn">›</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== LAPORAN (ADMIN) ========== -->
+      <section id="sec-laporan" class="sec">
+        <div class="stat-grid">
+          <div class="stat-card blue"><div class="stat-icon">👥</div><div class="stat-info"><p class="stat-val">148</p><p class="stat-label">Total Karyawan</p></div></div>
+          <div class="stat-card green"><div class="stat-icon">✅</div><div class="stat-info"><p class="stat-val">94.2%</p><p class="stat-label">Rata-rata Kehadiran</p></div></div>
+          <div class="stat-card orange"><div class="stat-icon">✈</div><div class="stat-info"><p class="stat-val">38</p><p class="stat-label">Cuti Bulan Ini</p></div></div>
+          <div class="stat-card purple"><div class="stat-icon">📊</div><div class="stat-info"><p class="stat-val">Rp 1,2 M</p><p class="stat-label">Total Payroll Mei</p></div></div>
+        </div>
+        <div class="dash-cols mt-4">
+          <div class="dash-col">
+            <div class="card">
+              <h4 class="card-section-title">Distribusi Karyawan per Divisi</h4>
+              <div class="bar-chart">
+                <div class="bc-row"><span class="bc-label">Teknologi Informasi</span><div class="bc-bar-wrap"><div class="bc-bar" style="width:62%">31</div></div></div>
+                <div class="bc-row"><span class="bc-label">Operasional</span><div class="bc-bar-wrap"><div class="bc-bar" style="width:48%">24</div></div></div>
+                <div class="bc-row"><span class="bc-label">Pemasaran</span><div class="bc-bar-wrap"><div class="bc-bar" style="width:38%">19</div></div></div>
+                <div class="bc-row"><span class="bc-label">Keuangan</span><div class="bc-bar-wrap"><div class="bc-bar" style="width:30%">15</div></div></div>
+                <div class="bc-row"><span class="bc-label">Human Resources</span><div class="bc-bar-wrap"><div class="bc-bar" style="width:26%">13</div></div></div>
+                <div class="bc-row"><span class="bc-label">Manajemen</span><div class="bc-bar-wrap"><div class="bc-bar" style="width:18%">9</div></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="dash-col">
+            <div class="card">
+              <h4 class="card-section-title">Rekap Kehadiran Bulan Ini</h4>
+              <div class="donut-wrap">
+                <svg viewBox="0 0 120 120" class="donut-svg">
+                  <circle cx="60" cy="60" r="50" fill="none" stroke="#E2E8F0" stroke-width="16"/>
+                  <circle cx="60" cy="60" r="50" fill="none" stroke="#3B82F6" stroke-width="16" stroke-dasharray="283 314" stroke-dashoffset="78" stroke-linecap="round"/>
+                  <circle cx="60" cy="60" r="50" fill="none" stroke="#F59E0B" stroke-width="16" stroke-dasharray="25 314" stroke-dashoffset="-205" stroke-linecap="round"/>
+                  <circle cx="60" cy="60" r="50" fill="none" stroke="#10B981" stroke-width="16" stroke-dasharray="18 314" stroke-dashoffset="-230" stroke-linecap="round"/>
+                  <text x="60" y="55" text-anchor="middle" font-size="16" font-weight="700" fill="#1A2742">94.2%</text>
+                  <text x="60" y="70" text-anchor="middle" font-size="8" fill="#64748B">Kehadiran</text>
+                </svg>
+                <div class="donut-legend">
+                  <div class="legend-item"><span class="ld blue"></span>Hadir 94.2%</div>
+                  <div class="legend-item"><span class="ld yellow"></span>WFH 8%</div>
+                  <div class="legend-item"><span class="ld green"></span>Sakit 6%</div>
+                  <div class="legend-item"><span class="ld gray"></span>Alpha 1.8%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card mt-4">
+          <div class="card-head">
+            <h4>Unduh Laporan</h4>
+          </div>
+          <div class="report-grid">
+            <div class="report-item" onclick="showToast('Mengunduh Laporan Kehadiran Mei 2025...')">
+              <span class="report-icon">📊</span>
+              <div><p class="report-name">Laporan Kehadiran</p><p class="report-desc">Mei 2025 · Excel</p></div>
+              <button class="btn-dl">Unduh</button>
+            </div>
+            <div class="report-item" onclick="showToast('Mengunduh Laporan Payroll Mei 2025...')">
+              <span class="report-icon">💰</span>
+              <div><p class="report-name">Laporan Payroll</p><p class="report-desc">Mei 2025 · Excel</p></div>
+              <button class="btn-dl">Unduh</button>
+            </div>
+            <div class="report-item" onclick="showToast('Mengunduh Laporan Cuti Q1 2025...')">
+              <span class="report-icon">✈</span>
+              <div><p class="report-name">Laporan Cuti</p><p class="report-desc">Q1 2025 · PDF</p></div>
+              <button class="btn-dl">Unduh</button>
+            </div>
+            <div class="report-item" onclick="showToast('Mengunduh Data Karyawan...')">
+              <span class="report-icon">👥</span>
+              <div><p class="report-name">Data Karyawan</p><p class="report-desc">Lengkap · Excel</p></div>
+              <button class="btn-dl">Unduh</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== PENGATURAN (ADMIN) ========== -->
+      <section id="sec-pengaturan" class="sec">
+        <div class="settings-grid">
+          <div class="card">
+            <h4 class="card-section-title">Pengaturan Umum</h4>
+            <div class="form-group"><label class="form-label">Nama Perusahaan</label><input class="form-input" value="PT Maju Bersama Indonesia" /></div>
+            <div class="form-group"><label class="form-label">Alamat Kantor</label><input class="form-input" value="Jl. HR. Muhammad No. 12, Surabaya" /></div>
+            <div class="form-group"><label class="form-label">Jam Kerja Mulai</label><input class="form-input" type="time" value="08:00" /></div>
+            <div class="form-group"><label class="form-label">Jam Kerja Selesai</label><input class="form-input" type="time" value="17:00" /></div>
+            <div class="form-group"><label class="form-label">Toleransi Keterlambatan (menit)</label><input class="form-input" type="number" value="15" /></div>
+            <button class="btn btn-primary" onclick="showToast('Pengaturan berhasil disimpan.')">Simpan Perubahan</button>
+          </div>
+          <div class="card">
+            <h4 class="card-section-title">Manajemen Role & Akses</h4>
+            <div class="role-list">
+              <div class="role-row">
+                <div><p class="role-name">Administrator</p><p class="role-desc">Akses penuh ke semua modul</p></div>
+                <span class="chip red">Super Admin</span>
+              </div>
+              <div class="role-row">
+                <div><p class="role-name">Manager</p><p class="role-desc">Akses tim, approval cuti, laporan divisi</p></div>
+                <span class="chip blue">Manager</span>
+              </div>
+              <div class="role-row">
+                <div><p class="role-name">Employee</p><p class="role-desc">Akses profil, absensi, cuti, payroll</p></div>
+                <span class="chip green">Staff</span>
+              </div>
+            </div>
+            <button class="btn btn-outline mt-4" onclick="showToast('Halaman manajemen role dibuka.')">Kelola Role</button>
+          </div>
+          <div class="card">
+            <h4 class="card-section-title">Notifikasi Sistem</h4>
+            <div class="toggle-list">
+              <div class="toggle-row"><span>Email notifikasi cuti</span><label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label></div>
+              <div class="toggle-row"><span>Email notifikasi absensi</span><label class="toggle"><input type="checkbox"/><span class="toggle-slider"></span></label></div>
+              <div class="toggle-row"><span>Reminder payroll</span><label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label></div>
+              <div class="toggle-row"><span>Notifikasi ulang tahun karyawan</span><label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label></div>
+            </div>
+          </div>
+          <div class="card">
+            <h4 class="card-section-title">Saldo Cuti Default</h4>
+            <div class="form-group"><label class="form-label">Cuti Tahunan (hari)</label><input class="form-input" type="number" value="12" /></div>
+            <div class="form-group"><label class="form-label">Cuti Sakit (hari)</label><input class="form-input" type="number" value="90" /></div>
+            <div class="form-group"><label class="form-label">Cuti Melahirkan (hari)</label><input class="form-input" type="number" value="90" /></div>
+            <div class="form-group"><label class="form-label">Cuti Duka (hari)</label><input class="form-input" type="number" value="3" /></div>
+            <button class="btn btn-primary" onclick="showToast('Saldo cuti berhasil disimpan.')">Simpan</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== TIM (MANAGER) ========== -->
+      <section id="sec-tim" class="sec">
+        <div class="card mb-4">
+          <h4 class="card-section-title">Ringkasan Tim – Teknologi Informasi</h4>
+          <div class="stat-grid">
+            <div class="stat-card blue"><div class="stat-icon">👥</div><div class="stat-info"><p class="stat-val">12</p><p class="stat-label">Anggota Tim</p></div></div>
+            <div class="stat-card green"><div class="stat-icon">✅</div><div class="stat-info"><p class="stat-val">10</p><p class="stat-label">Hadir Hari Ini</p></div></div>
+            <div class="stat-card yellow"><div class="stat-icon">✈</div><div class="stat-info"><p class="stat-val">1</p><p class="stat-label">Sedang Cuti</p></div></div>
+            <div class="stat-card blue"><div class="stat-icon">💻</div><div class="stat-info"><p class="stat-val">1</p><p class="stat-label">WFH Hari Ini</p></div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h4>Anggota Tim</h4></div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr><th>Nama</th><th>Jabatan</th><th>Status Hari Ini</th><th>Kehadiran Bulan Ini</th><th>Cuti Sisa</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Eko Prasetyo</td><td>Senior Developer</td><td><span class="chip yellow">Cuti</span></td><td>18/22</td><td>6 hari</td></tr>
+                <tr><td>Linda Anggraeni</td><td>Frontend Dev</td><td><span class="chip green">Hadir</span></td><td>21/22</td><td>10 hari</td></tr>
+                <tr><td>Yusuf Pratama</td><td>Backend Dev</td><td><span class="chip blue">WFH</span></td><td>22/22</td><td>12 hari</td></tr>
+                <tr><td>Rini Wulandari</td><td>QA Engineer</td><td><span class="chip green">Hadir</span></td><td>20/22</td><td>8 hari</td></tr>
+                <tr><td>Hendra Putra</td><td>DevOps</td><td><span class="chip green">Hadir</span></td><td>22/22</td><td>14 hari</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== APPROVAL (MANAGER) ========== -->
+      <section id="sec-approval" class="sec">
+        <div class="card">
+          <div class="card-head"><h4>Pengajuan Cuti Menunggu Persetujuan</h4><span class="badge-notif inline">3</span></div>
+          <div class="approval-list">
+            <div class="approval-item">
+              <div class="emp-avatar sm" style="background:#EF4444">EP</div>
+              <div class="approval-info">
+                <p class="approval-name">Eko Prasetyo</p>
+                <p class="approval-detail">Cuti Tahunan · 16–18 Jun 2025 · 3 hari</p>
+                <p class="approval-reason">Alasan: Keperluan keluarga di luar kota</p>
+              </div>
+              <div class="approval-actions">
+                <button class="btn btn-primary sm" onclick="showToast('Cuti Eko Prasetyo telah disetujui.')">Setujui</button>
+                <button class="btn btn-danger sm" onclick="showToast('Cuti Eko Prasetyo ditolak.')">Tolak</button>
+              </div>
+            </div>
+            <div class="approval-item">
+              <div class="emp-avatar sm" style="background:#EC4899">LA</div>
+              <div class="approval-info">
+                <p class="approval-name">Linda Anggraeni</p>
+                <p class="approval-detail">Cuti Tahunan · 23–24 Jun 2025 · 2 hari</p>
+                <p class="approval-reason">Alasan: Pernikahan saudara di Yogyakarta</p>
+              </div>
+              <div class="approval-actions">
+                <button class="btn btn-primary sm" onclick="showToast('Cuti Linda Anggraeni telah disetujui.')">Setujui</button>
+                <button class="btn btn-danger sm" onclick="showToast('Cuti Linda Anggraeni ditolak.')">Tolak</button>
+              </div>
+            </div>
+            <div class="approval-item">
+              <div class="emp-avatar sm" style="background:#6366F1">YP</div>
+              <div class="approval-info">
+                <p class="approval-name">Yusuf Pratama</p>
+                <p class="approval-detail">Cuti Tahunan · 30 Jun – 1 Jul 2025 · 2 hari</p>
+                <p class="approval-reason">Alasan: Liburan keluarga</p>
+              </div>
+              <div class="approval-actions">
+                <button class="btn btn-primary sm" onclick="showToast('Cuti Yusuf Pratama telah disetujui.')">Setujui</button>
+                <button class="btn btn-danger sm" onclick="showToast('Cuti Yusuf Pratama ditolak.')">Tolak</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card mt-4">
+          <div class="card-head"><h4>Riwayat Persetujuan</h4></div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Karyawan</th><th>Jenis Cuti</th><th>Periode</th><th>Keputusan</th><th>Tgl Keputusan</th></tr></thead>
+              <tbody>
+                <tr><td>Eko Prasetyo</td><td>Cuti Tahunan</td><td>5–7 Mei 2025</td><td><span class="chip green">Disetujui</span></td><td>3 Mei 2025</td></tr>
+                <tr><td>Rini Wulandari</td><td>Cuti Sakit</td><td>28 Mei 2025</td><td><span class="chip green">Disetujui</span></td><td>28 Mei 2025</td></tr>
+                <tr><td>Hendra Putra</td><td>Cuti Tahunan</td><td>10–12 Mar 2025</td><td><span class="chip red">Ditolak</span></td><td>8 Mar 2025</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast hidden"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
