@@ -1,0 +1,1988 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — WarehouseOS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ========== RESET & ROOT ========== */
+:root {
+  --navy:       #0F1B2D;
+  --navy-mid:   #162236;
+  --navy-light: #1E3050;
+  --navy-hover: #243760;
+  --teal:       #00C9A7;
+  --teal-dim:   #00A88A;
+  --amber:      #F59E0B;
+  --red:        #EF4444;
+  --green:      #22C55E;
+  --blue:       #3B82F6;
+  --purple:     #8B5CF6;
+  --text-primary: #F0F4F8;
+  --text-sub:     #B0C4D8;
+  --text-muted:   #6B88A4;
+  --border:       rgba(255,255,255,0.07);
+  --border-med:   rgba(255,255,255,0.12);
+  --card:         rgba(255,255,255,0.04);
+  --sidebar-w:    240px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html { height:100%; }
+body{font-family:'Inter',sans-serif;background:var(--navy);color:var(--text-primary);min-height:100vh;overflow-x:hidden;overflow-y:auto;}
+a{text-decoration:none;color:inherit;}
+
+/* ========== SIDEBAR ========== */
+.sidebar {
+  position: fixed; top:0; left:0;
+  width: var(--sidebar-w); height:100vh;
+  background: var(--navy-mid);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction:column;
+  z-index: 200;
+  transition: transform 0.3s ease;
+  overflow: hidden; /* biarkan hidden di sini, scroll ada di .sidebar-nav */
+}
+.sidebar-brand {
+  padding: 22px 20px 18px;
+  border-bottom: 1px solid var(--border);
+  display:flex; align-items:center; gap:12px;
+  flex-shrink: 0; /* jangan ikut mengecil */
+}
+.brand-icon-sm {
+  width:38px; height:38px;
+  background: linear-gradient(135deg, var(--teal), var(--teal-dim));
+  border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; flex-shrink:0;
+}
+.sidebar-brand h2 {
+  font-family:'Space Grotesk',sans-serif;
+  font-size:16px; font-weight:700; color:var(--text-primary);
+}
+.sidebar-brand span { font-size:10px; color:var(--text-muted); display:block; margin-top:1px; }
+
+/* Area nav yang bisa di-scroll */
+.sidebar-nav {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 8px;
+}
+/* Scrollbar tipis di sidebar */
+.sidebar-nav::-webkit-scrollbar { width: 4px; }
+.sidebar-nav::-webkit-scrollbar-track { background: transparent; }
+.sidebar-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+.sidebar-nav::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+.sidebar-section-label {
+  font-size:10px; font-weight:700; color:var(--text-muted);
+  text-transform:uppercase; letter-spacing:0.8px;
+  padding:18px 20px 8px;
+}
+.nav-item {
+  display:flex; align-items:center; gap:11px;
+  padding:10px 20px; cursor:pointer;
+  transition:all 0.15s;
+  font-size:13.5px; color:var(--text-sub); font-weight:500;
+  border-left:3px solid transparent;
+  position:relative;
+  white-space: nowrap;
+}
+.nav-item:hover { background:var(--navy-hover); color:var(--text-primary); }
+.nav-item.active {
+  background:rgba(0,201,167,0.1);
+  color:var(--teal);
+  border-left-color:var(--teal);
+}
+.nav-icon { font-size:16px; width:20px; text-align:center; flex-shrink:0; }
+.nav-badge {
+  margin-left:auto;
+  background:var(--red);
+  color:#fff; font-size:10px; font-weight:700;
+  padding:2px 7px; border-radius:20px;
+  flex-shrink:0;
+}
+.nav-badge.warn { background:var(--amber); color:var(--navy); }
+
+.sidebar-footer {
+  flex-shrink: 0; /* footer selalu di bawah, tidak ikut scroll */
+  border-top:1px solid var(--border);
+  padding:16px 20px;
+  background: var(--navy-mid);
+}
+.user-info { display:flex; align-items:center; gap:10px; }
+.avatar {
+  width:34px; height:34px; border-radius:50%;
+  background:linear-gradient(135deg,var(--teal),var(--blue));
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; font-weight:700; color:#fff; flex-shrink:0;
+}
+.user-detail { flex:1; min-width:0; }
+.user-name { font-size:13px; font-weight:600; color:var(--text-primary); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.user-role-badge { font-size:10px; font-weight:700; padding:2px 7px; border-radius:20px; display:inline-block; margin-top:2px; }
+.role-admin { background:rgba(239,68,68,0.15); color:#EF4444; }
+.role-manager { background:rgba(245,158,11,0.15); color:#F59E0B; }
+.role-staff { background:rgba(0,201,167,0.15); color:var(--teal); }
+.btn-logout { background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:16px; padding:4px; transition:color 0.2s; }
+.btn-logout:hover { color:var(--red); }
+
+/* ========== TOPBAR ========== */
+.topbar {
+  position:fixed; top:0; left:var(--sidebar-w); right:0;
+  height:60px; background:var(--navy-mid);
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center;
+  padding:0 20px; gap:12px; z-index:100;
+  min-width:0;
+}
+.topbar-title {
+  font-family:'Space Grotesk',sans-serif; font-size:17px; font-weight:600;
+  flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0;
+}
+.topbar-actions { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+.notif-btn {
+  width:36px; height:36px; border-radius:9px;
+  background:var(--card); border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:16px; position:relative;
+  transition:background 0.15s;
+}
+.notif-btn:hover { background:var(--navy-light); }
+.notif-dot { position:absolute; top:7px; right:7px; width:7px; height:7px; border-radius:50%; background:var(--red); border:1.5px solid var(--navy-mid); }
+.menu-toggle {
+  display:none; width:36px; height:36px; border-radius:9px;
+  background:var(--card); border:1px solid var(--border);
+  align-items:center; justify-content:center;
+  cursor:pointer; font-size:18px;
+}
+
+/* ========== MAIN ========== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding-top: 60px;
+  min-height: 100vh;
+  min-width: 0;
+  overflow-x: hidden;
+}
+.page { display:none; padding:28px; }
+.page.active { display:block; }
+
+/* ========== CARDS ========== */
+.stat-grid {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px;
+}
+.stat-card {
+  background:var(--navy-mid); border:1px solid var(--border);
+  border-radius:14px; padding:20px;
+  display:flex; align-items:flex-start; gap:14px;
+  transition:border-color 0.2s;
+}
+.stat-card:hover { border-color:var(--border-med); }
+.stat-icon {
+  width:44px; height:44px; border-radius:11px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px; flex-shrink:0;
+}
+.si-teal { background:rgba(0,201,167,0.12); }
+.si-amber { background:rgba(245,158,11,0.12); }
+.si-red   { background:rgba(239,68,68,0.12); }
+.si-blue  { background:rgba(59,130,246,0.12); }
+.si-purple{ background:rgba(139,92,246,0.12); }
+.si-green { background:rgba(34,197,94,0.12); }
+.stat-info {}
+.stat-value { font-family:'Space Grotesk',sans-serif; font-size:26px; font-weight:700; line-height:1; }
+.stat-label { font-size:12px; color:var(--text-muted); margin-top:4px; }
+.stat-change { font-size:11px; margin-top:6px; font-weight:600; }
+.up { color:var(--green); } .down { color:var(--red); } .warn-c { color:var(--amber); }
+
+/* ========== SECTIONS ========== */
+.section-row { display:grid; gap:16px; margin-bottom:24px; }
+.cols-2 { grid-template-columns:1fr 1fr; }
+.cols-3 { grid-template-columns:2fr 1fr; }
+.section-card {
+  background:var(--navy-mid); border:1px solid var(--border);
+  border-radius:14px; overflow:hidden;
+}
+.section-head {
+  padding:16px 20px;
+  display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid var(--border);
+}
+.section-head h3 { font-size:14px; font-weight:600; }
+.section-head span { font-size:12px; color:var(--text-muted); }
+.btn-sm {
+  font-size:12px; font-weight:600; padding:6px 14px;
+  border-radius:7px; border:none; cursor:pointer;
+  transition:opacity 0.2s;
+}
+.btn-sm:hover { opacity:0.85; }
+.btn-teal { background:rgba(0,201,167,0.15); color:var(--teal); }
+.btn-primary { background:linear-gradient(135deg,var(--teal),var(--teal-dim)); color:var(--navy); }
+.btn-amber { background:rgba(245,158,11,0.15); color:var(--amber); }
+.btn-red { background:rgba(239,68,68,0.15); color:var(--red); }
+.btn-blue { background:rgba(59,130,246,0.15); color:var(--blue); }
+
+/* ========== TABLE ========== */
+.table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+.table-wrap::-webkit-scrollbar { height:4px; }
+.table-wrap::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:4px; }
+table { width:100%; border-collapse:collapse; min-width:500px; }
+thead tr { background:rgba(255,255,255,0.03); }
+th { padding:11px 16px; text-align:left; font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; }
+td { padding:12px 16px; font-size:13px; border-bottom:1px solid var(--border); color:var(--text-sub); }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:rgba(255,255,255,0.02); }
+td .primary-text { color:var(--text-primary); font-weight:500; }
+
+.badge {
+  display:inline-flex; align-items:center;
+  font-size:11px; font-weight:700; padding:3px 9px; border-radius:20px; white-space:nowrap;
+}
+.badge-green { background:rgba(34,197,94,0.12); color:var(--green); }
+.badge-amber { background:rgba(245,158,11,0.12); color:var(--amber); }
+.badge-red   { background:rgba(239,68,68,0.12);  color:var(--red); }
+.badge-blue  { background:rgba(59,130,246,0.12); color:var(--blue); }
+.badge-purple{ background:rgba(139,92,246,0.12); color:var(--purple); }
+.badge-teal  { background:rgba(0,201,167,0.12);  color:var(--teal); }
+.badge-gray  { background:rgba(255,255,255,0.07);color:var(--text-muted); }
+
+/* ========== PROGRESS BAR ========== */
+.prog-bar { height:6px; border-radius:3px; background:rgba(255,255,255,0.08); overflow:hidden; }
+.prog-fill { height:100%; border-radius:3px; }
+
+/* ========== CHART MOCK ========== */
+.chart-mock { padding:20px; }
+.bar-chart { display:flex; align-items:flex-end; gap:8px; height:140px; }
+.bar {
+  flex:1; border-radius:6px 6px 0 0;
+  background:linear-gradient(to top,var(--teal-dim),var(--teal));
+  opacity:0.7; transition:opacity 0.2s; cursor:pointer; position:relative;
+}
+.bar:hover { opacity:1; }
+.bar.alt { background:linear-gradient(to top,#2563EB,var(--blue)); }
+.bar-labels { display:flex; gap:8px; padding:8px 0 0; }
+.bar-label { flex:1; text-align:center; font-size:10px; color:var(--text-muted); }
+
+/* ========== ACTIVITY FEED ========== */
+.activity-list { padding:4px 0; }
+.activity-item {
+  display:flex; align-items:flex-start; gap:12px;
+  padding:12px 20px; border-bottom:1px solid var(--border);
+}
+.activity-item:last-child { border-bottom:none; }
+.act-dot {
+  width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:5px;
+}
+.act-content { flex:1; }
+.act-text { font-size:13px; color:var(--text-sub); line-height:1.5; }
+.act-text strong { color:var(--text-primary); }
+.act-time { font-size:11px; color:var(--text-muted); margin-top:2px; }
+
+/* ========== FORMS ========== */
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; padding:20px; }
+.form-group-full { grid-column:1/-1; }
+.form-group label { display:block; font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:7px; }
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width:100%; background:var(--navy-light); border:1.5px solid var(--border);
+  border-radius:9px; padding:10px 14px; color:var(--text-primary);
+  font-size:13.5px; font-family:'Inter',sans-serif; outline:none; transition:border-color 0.2s;
+  appearance:none;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus { border-color:var(--teal); }
+.form-group textarea { resize:vertical; min-height:80px; }
+.form-group select option { background:var(--navy-mid); }
+.form-footer { padding:16px 20px; border-top:1px solid var(--border); display:flex; gap:10px; justify-content:flex-end; }
+
+/* ========== STOCK LEVEL ========== */
+.stock-ok { color:var(--green); }
+.stock-warn { color:var(--amber); }
+.stock-low { color:var(--red); }
+
+/* ========== PAGE HEADER ========== */
+.page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
+.page-header h2 { font-family:'Space Grotesk',sans-serif; font-size:22px; font-weight:700; }
+.page-header p { font-size:13px; color:var(--text-muted); margin-top:3px; }
+
+/* ========== SEARCH/FILTER ========== */
+.filter-bar { display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+.search-input { flex:1; min-width:200px; background:var(--navy-mid); border:1.5px solid var(--border); border-radius:9px; padding:9px 14px; color:var(--text-primary); font-size:13px; font-family:'Inter',sans-serif; outline:none; }
+.search-input:focus { border-color:var(--teal); }
+.filter-select { background:var(--navy-mid); border:1.5px solid var(--border); border-radius:9px; padding:9px 14px; color:var(--text-sub); font-size:13px; font-family:'Inter',sans-serif; outline:none; cursor:pointer; appearance:none; }
+.filter-select:focus { border-color:var(--teal); }
+
+/* ========== MODAL ========== */
+.modal-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,0.65);
+  z-index:500; display:none; align-items:center; justify-content:center; padding:20px;
+}
+.modal-overlay.open { display:flex; }
+.modal {
+  background:var(--navy-mid); border:1px solid var(--border-med);
+  border-radius:16px; width:100%; max-width:540px;
+  max-height:90vh; overflow-y:auto;
+}
+.modal-header {
+  padding:20px 24px 16px;
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.modal-header h3 { font-size:16px; font-weight:700; }
+.modal-close { background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:20px; line-height:1; }
+.modal-close:hover { color:var(--text-primary); }
+
+/* ========== ALERT/INFO ========== */
+.alert {
+  display:flex; gap:10px; align-items:flex-start;
+  padding:12px 16px; border-radius:10px; margin-bottom:16px; font-size:13px;
+}
+.alert-amber { background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.25); color:var(--amber); }
+.alert-red    { background:rgba(239,68,68,0.1);  border:1px solid rgba(239,68,68,0.25);  color:#FC8181; }
+.alert-teal   { background:rgba(0,201,167,0.1);  border:1px solid rgba(0,201,167,0.25);  color:var(--teal); }
+
+/* ========== UTIL ========== */
+.gap-top { margin-top:24px; }
+.text-right { text-align:right; }
+.text-center { text-align:center; }
+.full-width { width:100%; }
+.flex-row { display:flex; align-items:center; gap:8px; }
+.spacer { flex:1; }
+
+/* ========== RESPONSIVE ========== */
+
+/* Tablet landscape */
+@media(max-width:1200px) {
+  .stat-grid { grid-template-columns:repeat(2,1fr); }
+  .cols-2 { grid-template-columns:1fr 1fr; }
+  .cols-3 { grid-template-columns:1fr; }
+}
+
+/* Tablet portrait */
+@media(max-width:900px) {
+  .stat-grid { grid-template-columns:repeat(2,1fr); gap:12px; }
+  .cols-2 { grid-template-columns:1fr; }
+  .section-row { grid-template-columns:1fr; }
+  .info-grid { grid-template-columns:1fr; }
+  .kanban-row { grid-template-columns:1fr; }
+  .profil-header { flex-direction:column; align-items:flex-start; }
+  .profil-header > div:last-child { text-align:left !important; }
+}
+
+/* Mobile */
+@media(max-width:768px) {
+  :root { --sidebar-w: 0px; }
+
+  /* Sidebar */
+  .sidebar {
+    transform: translateX(-240px);
+    width: 240px;
+    box-shadow: none;
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 8px 0 40px rgba(0,0,0,0.5);
+  }
+
+  /* Topbar */
+  .topbar { left: 0; padding: 0 14px; gap: 10px; }
+  .menu-toggle { display: flex; }
+  .topbar-search { display: none; }
+  .topbar-title { font-size: 15px; }
+
+  /* Main content */
+  .main { margin-left: 0; }
+  .page { padding: 16px 14px 32px; }
+
+  /* Grids */
+  .stat-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
+  .section-row, .cols-2, .cols-3 { grid-template-columns: 1fr; gap: 12px; }
+  .form-grid { grid-template-columns: 1fr; gap: 12px; padding: 16px; }
+  .info-grid { grid-template-columns: 1fr; }
+  .kanban-row { grid-template-columns: 1fr; gap: 10px; }
+
+  /* Cards */
+  .stat-card { padding: 14px; gap: 10px; }
+  .stat-icon { width: 38px; height: 38px; font-size: 17px; }
+  .stat-value { font-size: 20px; }
+  .section-card { border-radius: 12px; }
+
+  /* Table: horizontal scroll */
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { min-width: 560px; }
+
+  /* Page header */
+  .page-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .page-header h2 { font-size: 18px; }
+
+  /* Filter bar */
+  .filter-bar { flex-direction: column; gap: 8px; }
+  .search-input, .filter-select { width: 100%; min-width: unset; }
+
+  /* Modal */
+  .modal { margin: 0; border-radius: 14px 14px 0 0; max-height: 92vh; }
+  .modal-overlay { align-items: flex-end; padding: 0; }
+  .modal-overlay.open { display: flex; }
+
+  /* Profil */
+  .profil-header { padding: 20px 16px; flex-direction: column; align-items: flex-start; }
+  .profil-header > div:last-child { text-align: left !important; width: 100%; }
+
+  /* Section head */
+  .section-head { flex-wrap: wrap; gap: 8px; padding: 14px 16px; }
+  .section-head h3 { font-size: 13px; }
+
+  /* Activity */
+  .activity-item { padding: 10px 14px; }
+
+  /* Bar chart */
+  .chart-mock { padding: 14px; }
+  .bar-chart { height: 100px; }
+
+  /* Tab bar */
+  .tab-bar { overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap; gap: 0; }
+  .tab-btn { white-space: nowrap; font-size: 12px; padding: 8px 14px; flex-shrink: 0; }
+
+  /* Alert */
+  .alert { font-size: 12px; }
+
+  /* Form footer */
+  .form-footer { flex-wrap: wrap; }
+  .form-footer .btn-sm { flex: 1; text-align: center; }
+}
+
+/* Small mobile */
+@media(max-width:420px) {
+  .stat-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat-value { font-size: 18px; }
+  .stat-label { font-size: 11px; }
+  .page { padding: 12px 10px 32px; }
+  .section-head h3 { font-size: 12px; }
+  td, th { padding: 10px 10px; font-size: 11px; }
+  .badge { font-size: 10px; padding: 2px 7px; }
+  table { min-width: 480px; }
+}
+
+/* ========== OVERLAY CLOSE ========== */
+.sidebar-backdrop {
+  display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:199;
+}
+.sidebar-backdrop.open { display:block; }
+
+/* ========== PROFIL ========== */
+.profil-header {
+  background: linear-gradient(135deg, var(--navy-light), var(--navy-mid));
+  border: 1px solid var(--border); border-radius:16px;
+  padding:28px 32px; display:flex; align-items:center; gap:24px;
+  margin-bottom:24px; flex-wrap:wrap;
+}
+.avatar-lg {
+  width:72px; height:72px; border-radius:50%;
+  background:linear-gradient(135deg,var(--teal),var(--blue));
+  display:flex; align-items:center; justify-content:center;
+  font-size:28px; font-weight:700; color:#fff; flex-shrink:0;
+  border:3px solid rgba(0,201,167,0.4);
+}
+.profil-meta h3 { font-size:22px; font-weight:700; font-family:'Space Grotesk',sans-serif; }
+.profil-meta p  { color:var(--text-muted); font-size:13px; margin-top:4px; }
+
+/* ========== PRINT ========== */
+@media print {
+  .sidebar,.topbar,.modal-overlay,.btn-sm,.filter-bar,.page-header button,
+  .sidebar-backdrop { display:none!important; }
+  .main { margin-left:0!important; padding-top:0!important; }
+  .page { display:block!important; padding:16px!important; }
+  body { background:#fff!important; color:#000!important; }
+  .section-card, .stat-card { border:1px solid #ddd!important; background:#fff!important; }
+  td, th { color:#000!important; }
+  .stat-value { color:#000!important; }
+}
+
+/* ========== TABS ========== */
+.tab-bar { display:flex; gap:4px; border-bottom:1px solid var(--border); margin-bottom:20px; }
+.tab-btn {
+  padding:9px 18px; font-size:13px; font-weight:600;
+  color:var(--text-muted); background:none; border:none;
+  border-bottom:2px solid transparent; cursor:pointer;
+  transition:all 0.2s; margin-bottom:-1px;
+}
+.tab-btn:hover { color:var(--text-primary); }
+.tab-btn.active { color:var(--teal); border-bottom-color:var(--teal); }
+.tab-panel { display:none; }
+.tab-panel.active { display:block; }
+
+/* ========== TIMELINE ========== */
+.timeline { padding:4px 20px; }
+.tl-item { display:flex; gap:16px; padding:14px 0; border-bottom:1px solid var(--border); }
+.tl-item:last-child { border-bottom:none; }
+.tl-left { display:flex; flex-direction:column; align-items:center; width:40px; flex-shrink:0; }
+.tl-circle { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; }
+.tl-line { width:2px; background:var(--border); flex:1; min-height:20px; margin-top:4px; }
+.tl-body { flex:1; padding-top:4px; }
+.tl-title { font-size:13px; font-weight:600; color:var(--text-primary); }
+.tl-desc  { font-size:12px; color:var(--text-muted); margin-top:3px; line-height:1.5; }
+.tl-time  { font-size:11px; color:var(--text-muted); margin-top:4px; }
+
+/* ========== INFO GRID ========== */
+.info-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; padding:20px; }
+.info-item label { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:4px; }
+.info-item span  { font-size:14px; color:var(--text-primary); }
+.info-item-full  { grid-column:1/-1; }
+
+/* ========== TOOLTIP badge ========== */
+.access-yes { color:var(--green); font-weight:700; }
+.access-no  { color:var(--text-muted); }
+
+/* ========== PURCHASE ORDER ========== */
+.po-card {
+  background:var(--navy-mid); border:1px solid var(--border);
+  border-radius:12px; padding:18px 20px;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; flex-wrap:wrap; transition:border-color 0.2s;
+}
+.po-card:hover { border-color:var(--border-med); }
+.po-card + .po-card { margin-top:10px; }
+.po-info h4 { font-size:14px; font-weight:600; color:var(--text-primary); }
+.po-info p  { font-size:12px; color:var(--text-muted); margin-top:3px; }
+.po-amount  { font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:700; color:var(--teal); }
+
+/* ========== SEARCH RESULTS ========== */
+.search-result-item {
+  display:flex; align-items:center; gap:12px;
+  padding:11px 16px; border-bottom:1px solid var(--border);
+  cursor:pointer; transition:background 0.15s;
+}
+.search-result-item:hover { background:rgba(255,255,255,0.03); }
+.search-result-item:last-child { border-bottom:none; }
+
+/* ========== TOPBAR SEARCH ========== */
+.topbar-search {
+  flex:1; max-width:320px;
+  background:var(--navy-light); border:1.5px solid var(--border);
+  border-radius:9px; padding:8px 14px; color:var(--text-primary);
+  font-size:13px; font-family:'Inter',sans-serif; outline:none;
+  transition:border-color 0.2s;
+}
+.topbar-search:focus { border-color:var(--teal); }
+@media(max-width:768px) { .topbar-search { display:none; } }
+
+/* ========== KANBAN-STYLE STATUS ========== */
+.kanban-row { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:20px; }
+.kanban-col { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; }
+.kanban-col h4 { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-muted); margin-bottom:12px; display:flex; align-items:center; gap:6px; }
+.kanban-item { background:var(--navy-mid); border:1px solid var(--border); border-radius:9px; padding:12px 14px; margin-bottom:8px; }
+.kanban-item:last-child { margin-bottom:0; }
+.kanban-item h5 { font-size:13px; font-weight:600; color:var(--text-primary); }
+.kanban-item p  { font-size:11px; color:var(--text-muted); margin-top:3px; }
+@media(max-width:640px) { .kanban-row { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR BACKDROP (mobile) -->
+<div class="sidebar-backdrop" id="backdrop" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon-sm">📦</div>
+    <div>
+      <h2>WarehouseOS</h2>
+      <span>v2.4.1 — Sistem Gudang</span>
+    </div>
+  </div>
+
+  <!-- sidebar-nav: scrollable area -->
+  <div class="sidebar-nav">
+    <div class="sidebar-section-label">Utama</div>
+    <div class="nav-item active" onclick="goPage('dashboard',this)">
+      <span class="nav-icon">🏠</span> Dashboard
+    </div>
+
+    <div class="sidebar-section-label">Inventori</div>
+    <div class="nav-item" onclick="goPage('produk',this)">
+      <span class="nav-icon">📋</span> Data Produk
+    </div>
+    <div class="nav-item" onclick="goPage('kategori',this)">
+      <span class="nav-icon">🗂️</span> Kategori
+    </div>
+    <div class="nav-item" onclick="goPage('stok',this)">
+      <span class="nav-icon">📊</span> Kelola Stok
+      <span class="nav-badge warn">4</span>
+    </div>
+
+    <div class="sidebar-section-label">Transaksi</div>
+    <div class="nav-item" onclick="goPage('masuk',this)">
+      <span class="nav-icon">📥</span> Barang Masuk
+    </div>
+    <div class="nav-item" onclick="goPage('keluar',this)">
+      <span class="nav-icon">📤</span> Barang Keluar
+    </div>
+    <div class="nav-item" onclick="goPage('retur',this)">
+      <span class="nav-icon">🔄</span> Retur Barang
+      <span class="nav-badge">2</span>
+    </div>
+
+    <div class="sidebar-section-label">Manajemen</div>
+    <div class="nav-item" onclick="goPage('supplier',this)">
+      <span class="nav-icon">🏭</span> Supplier
+    </div>
+    <div class="nav-item" onclick="goPage('lokasi',this)">
+      <span class="nav-icon">📍</span> Lokasi Gudang
+    </div>
+    <div class="nav-item" id="navLaporan" onclick="goPage('laporan',this)">
+      <span class="nav-icon">📑</span> Laporan
+    </div>
+    <div class="nav-item" onclick="goPage('po',this)">
+      <span class="nav-icon">🛒</span> Purchase Order
+      <span class="nav-badge warn">3</span>
+    </div>
+
+    <div class="sidebar-section-label" id="adminMenu" style="display:none">Admin</div>
+    <div class="nav-item" id="navPengguna" style="display:none" onclick="goPage('pengguna',this)">
+      <span class="nav-icon">👥</span> Pengguna
+    </div>
+    <div class="nav-item" id="navSetting" style="display:none" onclick="goPage('setting',this)">
+      <span class="nav-icon">⚙️</span> Pengaturan
+    </div>
+
+    <div class="sidebar-section-label">Akun</div>
+    <div class="nav-item" onclick="goPage('profil',this)">
+      <span class="nav-icon">👤</span> Profil Saya
+    </div>
+  </div><!-- /sidebar-nav -->
+
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="avatar" id="sidebarAvatar">B</div>
+      <div class="user-detail">
+        <div class="user-name" id="sidebarName">Budi Santoso</div>
+        <span class="user-role-badge role-admin" id="sidebarRoleBadge">Admin</span>
+      </div>
+      <button class="btn-logout" onclick="logout()" title="Keluar">⏻</button>
+    </div>
+  </div>
+</aside>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+  <span class="topbar-title" id="topbarTitle">Dashboard</span>
+  <input class="topbar-search" type="text" placeholder="🔍 Cari produk, SKU, transaksi..." id="topbarSearch" onfocus="showSearchHint()" onblur="hideSearchHint()">
+  <div class="topbar-actions">
+    <div class="notif-btn" onclick="goPage('notifikasi',null)" title="Notifikasi (6 baru)">
+      🔔<span class="notif-dot"></span>
+    </div>
+    <div class="notif-btn" onclick="window.print()" title="Cetak halaman ini">🖨️</div>
+    <div class="notif-btn" onclick="goPage('profil',null)" title="Profil saya" id="topbarAvatarBtn" style="font-size:13px;font-weight:700;background:linear-gradient(135deg,var(--teal),var(--blue));color:#fff;border:none;">B</div>
+  </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+<!-- ===== DASHBOARD ===== -->
+<div class="page active" id="page-dashboard">
+  <div class="page-header">
+    <div>
+      <h2>Dashboard</h2>
+      <p>Ringkasan operasional gudang hari ini</p>
+    </div>
+    <span style="font-size:12px;color:var(--text-muted);">📅 Jumat, 12 Juni 2026</span>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-icon si-teal">📦</div>
+      <div class="stat-info">
+        <div class="stat-value">1.847</div>
+        <div class="stat-label">Total Produk (SKU)</div>
+        <div class="stat-change up">↑ 24 produk baru bulan ini</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon si-blue">📥</div>
+      <div class="stat-info">
+        <div class="stat-value">138</div>
+        <div class="stat-label">Barang Masuk Hari Ini</div>
+        <div class="stat-change up">↑ 12% vs kemarin</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon si-amber">📤</div>
+      <div class="stat-info">
+        <div class="stat-value">94</div>
+        <div class="stat-label">Barang Keluar Hari Ini</div>
+        <div class="stat-change up">↑ 8% vs kemarin</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon si-red">⚠️</div>
+      <div class="stat-info">
+        <div class="stat-value">4</div>
+        <div class="stat-label">Stok Menipis</div>
+        <div class="stat-change warn-c">Perlu reorder segera</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card">
+      <div class="stat-icon si-green">💰</div>
+      <div class="stat-info">
+        <div class="stat-value" style="font-size:20px;">Rp 4,82 M</div>
+        <div class="stat-label">Nilai Inventori</div>
+        <div class="stat-change up">↑ 3% dari bulan lalu</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon si-purple">🏭</div>
+      <div class="stat-info">
+        <div class="stat-value">28</div>
+        <div class="stat-label">Supplier Aktif</div>
+        <div class="stat-change up">↑ 2 baru</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon si-amber">🔄</div>
+      <div class="stat-info">
+        <div class="stat-value">2</div>
+        <div class="stat-label">Retur Pending</div>
+        <div class="stat-change warn-c">Menunggu proses</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon si-teal">📍</div>
+      <div class="stat-info">
+        <div class="stat-value">6</div>
+        <div class="stat-label">Lokasi Gudang</div>
+        <div class="stat-change up">Semua aktif</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert alert-amber">
+    ⚠️ <span><strong>Perhatian:</strong> 4 produk mendekati batas minimum stok — <strong>Kabel UTP Cat6, Tinta Printer HP, Kertas HVS A4, Lampu LED 18W</strong>. Segera lakukan reorder.</span>
+  </div>
+
+  <div class="section-row cols-3">
+    <div class="section-card">
+      <div class="section-head">
+        <h3>📈 Tren Barang Masuk vs Keluar (7 Hari)</h3>
+      </div>
+      <div class="chart-mock">
+        <div class="bar-chart">
+          <div class="bar" style="height:60%" title="Sen: 82 masuk"></div>
+          <div class="bar alt" style="height:45%" title="Sen: 60 keluar"></div>
+          <div class="bar" style="height:75%" title="Sel: 102 masuk"></div>
+          <div class="bar alt" style="height:55%" title="Sel: 75 keluar"></div>
+          <div class="bar" style="height:50%" title="Rab: 68 masuk"></div>
+          <div class="bar alt" style="height:40%" title="Rab: 54 keluar"></div>
+          <div class="bar" style="height:88%" title="Kam: 120 masuk"></div>
+          <div class="bar alt" style="height:62%" title="Kam: 85 keluar"></div>
+          <div class="bar" style="height:70%" title="Jum: 95 masuk"></div>
+          <div class="bar alt" style="height:50%" title="Jum: 68 keluar"></div>
+          <div class="bar" style="height:45%" title="Sab: 62 masuk"></div>
+          <div class="bar alt" style="height:30%" title="Sab: 41 keluar"></div>
+          <div class="bar" style="height:100%" title="Ming: 138 masuk"></div>
+          <div class="bar alt" style="height:68%" title="Ming: 94 keluar"></div>
+        </div>
+        <div class="bar-labels" style="display:flex;gap:4px;">
+          <span style="flex:2;text-align:center;font-size:10px;color:var(--text-muted)">Sen</span>
+          <span style="flex:2;text-align:center;font-size:10px;color:var(--text-muted)">Sel</span>
+          <span style="flex:2;text-align:center;font-size:10px;color:var(--text-muted)">Rab</span>
+          <span style="flex:2;text-align:center;font-size:10px;color:var(--text-muted)">Kam</span>
+          <span style="flex:2;text-align:center;font-size:10px;color:var(--text-muted)">Jum</span>
+          <span style="flex:2;text-align:center;font-size:10px;color:var(--text-muted)">Sab</span>
+          <span style="flex:2;text-align:center;font-size:10px;color:var(--text-muted)">Ming</span>
+        </div>
+        <div style="display:flex;gap:16px;margin-top:12px;font-size:11px;">
+          <span style="display:flex;align-items:center;gap:5px;color:var(--text-muted)"><span style="width:10px;height:10px;border-radius:2px;background:var(--teal);display:inline-block"></span>Masuk</span>
+          <span style="display:flex;align-items:center;gap:5px;color:var(--text-muted)"><span style="width:10px;height:10px;border-radius:2px;background:var(--blue);display:inline-block"></span>Keluar</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-head"><h3>📊 Stok Kritis</h3><button class="btn-sm btn-amber" onclick="goPage('stok',null)">Lihat Semua</button></div>
+      <div style="padding:8px 0;">
+        <div style="padding:12px 20px;border-bottom:1px solid var(--border)">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+            <span style="font-size:13px;color:var(--text-primary);font-weight:500;">Kabel UTP Cat6</span>
+            <span style="font-size:12px;" class="stock-low">8 pcs</span>
+          </div>
+          <div class="prog-bar"><div class="prog-fill" style="width:8%;background:var(--red)"></div></div>
+          <span style="font-size:11px;color:var(--text-muted);">Min: 50 pcs</span>
+        </div>
+        <div style="padding:12px 20px;border-bottom:1px solid var(--border)">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+            <span style="font-size:13px;color:var(--text-primary);font-weight:500;">Tinta Printer HP</span>
+            <span style="font-size:12px;" class="stock-warn">15 pcs</span>
+          </div>
+          <div class="prog-bar"><div class="prog-fill" style="width:15%;background:var(--amber)"></div></div>
+          <span style="font-size:11px;color:var(--text-muted);">Min: 30 pcs</span>
+        </div>
+        <div style="padding:12px 20px;border-bottom:1px solid var(--border)">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+            <span style="font-size:13px;color:var(--text-primary);font-weight:500;">Kertas HVS A4</span>
+            <span style="font-size:12px;" class="stock-warn">12 rim</span>
+          </div>
+          <div class="prog-bar"><div class="prog-fill" style="width:20%;background:var(--amber)"></div></div>
+          <span style="font-size:11px;color:var(--text-muted);">Min: 25 rim</span>
+        </div>
+        <div style="padding:12px 20px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+            <span style="font-size:13px;color:var(--text-primary);font-weight:500;">Lampu LED 18W</span>
+            <span style="font-size:12px;" class="stock-low">5 pcs</span>
+          </div>
+          <div class="prog-bar"><div class="prog-fill" style="width:5%;background:var(--red)"></div></div>
+          <span style="font-size:11px;color:var(--text-muted);">Min: 40 pcs</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-row cols-2">
+    <div class="section-card">
+      <div class="section-head"><h3>🕐 Aktivitas Terbaru</h3><span>Hari ini</span></div>
+      <div class="activity-list">
+        <div class="activity-item">
+          <div class="act-dot" style="background:var(--green)"></div>
+          <div class="act-content">
+            <div class="act-text"><strong>Barang Masuk #BM-2024-0892</strong> — 200 unit Monitor LED 24" dari PT. Jaya Teknik</div>
+            <div class="act-time">⏱ 08:42 — Agus Firmansyah</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="act-dot" style="background:var(--blue)"></div>
+          <div class="act-content">
+            <div class="act-text"><strong>Barang Keluar #BK-2024-0541</strong> — 50 unit Keyboard Mechanical ke Dept. IT</div>
+            <div class="act-time">⏱ 09:15 — Siti Aisyah</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="act-dot" style="background:var(--amber)"></div>
+          <div class="act-content">
+            <div class="act-text"><strong>Peringatan Stok</strong> — Kabel UTP Cat6 di bawah minimum (8 pcs)</div>
+            <div class="act-time">⏱ 09:30 — Sistem Otomatis</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="act-dot" style="background:var(--teal)"></div>
+          <div class="act-content">
+            <div class="act-text"><strong>Stok Opname</strong> selesai di Gudang A — 342 item diverifikasi</div>
+            <div class="act-time">⏱ 10:00 — Dewi Rahayu</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="act-dot" style="background:var(--red)"></div>
+          <div class="act-content">
+            <div class="act-text"><strong>Retur #RT-2024-0023</strong> — 10 unit Mouse Wireless rusak dikembalikan ke supplier</div>
+            <div class="act-time">⏱ 11:20 — Agus Firmansyah</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-head"><h3>🏆 Top Produk Keluar (Bulan Ini)</h3></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Produk</th><th>Qty</th><th>Tren</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td><span class="primary-text">Kertas HVS A4</span></td><td>1.240 rim</td><td class="up">↑ 18%</td></tr>
+            <tr><td>2</td><td><span class="primary-text">Toner Printer Canon</span></td><td>820 pcs</td><td class="up">↑ 12%</td></tr>
+            <tr><td>3</td><td><span class="primary-text">Kabel Power 3m</span></td><td>650 pcs</td><td class="down">↓ 5%</td></tr>
+            <tr><td>4</td><td><span class="primary-text">Mouse Wireless</span></td><td>410 pcs</td><td class="up">↑ 22%</td></tr>
+            <tr><td>5</td><td><span class="primary-text">Keyboard USB</span></td><td>380 pcs</td><td class="up">↑ 9%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PRODUK ===== -->
+<div class="page" id="page-produk">
+  <div class="page-header">
+    <div><h2>Data Produk</h2><p>Kelola seluruh produk dan SKU inventori</p></div>
+    <button class="btn-sm btn-primary" onclick="openModal('modalTambahProduk')">+ Tambah Produk</button>
+  </div>
+  <div class="filter-bar">
+    <input class="search-input" type="text" placeholder="🔍 Cari produk, SKU, merek...">
+    <select class="filter-select"><option>Semua Kategori</option><option>Elektronik</option><option>ATK</option><option>Hardware</option><option>Networking</option></select>
+    <select class="filter-select"><option>Semua Status</option><option>Aktif</option><option>Tidak Aktif</option><option>Stok Habis</option></select>
+    <button class="btn-sm btn-teal">Filter</button>
+  </div>
+  <div class="section-card">
+    <div class="section-head"><h3>1.847 Produk Terdaftar</h3><div style="display:flex;gap:8px;"><button class="btn-sm btn-blue">📥 Import</button><button class="btn-sm btn-teal">📤 Export</button></div></div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>SKU</th><th>Nama Produk</th><th>Kategori</th><th>Satuan</th><th>Stok</th><th>Harga Beli</th><th>Harga Jual</th><th>Status</th><th>Aksi</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="primary-text">EL-001</td><td><span class="primary-text">Monitor LED 24"</span><br><span style="font-size:11px;color:var(--text-muted)">Samsung / LG</span></td><td><span class="badge badge-blue">Elektronik</span></td><td>Unit</td><td class="stock-ok">248</td><td>Rp 1.800.000</td><td>Rp 2.250.000</td><td><span class="badge badge-green">Aktif</span></td><td><div style="display:flex;gap:6px;"><button class="btn-sm btn-teal">Edit</button><button class="btn-sm btn-red">Hapus</button></div></td></tr>
+          <tr><td class="primary-text">EL-002</td><td><span class="primary-text">Keyboard Mechanical</span><br><span style="font-size:11px;color:var(--text-muted)">Rexus / Logitech</span></td><td><span class="badge badge-blue">Elektronik</span></td><td>Unit</td><td class="stock-ok">135</td><td>Rp 350.000</td><td>Rp 480.000</td><td><span class="badge badge-green">Aktif</span></td><td><div style="display:flex;gap:6px;"><button class="btn-sm btn-teal">Edit</button><button class="btn-sm btn-red">Hapus</button></div></td></tr>
+          <tr><td class="primary-text">NW-003</td><td><span class="primary-text">Kabel UTP Cat6</span><br><span style="font-size:11px;color:var(--text-muted)">AMP / Belden</span></td><td><span class="badge badge-purple">Networking</span></td><td>Meter</td><td class="stock-low">8</td><td>Rp 8.000</td><td>Rp 12.000</td><td><span class="badge badge-red">Stok Kritis</span></td><td><div style="display:flex;gap:6px;"><button class="btn-sm btn-teal">Edit</button><button class="btn-sm btn-red">Hapus</button></div></td></tr>
+          <tr><td class="primary-text">ATK-004</td><td><span class="primary-text">Kertas HVS A4</span><br><span style="font-size:11px;color:var(--text-muted)">Sinar Dunia / IK</span></td><td><span class="badge badge-amber">ATK</span></td><td>Rim</td><td class="stock-warn">12</td><td>Rp 48.000</td><td>Rp 58.000</td><td><span class="badge badge-amber">Stok Rendah</span></td><td><div style="display:flex;gap:6px;"><button class="btn-sm btn-teal">Edit</button><button class="btn-sm btn-red">Hapus</button></div></td></tr>
+          <tr><td class="primary-text">ATK-005</td><td><span class="primary-text">Tinta Printer HP</span><br><span style="font-size:11px;color:var(--text-muted)">HP Original</span></td><td><span class="badge badge-amber">ATK</span></td><td>Pcs</td><td class="stock-warn">15</td><td>Rp 95.000</td><td>Rp 130.000</td><td><span class="badge badge-amber">Stok Rendah</span></td><td><div style="display:flex;gap:6px;"><button class="btn-sm btn-teal">Edit</button><button class="btn-sm btn-red">Hapus</button></div></td></tr>
+          <tr><td class="primary-text">HW-006</td><td><span class="primary-text">SSD 512GB</span><br><span style="font-size:11px;color:var(--text-muted)">Kingston / WD</span></td><td><span class="badge badge-teal">Hardware</span></td><td>Unit</td><td class="stock-ok">62</td><td>Rp 680.000</td><td>Rp 850.000</td><td><span class="badge badge-green">Aktif</span></td><td><div style="display:flex;gap:6px;"><button class="btn-sm btn-teal">Edit</button><button class="btn-sm btn-red">Hapus</button></div></td></tr>
+          <tr><td class="primary-text">EL-007</td><td><span class="primary-text">Mouse Wireless</span><br><span style="font-size:11px;color:var(--text-muted)">Logitech M331</span></td><td><span class="badge badge-blue">Elektronik</span></td><td>Unit</td><td class="stock-ok">204</td><td>Rp 185.000</td><td>Rp 250.000</td><td><span class="badge badge-green">Aktif</span></td><td><div style="display:flex;gap:6px;"><button class="btn-sm btn-teal">Edit</button><button class="btn-sm btn-red">Hapus</button></div></td></tr>
+          <tr><td class="primary-text">EL-008</td><td><span class="primary-text">Lampu LED 18W</span><br><span style="font-size:11px;color:var(--text-muted)">Philips / Panasonic</span></td><td><span class="badge badge-blue">Elektronik</span></td><td>Pcs</td><td class="stock-low">5</td><td>Rp 35.000</td><td>Rp 48.000</td><td><span class="badge badge-red">Stok Kritis</span></td><td><div style="display:flex;gap:6px;"><button class="btn-sm btn-teal">Edit</button><button class="btn-sm btn-red">Hapus</button></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== KATEGORI ===== -->
+<div class="page" id="page-kategori">
+  <div class="page-header">
+    <div><h2>Kategori Produk</h2><p>Kelola klasifikasi dan pengelompokan produk</p></div>
+    <button class="btn-sm btn-primary">+ Tambah Kategori</button>
+  </div>
+  <div class="stat-grid" style="grid-template-columns:repeat(4,1fr);">
+    <div class="stat-card"><div class="stat-icon si-blue">💻</div><div class="stat-info"><div class="stat-value">487</div><div class="stat-label">Elektronik</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-amber">📝</div><div class="stat-info"><div class="stat-value">312</div><div class="stat-label">ATK</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-teal">🔧</div><div class="stat-info"><div class="stat-value">254</div><div class="stat-label">Hardware</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-purple">🌐</div><div class="stat-info"><div class="stat-value">198</div><div class="stat-label">Networking</div></div></div>
+  </div>
+  <div class="section-card">
+    <div class="section-head"><h3>Semua Kategori</h3></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ID</th><th>Nama Kategori</th><th>Deskripsi</th><th>Jumlah Produk</th><th>Status</th><th>Aksi</th></tr></thead>
+        <tbody>
+          <tr><td>KAT-01</td><td><span class="primary-text">Elektronik</span></td><td>Perangkat elektronik dan aksesoris</td><td>487</td><td><span class="badge badge-green">Aktif</span></td><td><div style="display:flex;gap:6px;"><button class="btn-sm btn-teal">Edit</button><button class="btn-sm btn-red">Hapus</button></div></td></tr>
+          <tr><td>KAT-02</td><td><span class="primary-text">ATK</span></td><td>Alat tulis dan keperluan kantor</td><td>312</td><td><span class="badge badge-green">Aktif</span></td><td><div style="display:flex;gap:6px;"><button class="btn-sm btn-teal">Edit</button><button class="btn-sm btn-red">Hapus</button></div></td></tr>
+          <tr><td>KAT-03</td><td><span class="primary-text">Hardware Komputer</span></td><td>Komponen dan peripheral komputer</td><td>254</td><td><span class="badge badge-green">Aktif</span></td><td><div style="display:flex;gap:6px;"><button class="btn-sm btn-teal">Edit</button><button class="btn-sm btn-red">Hapus</button></div></td></tr>
+          <tr><td>KAT-04</td><td><span class="primary-text">Networking</span></td><td>Perangkat dan kabel jaringan</td><td>198</td><td><span class="badge badge-green">Aktif</span></td><td><div style="display:flex;gap:6px;"><button class="btn-sm btn-teal">Edit</button><button class="btn-sm btn-red">Hapus</button></div></td></tr>
+          <tr><td>KAT-05</td><td><span class="primary-text">Furniture Kantor</span></td><td>Meja, kursi, lemari kantor</td><td>145</td><td><span class="badge badge-green">Aktif</span></td><td><div style="display:flex;gap:6px;"><button class="btn-sm btn-teal">Edit</button><button class="btn-sm btn-red">Hapus</button></div></td></tr>
+          <tr><td>KAT-06</td><td><span class="primary-text">Kebersihan</span></td><td>Produk kebersihan dan sanitasi</td><td>120</td><td><span class="badge badge-green">Aktif</span></td><td><div style="display:flex;gap:6px;"><button class="btn-sm btn-teal">Edit</button><button class="btn-sm btn-red">Hapus</button></div></td></tr>
+          <tr><td>KAT-07</td><td><span class="primary-text">Bahan Bangunan</span></td><td>Material konstruksi dan bangunan</td><td>131</td><td><span class="badge badge-gray">Tidak Aktif</span></td><td><div style="display:flex;gap:6px;"><button class="btn-sm btn-teal">Edit</button><button class="btn-sm btn-red">Hapus</button></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== KELOLA STOK ===== -->
+<div class="page" id="page-stok">
+  <div class="page-header">
+    <div><h2>Kelola Stok</h2><p>Pantau dan update stok seluruh produk</p></div>
+    <div style="display:flex;gap:10px;"><button class="btn-sm btn-amber" onclick="openModal('modalOpname')">📋 Stok Opname</button><button class="btn-sm btn-primary">+ Adjust Stok</button></div>
+  </div>
+  <div class="alert alert-red">🚨 <span><strong>4 produk stok kritis!</strong> Segera lakukan pemesanan ke supplier.</span></div>
+  <div class="filter-bar">
+    <input class="search-input" type="text" placeholder="🔍 Cari produk...">
+    <select class="filter-select"><option>Semua Lokasi</option><option>Gudang A</option><option>Gudang B</option><option>Gudang C</option></select>
+    <select class="filter-select"><option>Semua Status Stok</option><option>Normal</option><option>Stok Rendah</option><option>Stok Kritis</option><option>Stok Habis</option></select>
+  </div>
+  <div class="section-card">
+    <div class="section-head"><h3>Monitor Stok Produk</h3><span>Update otomatis setiap transaksi</span></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>SKU</th><th>Produk</th><th>Lokasi</th><th>Stok Saat Ini</th><th>Min. Stok</th><th>Max. Stok</th><th>Level</th><th>Aksi</th></tr></thead>
+        <tbody>
+          <tr><td>EL-001</td><td><span class="primary-text">Monitor LED 24"</span></td><td>Gudang A — Rak B2</td><td class="stock-ok"><strong>248</strong></td><td>20</td><td>300</td><td><div style="width:100px"><div class="prog-bar"><div class="prog-fill" style="width:82%;background:var(--green)"></div></div></div></td><td><button class="btn-sm btn-teal">Adjust</button></td></tr>
+          <tr><td>EL-002</td><td><span class="primary-text">Keyboard Mechanical</span></td><td>Gudang A — Rak C1</td><td class="stock-ok"><strong>135</strong></td><td>15</td><td>200</td><td><div style="width:100px"><div class="prog-bar"><div class="prog-fill" style="width:67%;background:var(--green)"></div></div></div></td><td><button class="btn-sm btn-teal">Adjust</button></td></tr>
+          <tr><td>NW-003</td><td><span class="primary-text">Kabel UTP Cat6</span></td><td>Gudang B — Rak A3</td><td class="stock-low"><strong>8</strong></td><td>50</td><td>500</td><td><div style="width:100px"><div class="prog-bar"><div class="prog-fill" style="width:5%;background:var(--red)"></div></div></div></td><td><button class="btn-sm btn-amber">Reorder</button></td></tr>
+          <tr><td>ATK-004</td><td><span class="primary-text">Kertas HVS A4</span></td><td>Gudang A — Rak D2</td><td class="stock-warn"><strong>12</strong></td><td>25</td><td>200</td><td><div style="width:100px"><div class="prog-bar"><div class="prog-fill" style="width:15%;background:var(--amber)"></div></div></div></td><td><button class="btn-sm btn-amber">Reorder</button></td></tr>
+          <tr><td>ATK-005</td><td><span class="primary-text">Tinta Printer HP</span></td><td>Gudang A — Rak D1</td><td class="stock-warn"><strong>15</strong></td><td>30</td><td>150</td><td><div style="width:100px"><div class="prog-bar"><div class="prog-fill" style="width:18%;background:var(--amber)"></div></div></div></td><td><button class="btn-sm btn-amber">Reorder</button></td></tr>
+          <tr><td>HW-006</td><td><span class="primary-text">SSD 512GB</span></td><td>Gudang B — Rak B1</td><td class="stock-ok"><strong>62</strong></td><td>10</td><td>100</td><td><div style="width:100px"><div class="prog-bar"><div class="prog-fill" style="width:62%;background:var(--green)"></div></div></div></td><td><button class="btn-sm btn-teal">Adjust</button></td></tr>
+          <tr><td>EL-008</td><td><span class="primary-text">Lampu LED 18W</span></td><td>Gudang C — Rak A1</td><td class="stock-low"><strong>5</strong></td><td>40</td><td>200</td><td><div style="width:100px"><div class="prog-bar"><div class="prog-fill" style="width:3%;background:var(--red)"></div></div></div></td><td><button class="btn-sm btn-amber">Reorder</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== BARANG MASUK ===== -->
+<div class="page" id="page-masuk">
+  <div class="page-header">
+    <div><h2>Barang Masuk</h2><p>Catat dan kelola penerimaan barang dari supplier</p></div>
+    <button class="btn-sm btn-primary" onclick="openModal('modalBMasuk')">+ Catat Barang Masuk</button>
+  </div>
+  <div class="stat-grid" style="grid-template-columns:repeat(4,1fr)">
+    <div class="stat-card"><div class="stat-icon si-green">📥</div><div class="stat-info"><div class="stat-value">138</div><div class="stat-label">Hari Ini</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-blue">📦</div><div class="stat-info"><div class="stat-value">892</div><div class="stat-label">Bulan Ini</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-teal">✅</div><div class="stat-info"><div class="stat-value">870</div><div class="stat-label">Terverifikasi</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-amber">⏳</div><div class="stat-info"><div class="stat-value">22</div><div class="stat-label">Pending</div></div></div>
+  </div>
+  <div class="section-card">
+    <div class="section-head"><h3>Riwayat Barang Masuk</h3><div style="display:flex;gap:8px;"><button class="btn-sm btn-teal">Export</button></div></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>No. Terima</th><th>Tanggal</th><th>Supplier</th><th>Produk</th><th>Qty</th><th>Gudang</th><th>Diterima Oleh</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td class="primary-text">BM-2024-0892</td><td>12/06/2026</td><td>PT. Jaya Teknik</td><td>Monitor LED 24"</td><td>200 unit</td><td>Gudang A</td><td>Agus F.</td><td><span class="badge badge-green">Diterima</span></td></tr>
+          <tr><td class="primary-text">BM-2024-0891</td><td>12/06/2026</td><td>CV. Indo Supply</td><td>Kertas HVS A4</td><td>50 rim</td><td>Gudang A</td><td>Siti A.</td><td><span class="badge badge-green">Diterima</span></td></tr>
+          <tr><td class="primary-text">BM-2024-0890</td><td>11/06/2026</td><td>PT. Maju Bersama</td><td>SSD 512GB</td><td>30 unit</td><td>Gudang B</td><td>Agus F.</td><td><span class="badge badge-green">Diterima</span></td></tr>
+          <tr><td class="primary-text">BM-2024-0889</td><td>11/06/2026</td><td>PT. Jaya Teknik</td><td>Mouse Wireless</td><td>100 unit</td><td>Gudang A</td><td>Budi S.</td><td><span class="badge badge-amber">Pending QC</span></td></tr>
+          <tr><td class="primary-text">BM-2024-0888</td><td>10/06/2026</td><td>CV. Surya Abadi</td><td>Kabel Power 3m</td><td>500 pcs</td><td>Gudang B</td><td>Siti A.</td><td><span class="badge badge-green">Diterima</span></td></tr>
+          <tr><td class="primary-text">BM-2024-0887</td><td>10/06/2026</td><td>PT. Digital Nusa</td><td>Toner Canon</td><td>80 pcs</td><td>Gudang A</td><td>Agus F.</td><td><span class="badge badge-amber">Pending</span></td></tr>
+          <tr><td class="primary-text">BM-2024-0886</td><td>09/06/2026</td><td>PT. Maju Bersama</td><td>RAM DDR4 8GB</td><td>60 unit</td><td>Gudang B</td><td>Budi S.</td><td><span class="badge badge-green">Diterima</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== BARANG KELUAR ===== -->
+<div class="page" id="page-keluar">
+  <div class="page-header">
+    <div><h2>Barang Keluar</h2><p>Catat pengeluaran dan distribusi barang dari gudang</p></div>
+    <button class="btn-sm btn-primary" onclick="openModal('modalBKeluar')">+ Catat Barang Keluar</button>
+  </div>
+  <div class="stat-grid" style="grid-template-columns:repeat(4,1fr)">
+    <div class="stat-card"><div class="stat-icon si-amber">📤</div><div class="stat-info"><div class="stat-value">94</div><div class="stat-label">Hari Ini</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-blue">📦</div><div class="stat-info"><div class="stat-value">541</div><div class="stat-label">Bulan Ini</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-green">✅</div><div class="stat-info"><div class="stat-value">529</div><div class="stat-label">Terkirim</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-amber">⏳</div><div class="stat-info"><div class="stat-value">12</div><div class="stat-label">Diproses</div></div></div>
+  </div>
+  <div class="section-card">
+    <div class="section-head"><h3>Riwayat Barang Keluar</h3><button class="btn-sm btn-teal">Export</button></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>No. Keluar</th><th>Tanggal</th><th>Tujuan / Dept.</th><th>Produk</th><th>Qty</th><th>Gudang</th><th>Dikeluarkan Oleh</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td class="primary-text">BK-2024-0541</td><td>12/06/2026</td><td>Dept. IT</td><td>Keyboard Mechanical</td><td>50 unit</td><td>Gudang A</td><td>Siti A.</td><td><span class="badge badge-green">Terkirim</span></td></tr>
+          <tr><td class="primary-text">BK-2024-0540</td><td>12/06/2026</td><td>Dept. Keuangan</td><td>Kertas HVS A4</td><td>10 rim</td><td>Gudang A</td><td>Agus F.</td><td><span class="badge badge-green">Terkirim</span></td></tr>
+          <tr><td class="primary-text">BK-2024-0539</td><td>11/06/2026</td><td>Proyek Gedung C</td><td>Kabel UTP Cat6</td><td>200 m</td><td>Gudang B</td><td>Budi S.</td><td><span class="badge badge-green">Terkirim</span></td></tr>
+          <tr><td class="primary-text">BK-2024-0538</td><td>11/06/2026</td><td>Dept. Marketing</td><td>Mouse Wireless</td><td>25 unit</td><td>Gudang A</td><td>Siti A.</td><td><span class="badge badge-blue">Diproses</span></td></tr>
+          <tr><td class="primary-text">BK-2024-0537</td><td>10/06/2026</td><td>Dept. HRD</td><td>Tinta Printer HP</td><td>8 pcs</td><td>Gudang A</td><td>Agus F.</td><td><span class="badge badge-green">Terkirim</span></td></tr>
+          <tr><td class="primary-text">BK-2024-0536</td><td>10/06/2026</td><td>Proyek Server Room</td><td>SSD 512GB</td><td>10 unit</td><td>Gudang B</td><td>Budi S.</td><td><span class="badge badge-green">Terkirim</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== RETUR ===== -->
+<div class="page" id="page-retur">
+  <div class="page-header">
+    <div><h2>Retur Barang</h2><p>Kelola pengembalian barang ke supplier maupun dari departemen</p></div>
+    <button class="btn-sm btn-primary" onclick="openModal('modalRetur')">+ Buat Retur</button>
+  </div>
+  <div class="alert alert-amber">⏳ <span><strong>2 retur menunggu approval</strong> dari manager gudang.</span></div>
+  <div class="section-card">
+    <div class="section-head"><h3>Riwayat Retur</h3></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>No. Retur</th><th>Tanggal</th><th>Jenis</th><th>Produk</th><th>Qty</th><th>Alasan</th><th>Status</th><th>Aksi</th></tr></thead>
+        <tbody>
+          <tr><td class="primary-text">RT-2024-0023</td><td>12/06/2026</td><td><span class="badge badge-red">Ke Supplier</span></td><td>Mouse Wireless</td><td>10 unit</td><td>Rusak / Cacat</td><td><span class="badge badge-amber">Menunggu</span></td><td><button class="btn-sm btn-blue">Detail</button></td></tr>
+          <tr><td class="primary-text">RT-2024-0022</td><td>11/06/2026</td><td><span class="badge badge-amber">Dari Dept.</span></td><td>Toner Printer Canon</td><td>5 pcs</td><td>Salah Kirim</td><td><span class="badge badge-amber">Menunggu</span></td><td><button class="btn-sm btn-blue">Detail</button></td></tr>
+          <tr><td class="primary-text">RT-2024-0021</td><td>09/06/2026</td><td><span class="badge badge-red">Ke Supplier</span></td><td>Keyboard USB</td><td>3 unit</td><td>Tidak Sesuai Spek</td><td><span class="badge badge-green">Selesai</span></td><td><button class="btn-sm btn-blue">Detail</button></td></tr>
+          <tr><td class="primary-text">RT-2024-0020</td><td>07/06/2026</td><td><span class="badge badge-amber">Dari Dept.</span></td><td>Lampu LED 18W</td><td>2 pcs</td><td>Tidak Dipakai</td><td><span class="badge badge-green">Selesai</span></td><td><button class="btn-sm btn-blue">Detail</button></td></tr>
+          <tr><td class="primary-text">RT-2024-0019</td><td>05/06/2026</td><td><span class="badge badge-red">Ke Supplier</span></td><td>RAM DDR4 8GB</td><td>2 unit</td><td>Mati / Tidak Berfungsi</td><td><span class="badge badge-green">Selesai</span></td><td><button class="btn-sm btn-blue">Detail</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SUPPLIER ===== -->
+<div class="page" id="page-supplier">
+  <div class="page-header">
+    <div><h2>Manajemen Supplier</h2><p>Data vendor dan mitra penyedia barang</p></div>
+    <button class="btn-sm btn-primary" onclick="openModal('modalSupplier')">+ Tambah Supplier</button>
+  </div>
+  <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
+    <div class="stat-card"><div class="stat-icon si-teal">🏭</div><div class="stat-info"><div class="stat-value">28</div><div class="stat-label">Total Supplier Aktif</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-green">⭐</div><div class="stat-info"><div class="stat-value">12</div><div class="stat-label">Supplier Terpercaya</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-amber">⏳</div><div class="stat-info"><div class="stat-value">3</div><div class="stat-label">Pending Evaluasi</div></div></div>
+  </div>
+  <div class="section-card">
+    <div class="section-head"><h3>Daftar Supplier</h3><input class="search-input" style="width:220px" type="text" placeholder="🔍 Cari supplier..."></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ID</th><th>Nama Supplier</th><th>PIC</th><th>Telepon</th><th>Kota</th><th>Kategori</th><th>Rating</th><th>Status</th><th>Aksi</th></tr></thead>
+        <tbody>
+          <tr><td>SUP-01</td><td><span class="primary-text">PT. Jaya Teknik</span></td><td>Hendra Wijaya</td><td>021-5551234</td><td>Jakarta</td><td>Elektronik</td><td>⭐ 4.8</td><td><span class="badge badge-green">Aktif</span></td><td><div style="display:flex;gap:6px;"><button class="btn-sm btn-teal">Edit</button><button class="btn-sm btn-blue">Order</button></div></td></tr>
+          <tr><td>SUP-02</td><td><span class="primary-text">CV. Indo Supply</span></td><td>Rini Susanti</td><td>031-5559876</td><td>Surabaya</td><td>ATK</td><td>⭐ 4.5</td><td><span class="badge badge-green">Aktif</span></td><td><div style="display:flex;gap:6px;"><button class="btn-sm btn-teal">Edit</button><button class="btn-sm btn-blue">Order</button></div></td></tr>
+          <tr><td>SUP-03</td><td><span class="primary-text">PT. Maju Bersama</span></td><td>Doni Kurniawan</td><td>022-5554321</td><td>Bandung</td><td>Hardware</td><td>⭐ 4.7</td><td><span class="badge badge-green">Aktif</span></td><td><div style="display:flex;gap:6px;"><button class="btn-sm btn-teal">Edit</button><button class="btn-sm btn-blue">Order</button></div></td></tr>
+          <tr><td>SUP-04</td><td><span class="primary-text">CV. Surya Abadi</span></td><td>Tono Pratama</td><td>024-5556789</td><td>Semarang</td><td>Networking</td><td>⭐ 4.2</td><td><span class="badge badge-green">Aktif</span></td><td><div style="display:flex;gap:6px;"><button class="btn-sm btn-teal">Edit</button><button class="btn-sm btn-blue">Order</button></div></td></tr>
+          <tr><td>SUP-05</td><td><span class="primary-text">PT. Digital Nusa</span></td><td>Maya Putri</td><td>021-5557890</td><td>Jakarta</td><td>Elektronik</td><td>⭐ 4.6</td><td><span class="badge badge-green">Aktif</span></td><td><div style="display:flex;gap:6px;"><button class="btn-sm btn-teal">Edit</button><button class="btn-sm btn-blue">Order</button></div></td></tr>
+          <tr><td>SUP-06</td><td><span class="primary-text">UD. Berkah Jaya</span></td><td>Santoso</td><td>0341-554321</td><td>Malang</td><td>ATK</td><td>⭐ 3.9</td><td><span class="badge badge-amber">Evaluasi</span></td><td><div style="display:flex;gap:6px;"><button class="btn-sm btn-teal">Edit</button><button class="btn-sm btn-blue">Order</button></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LOKASI GUDANG ===== -->
+<div class="page" id="page-lokasi">
+  <div class="page-header">
+    <div><h2>Lokasi Gudang</h2><p>Peta rak, zona, dan kapasitas tiap gudang</p></div>
+    <button class="btn-sm btn-primary">+ Tambah Lokasi</button>
+  </div>
+  <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
+    <div class="stat-card"><div class="stat-icon si-teal">🏢</div><div class="stat-info"><div class="stat-value">6</div><div class="stat-label">Total Gudang</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-green">✅</div><div class="stat-info"><div class="stat-value">6</div><div class="stat-label">Aktif</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-amber">📦</div><div class="stat-info"><div class="stat-value">72%</div><div class="stat-label">Rata-rata Kapasitas</div></div></div>
+  </div>
+  <div class="section-card">
+    <div class="section-head"><h3>Daftar Lokasi & Kapasitas</h3></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Kode</th><th>Nama Gudang</th><th>Alamat</th><th>PIC</th><th>Kapasitas</th><th>Terpakai</th><th>Utilisasi</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td class="primary-text">GDG-A</td><td><span class="primary-text">Gudang Utama A</span></td><td>Jl. Industri No.1, Malang</td><td>Dewi Rahayu</td><td>1.000 rak</td><td>780 rak</td><td><div style="display:flex;align-items:center;gap:8px;"><div class="prog-bar" style="width:80px;flex-shrink:0"><div class="prog-fill" style="width:78%;background:var(--amber)"></div></div><span style="font-size:12px">78%</span></div></td><td><span class="badge badge-green">Aktif</span></td></tr>
+          <tr><td class="primary-text">GDG-B</td><td><span class="primary-text">Gudang B</span></td><td>Jl. Industri No.5, Malang</td><td>Agus Firmansyah</td><td>600 rak</td><td>360 rak</td><td><div style="display:flex;align-items:center;gap:8px;"><div class="prog-bar" style="width:80px;flex-shrink:0"><div class="prog-fill" style="width:60%;background:var(--green)"></div></div><span style="font-size:12px">60%</span></div></td><td><span class="badge badge-green">Aktif</span></td></tr>
+          <tr><td class="primary-text">GDG-C</td><td><span class="primary-text">Gudang C (Elektronik)</span></td><td>Jl. Raya Sukun No.12, Malang</td><td>Siti Aisyah</td><td>400 rak</td><td>340 rak</td><td><div style="display:flex;align-items:center;gap:8px;"><div class="prog-bar" style="width:80px;flex-shrink:0"><div class="prog-fill" style="width:85%;background:var(--red)"></div></div><span style="font-size:12px">85%</span></div></td><td><span class="badge badge-amber">Hampir Penuh</span></td></tr>
+          <tr><td class="primary-text">GDG-D</td><td><span class="primary-text">Gudang D (ATK)</span></td><td>Jl. Industri No.8, Malang</td><td>Dewi Rahayu</td><td>300 rak</td><td>150 rak</td><td><div style="display:flex;align-items:center;gap:8px;"><div class="prog-bar" style="width:80px;flex-shrink:0"><div class="prog-fill" style="width:50%;background:var(--green)"></div></div><span style="font-size:12px">50%</span></div></td><td><span class="badge badge-green">Aktif</span></td></tr>
+          <tr><td class="primary-text">GDG-E</td><td><span class="primary-text">Gudang E (Transit)</span></td><td>Jl. Ring Road No.3, Malang</td><td>Agus Firmansyah</td><td>200 rak</td><td>80 rak</td><td><div style="display:flex;align-items:center;gap:8px;"><div class="prog-bar" style="width:80px;flex-shrink:0"><div class="prog-fill" style="width:40%;background:var(--green)"></div></div><span style="font-size:12px">40%</span></div></td><td><span class="badge badge-green">Aktif</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LAPORAN ===== -->
+<div class="page" id="page-laporan">
+  <div class="page-header">
+    <div><h2>Laporan</h2><p>Ringkasan dan analitik operasional gudang</p></div>
+    <div style="display:flex;gap:10px;"><button class="btn-sm btn-blue">📄 Export PDF</button><button class="btn-sm btn-teal">📊 Export Excel</button></div>
+  </div>
+  <div class="filter-bar">
+    <select class="filter-select"><option>Bulan Ini — Juni 2026</option><option>Mei 2026</option><option>April 2026</option><option>Q1 2026</option></select>
+    <select class="filter-select"><option>Semua Gudang</option><option>Gudang A</option><option>Gudang B</option><option>Gudang C</option></select>
+    <button class="btn-sm btn-teal">Terapkan</button>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-icon si-blue">📥</div><div class="stat-info"><div class="stat-value">892</div><div class="stat-label">Total Barang Masuk</div><div class="stat-change up">↑ 14% vs bulan lalu</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-amber">📤</div><div class="stat-info"><div class="stat-value">541</div><div class="stat-label">Total Barang Keluar</div><div class="stat-change up">↑ 8%</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-red">🔄</div><div class="stat-info"><div class="stat-value">23</div><div class="stat-label">Total Retur</div><div class="stat-change down">↑ 3 retur</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-green">💰</div><div class="stat-info"><div class="stat-value" style="font-size:18px;">Rp 4,82 M</div><div class="stat-label">Nilai Inventori</div><div class="stat-change up">↑ 3%</div></div></div>
+  </div>
+
+  <div class="section-row cols-2">
+    <div class="section-card">
+      <div class="section-head"><h3>📋 Laporan Barang Masuk — Juni 2026</h3></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Minggu</th><th>Transaksi</th><th>Item</th><th>Nilai</th></tr></thead>
+          <tbody>
+            <tr><td>Minggu 1</td><td>48</td><td>1.240</td><td>Rp 180 Jt</td></tr>
+            <tr><td>Minggu 2</td><td>62</td><td>1.850</td><td>Rp 240 Jt</td></tr>
+            <tr><td>Minggu 3 (ini)</td><td>28</td><td>760</td><td>Rp 95 Jt</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="section-head"><h3>📋 Laporan Barang Keluar — Juni 2026</h3></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Minggu</th><th>Transaksi</th><th>Item</th><th>Dept.</th></tr></thead>
+          <tbody>
+            <tr><td>Minggu 1</td><td>30</td><td>820</td><td>IT, HRD</td></tr>
+            <tr><td>Minggu 2</td><td>38</td><td>1.120</td><td>IT, Ops, Mktg</td></tr>
+            <tr><td>Minggu 3 (ini)</td><td>14</td><td>420</td><td>Ops, IT</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-card gap-top">
+    <div class="section-head"><h3>📦 Laporan Stok Opname Terakhir — 12 Juni 2026</h3></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Gudang</th><th>Total SKU</th><th>Sesuai</th><th>Selisih +</th><th>Selisih −</th><th>Akurasi</th><th>Petugas</th></tr></thead>
+        <tbody>
+          <tr><td>Gudang A</td><td>842</td><td>832</td><td>6</td><td>4</td><td class="stock-ok"><strong>98.8%</strong></td><td>Dewi, Agus</td></tr>
+          <tr><td>Gudang B</td><td>512</td><td>508</td><td>3</td><td>1</td><td class="stock-ok"><strong>99.2%</strong></td><td>Siti, Budi</td></tr>
+          <tr><td>Gudang C</td><td>310</td><td>302</td><td>5</td><td>3</td><td class="stock-warn"><strong>97.4%</strong></td><td>Agus</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PENGGUNA (ADMIN ONLY) ===== -->
+<div class="page" id="page-pengguna">
+  <div class="page-header">
+    <div><h2>Manajemen Pengguna</h2><p>Kelola akun dan hak akses pengguna sistem</p></div>
+    <button class="btn-sm btn-primary" onclick="openModal('modalPengguna')">+ Tambah Pengguna</button>
+  </div>
+  <div class="section-card">
+    <div class="section-head"><h3>Daftar Pengguna Sistem</h3></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ID</th><th>Nama</th><th>Username</th><th>Role</th><th>Email</th><th>Terakhir Login</th><th>Status</th><th>Aksi</th></tr></thead>
+        <tbody>
+          <tr><td>USR-01</td><td><span class="primary-text">Budi Santoso</span></td><td>admin</td><td><span class="badge badge-red">Administrator</span></td><td>budi@warehouse.co.id</td><td>12/06/2026 08:00</td><td><span class="badge badge-green">Aktif</span></td><td><div style="display:flex;gap:6px;"><button class="btn-sm btn-teal">Edit</button><button class="btn-sm btn-red">Nonaktif</button></div></td></tr>
+          <tr><td>USR-02</td><td><span class="primary-text">Dewi Rahayu</span></td><td>manager</td><td><span class="badge badge-amber">Manager</span></td><td>dewi@warehouse.co.id</td><td>12/06/2026 07:45</td><td><span class="badge badge-green">Aktif</span></td><td><div style="display:flex;gap:6px;"><button class="btn-sm btn-teal">Edit</button><button class="btn-sm btn-red">Nonaktif</button></div></td></tr>
+          <tr><td>USR-03</td><td><span class="primary-text">Agus Firmansyah</span></td><td>staff</td><td><span class="badge badge-teal">Staff</span></td><td>agus@warehouse.co.id</td><td>12/06/2026 08:30</td><td><span class="badge badge-green">Aktif</span></td><td><div style="display:flex;gap:6px;"><button class="btn-sm btn-teal">Edit</button><button class="btn-sm btn-red">Nonaktif</button></div></td></tr>
+          <tr><td>USR-04</td><td><span class="primary-text">Siti Aisyah</span></td><td>siti_a</td><td><span class="badge badge-teal">Staff</span></td><td>siti@warehouse.co.id</td><td>11/06/2026 16:20</td><td><span class="badge badge-green">Aktif</span></td><td><div style="display:flex;gap:6px;"><button class="btn-sm btn-teal">Edit</button><button class="btn-sm btn-red">Nonaktif</button></div></td></tr>
+          <tr><td>USR-05</td><td><span class="primary-text">Rizky Aditya</span></td><td>rizky_a</td><td><span class="badge badge-teal">Staff</span></td><td>rizky@warehouse.co.id</td><td>10/06/2026 10:15</td><td><span class="badge badge-gray">Nonaktif</span></td><td><div style="display:flex;gap:6px;"><button class="btn-sm btn-teal">Edit</button><button class="btn-sm btn-green">Aktifkan</button></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="section-card gap-top">
+    <div class="section-head"><h3>Hak Akses per Role</h3></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Fitur</th><th>Administrator</th><th>Manager</th><th>Staff</th></tr></thead>
+        <tbody>
+          <tr><td>Dashboard</td><td>✅</td><td>✅</td><td>✅</td></tr>
+          <tr><td>Data Produk</td><td>✅ Full</td><td>✅ Full</td><td>👁 Baca Saja</td></tr>
+          <tr><td>Kelola Stok</td><td>✅ Full</td><td>✅ Full</td><td>✅ Update</td></tr>
+          <tr><td>Barang Masuk</td><td>✅ Full</td><td>✅ Full</td><td>✅ Tambah</td></tr>
+          <tr><td>Barang Keluar</td><td>✅ Full</td><td>✅ Full</td><td>✅ Tambah</td></tr>
+          <tr><td>Retur</td><td>✅ Full</td><td>✅ Approve</td><td>✅ Ajukan</td></tr>
+          <tr><td>Laporan</td><td>✅ Full</td><td>✅ Baca + Export</td><td>❌</td></tr>
+          <tr><td>Manajemen Pengguna</td><td>✅ Full</td><td>❌</td><td>❌</td></tr>
+          <tr><td>Pengaturan Sistem</td><td>✅ Full</td><td>❌</td><td>❌</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PENGATURAN (ADMIN ONLY) ===== -->
+<div class="page" id="page-setting">
+  <div class="page-header">
+    <div><h2>Pengaturan Sistem</h2><p>Konfigurasi umum dan preferensi aplikasi</p></div>
+    <button class="btn-sm btn-primary">Simpan Perubahan</button>
+  </div>
+  <div class="section-row cols-2">
+    <div class="section-card">
+      <div class="section-head"><h3>⚙️ Informasi Perusahaan</h3></div>
+      <div class="form-grid">
+        <div class="form-group form-group-full"><label>Nama Perusahaan</label><input type="text" value="PT. Gudang Nusantara Jaya"></div>
+        <div class="form-group form-group-full"><label>Alamat</label><input type="text" value="Jl. Industri No. 1, Malang, Jawa Timur 65141"></div>
+        <div class="form-group"><label>Telepon</label><input type="text" value="0341-551234"></div>
+        <div class="form-group"><label>Email</label><input type="text" value="admin@gudangnusantara.co.id"></div>
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="section-head"><h3>🔔 Notifikasi & Peringatan</h3></div>
+      <div class="form-grid">
+        <div class="form-group"><label>Batas Stok Minimum Default</label><input type="number" value="10"></div>
+        <div class="form-group"><label>Level Peringatan (%)</label><input type="number" value="20"></div>
+        <div class="form-group form-group-full"><label>Email Notifikasi Stok</label><input type="text" value="manager@gudangnusantara.co.id"></div>
+        <div class="form-group form-group-full"><label>Frekuensi Laporan Otomatis</label>
+          <select><option>Harian</option><option selected>Mingguan</option><option>Bulanan</option></select>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="section-card gap-top">
+    <div class="section-head"><h3>🔒 Keamanan Sistem</h3></div>
+    <div class="form-grid">
+      <div class="form-group"><label>Timeout Sesi (menit)</label><input type="number" value="30"></div>
+      <div class="form-group"><label>Maksimum Login Gagal</label><input type="number" value="5"></div>
+      <div class="form-group form-group-full"><label>Backup Otomatis</label>
+        <select><option>Setiap Hari (02:00 WIB)</option><option>Setiap Minggu</option></select>
+      </div>
+    </div>
+    <div class="form-footer"><button class="btn-sm btn-primary">💾 Simpan Pengaturan</button></div>
+  </div>
+</div>
+
+<!-- ===== NOTIFIKASI ===== -->
+<div class="page" id="page-notifikasi">
+  <div class="page-header">
+    <div><h2>Notifikasi</h2><p>Peringatan dan pembaruan sistem</p></div>
+    <button class="btn-sm btn-teal">Tandai Semua Dibaca</button>
+  </div>
+  <div class="section-card">
+    <div class="activity-list">
+      <div class="activity-item" style="background:rgba(239,68,68,0.04)">
+        <div class="act-dot" style="background:var(--red)"></div>
+        <div class="act-content">
+          <div class="act-text"><strong>🚨 Stok Kritis: Kabel UTP Cat6</strong> — Sisa 8 unit (min. 50). Segera hubungi supplier PT. Jaya Teknik.</div>
+          <div class="act-time">⏱ Hari ini, 09:30</div>
+        </div>
+        <span class="badge badge-red" style="flex-shrink:0">Kritis</span>
+      </div>
+      <div class="activity-item" style="background:rgba(239,68,68,0.04)">
+        <div class="act-dot" style="background:var(--red)"></div>
+        <div class="act-content">
+          <div class="act-text"><strong>🚨 Stok Kritis: Lampu LED 18W</strong> — Sisa 5 unit (min. 40).</div>
+          <div class="act-time">⏱ Hari ini, 09:30</div>
+        </div>
+        <span class="badge badge-red" style="flex-shrink:0">Kritis</span>
+      </div>
+      <div class="activity-item">
+        <div class="act-dot" style="background:var(--amber)"></div>
+        <div class="act-content">
+          <div class="act-text"><strong>⚠️ Stok Rendah: Tinta Printer HP</strong> — Sisa 15 unit (min. 30).</div>
+          <div class="act-time">⏱ Hari ini, 09:30</div>
+        </div>
+        <span class="badge badge-amber" style="flex-shrink:0">Rendah</span>
+      </div>
+      <div class="activity-item">
+        <div class="act-dot" style="background:var(--amber)"></div>
+        <div class="act-content">
+          <div class="act-text"><strong>⚠️ Retur Menunggu Approval</strong> — RT-2024-0023 dan RT-2024-0022 belum diproses manager.</div>
+          <div class="act-time">⏱ Kemarin, 15:00</div>
+        </div>
+        <span class="badge badge-amber" style="flex-shrink:0">Pending</span>
+      </div>
+      <div class="activity-item">
+        <div class="act-dot" style="background:var(--blue)"></div>
+        <div class="act-content">
+          <div class="act-text"><strong>📊 Stok Opname Selesai</strong> — Gudang A berhasil diverifikasi, akurasi 98.8%.</div>
+          <div class="act-time">⏱ Hari ini, 10:00</div>
+        </div>
+        <span class="badge badge-blue" style="flex-shrink:0">Info</span>
+      </div>
+      <div class="activity-item">
+        <div class="act-dot" style="background:var(--teal)"></div>
+        <div class="act-content">
+          <div class="act-text"><strong>✅ Barang Masuk Diterima</strong> — BM-2024-0892: 200 unit Monitor LED 24" dari PT. Jaya Teknik.</div>
+          <div class="act-time">⏱ Hari ini, 08:42</div>
+        </div>
+        <span class="badge badge-teal" style="flex-shrink:0">Diterima</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PROFIL ===== -->
+<div class="page" id="page-profil">
+  <div class="page-header">
+    <div><h2>Profil Saya</h2><p>Informasi akun dan aktivitas pengguna</p></div>
+    <button class="btn-sm btn-primary" onclick="openModal('modalGantiPass')">🔒 Ganti Password</button>
+  </div>
+
+  <div class="profil-header">
+    <div class="avatar-lg" id="profilAvatar">B</div>
+    <div class="profil-meta">
+      <h3 id="profilName">Budi Santoso</h3>
+      <p id="profilEmail">budi@warehouse.co.id &nbsp;|&nbsp; Bergabung: 03 Januari 2024</p>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+        <span class="badge badge-red" id="profilRoleBadge">Administrator</span>
+        <span class="badge badge-green">Akun Aktif</span>
+        <span class="badge badge-blue">Gudang: Semua</span>
+      </div>
+    </div>
+    <div style="margin-left:auto;text-align:right;">
+      <div style="font-size:12px;color:var(--text-muted);">Login Terakhir</div>
+      <div style="font-size:14px;color:var(--text-primary);margin-top:2px;">12/06/2026 — 08:00</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:8px;">Total Login Bulan Ini</div>
+      <div style="font-size:20px;font-weight:700;color:var(--teal);">22 kali</div>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('profil','info',this)">📋 Informasi</button>
+    <button class="tab-btn" onclick="switchTab('profil','aktivitas',this)">🕐 Riwayat Aktivitas</button>
+    <button class="tab-btn" onclick="switchTab('profil','akses',this)">🔑 Hak Akses</button>
+  </div>
+
+  <!-- TAB: INFO -->
+  <div class="tab-panel active" id="profil-tab-info">
+    <div class="section-row cols-2">
+      <div class="section-card">
+        <div class="section-head"><h3>Data Diri</h3><button class="btn-sm btn-teal" onclick="openModal('modalEditProfil')">Edit</button></div>
+        <div class="info-grid">
+          <div class="info-item"><label>Nama Lengkap</label><span id="piNama">Budi Santoso</span></div>
+          <div class="info-item"><label>Username</label><span id="piUsername">admin</span></div>
+          <div class="info-item"><label>Email</label><span>budi@warehouse.co.id</span></div>
+          <div class="info-item"><label>No. Telepon</label><span>0812-3456-7890</span></div>
+          <div class="info-item"><label>Role / Jabatan</label><span id="piRole">Administrator</span></div>
+          <div class="info-item"><label>Gudang Tugas</label><span>Semua Gudang</span></div>
+          <div class="info-item info-item-full"><label>Alamat</label><span>Jl. Mayjend Sungkono No. 45, Malang, Jawa Timur</span></div>
+        </div>
+      </div>
+      <div class="section-card">
+        <div class="section-head"><h3>Statistik Aktivitas</h3><span>Bulan Juni 2026</span></div>
+        <div style="padding:20px;display:flex;flex-direction:column;gap:16px;">
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:13px;">Transaksi Barang Masuk</span><strong style="color:var(--teal)">42</strong></div>
+            <div class="prog-bar"><div class="prog-fill" style="width:70%;background:var(--teal)"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:13px;">Transaksi Barang Keluar</span><strong style="color:var(--blue)">38</strong></div>
+            <div class="prog-bar"><div class="prog-fill" style="width:63%;background:var(--blue)"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:13px;">Produk Ditambahkan</span><strong style="color:var(--green)">18</strong></div>
+            <div class="prog-bar"><div class="prog-fill" style="width:30%;background:var(--green)"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:13px;">Stok Opname</span><strong style="color:var(--amber)">3</strong></div>
+            <div class="prog-bar"><div class="prog-fill" style="width:15%;background:var(--amber)"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:13px;">Retur Diproses</span><strong style="color:var(--red)">5</strong></div>
+            <div class="prog-bar"><div class="prog-fill" style="width:10%;background:var(--red)"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: AKTIVITAS -->
+  <div class="tab-panel" id="profil-tab-aktivitas">
+    <div class="section-card">
+      <div class="section-head"><h3>Riwayat Aktivitas Terakhir</h3><span>30 hari terakhir</span></div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-circle si-green">📥</div><div class="tl-line"></div></div>
+          <div class="tl-body">
+            <div class="tl-title">Catat Barang Masuk — BM-2024-0892</div>
+            <div class="tl-desc">200 unit Monitor LED 24" dari PT. Jaya Teknik → Gudang A</div>
+            <div class="tl-time">⏱ 12/06/2026 08:42</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-circle si-teal">📋</div><div class="tl-line"></div></div>
+          <div class="tl-body">
+            <div class="tl-title">Stok Opname — Gudang A</div>
+            <div class="tl-desc">342 item diverifikasi, akurasi 98.8%</div>
+            <div class="tl-time">⏱ 12/06/2026 10:00</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-circle si-blue">📤</div><div class="tl-line"></div></div>
+          <div class="tl-body">
+            <div class="tl-title">Catat Barang Keluar — BK-2024-0539</div>
+            <div class="tl-desc">200 m Kabel UTP Cat6 ke Proyek Gedung C</div>
+            <div class="tl-time">⏱ 11/06/2026 14:20</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-circle si-purple">👤</div><div class="tl-line"></div></div>
+          <div class="tl-body">
+            <div class="tl-title">Tambah Pengguna — Siti Aisyah (Staff)</div>
+            <div class="tl-desc">Akun baru dibuat dengan role Staff Gudang</div>
+            <div class="tl-time">⏱ 10/06/2026 09:00</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-circle si-amber">🔄</div><div class="tl-line"></div></div>
+          <div class="tl-body">
+            <div class="tl-title">Approve Retur — RT-2024-0021</div>
+            <div class="tl-desc">3 unit Keyboard USB dikembalikan ke supplier</div>
+            <div class="tl-time">⏱ 09/06/2026 11:30</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-left"><div class="tl-circle si-green">➕</div></div>
+          <div class="tl-body">
+            <div class="tl-title">Tambah Produk Baru — SSD 512GB (HW-006)</div>
+            <div class="tl-desc">Produk baru ditambahkan ke sistem dengan stok awal 30 unit</div>
+            <div class="tl-time">⏱ 07/06/2026 08:15</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: AKSES -->
+  <div class="tab-panel" id="profil-tab-akses">
+    <div class="section-card">
+      <div class="section-head"><h3>Hak Akses Akun Ini</h3><span id="aksesRoleLabel">Role: Administrator</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Modul</th><th>Lihat</th><th>Tambah</th><th>Edit</th><th>Hapus</th><th>Export</th></tr></thead>
+          <tbody id="aksesTable">
+            <tr><td><strong>Dashboard</strong></td><td class="access-yes">✅</td><td>—</td><td>—</td><td>—</td><td>—</td></tr>
+            <tr><td><strong>Data Produk</strong></td><td class="access-yes">✅</td><td class="access-yes">✅</td><td class="access-yes">✅</td><td class="access-yes">✅</td><td class="access-yes">✅</td></tr>
+            <tr><td><strong>Kelola Stok</strong></td><td class="access-yes">✅</td><td class="access-yes">✅</td><td class="access-yes">✅</td><td class="access-yes">✅</td><td class="access-yes">✅</td></tr>
+            <tr><td><strong>Barang Masuk</strong></td><td class="access-yes">✅</td><td class="access-yes">✅</td><td class="access-yes">✅</td><td class="access-yes">✅</td><td class="access-yes">✅</td></tr>
+            <tr><td><strong>Barang Keluar</strong></td><td class="access-yes">✅</td><td class="access-yes">✅</td><td class="access-yes">✅</td><td class="access-yes">✅</td><td class="access-yes">✅</td></tr>
+            <tr><td><strong>Retur</strong></td><td class="access-yes">✅</td><td class="access-yes">✅</td><td class="access-yes">✅</td><td class="access-yes">✅</td><td class="access-yes">✅</td></tr>
+            <tr><td><strong>Laporan</strong></td><td class="access-yes">✅</td><td>—</td><td>—</td><td>—</td><td class="access-yes">✅</td></tr>
+            <tr><td><strong>Supplier</strong></td><td class="access-yes">✅</td><td class="access-yes">✅</td><td class="access-yes">✅</td><td class="access-yes">✅</td><td class="access-yes">✅</td></tr>
+            <tr><td><strong>Pengguna</strong></td><td class="access-yes">✅</td><td class="access-yes">✅</td><td class="access-yes">✅</td><td class="access-yes">✅</td><td>—</td></tr>
+            <tr><td><strong>Pengaturan</strong></td><td class="access-yes">✅</td><td>—</td><td class="access-yes">✅</td><td>—</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PURCHASE ORDER ===== -->
+<div class="page" id="page-po">
+  <div class="page-header">
+    <div><h2>Purchase Order</h2><p>Kelola pemesanan barang ke supplier</p></div>
+    <button class="btn-sm btn-primary" onclick="openModal('modalPO')">+ Buat PO Baru</button>
+  </div>
+
+  <div class="stat-grid" style="grid-template-columns:repeat(4,1fr)">
+    <div class="stat-card"><div class="stat-icon si-blue">📋</div><div class="stat-info"><div class="stat-value">12</div><div class="stat-label">PO Aktif</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-amber">⏳</div><div class="stat-info"><div class="stat-value">5</div><div class="stat-label">Menunggu Kirim</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-green">✅</div><div class="stat-info"><div class="stat-value">48</div><div class="stat-label">PO Selesai (Bulan Ini)</div></div></div>
+    <div class="stat-card"><div class="stat-icon si-teal">💰</div><div class="stat-info"><div class="stat-value" style="font-size:18px;">Rp 2,4 M</div><div class="stat-label">Nilai PO Bulan Ini</div></div></div>
+  </div>
+
+  <div class="alert alert-amber">⚠️ <span><strong>Reorder otomatis disarankan:</strong> Kabel UTP Cat6 (8 pcs), Lampu LED 18W (5 pcs). <button class="btn-sm btn-amber" style="margin-left:10px;" onclick="openModal('modalPO')">Buat PO Sekarang</button></span></div>
+
+  <div class="kanban-row">
+    <div class="kanban-col">
+      <h4><span style="width:8px;height:8px;border-radius:50%;background:var(--amber);display:inline-block"></span> Draft (3)</h4>
+      <div class="kanban-item">
+        <h5>PO-2024-0056</h5>
+        <p>PT. Jaya Teknik — Kabel UTP Cat6</p>
+        <p style="color:var(--teal);margin-top:6px;font-weight:600;">Rp 4.000.000</p>
+      </div>
+      <div class="kanban-item">
+        <h5>PO-2024-0057</h5>
+        <p>CV. Indo Supply — Kertas HVS A4</p>
+        <p style="color:var(--teal);margin-top:6px;font-weight:600;">Rp 2.900.000</p>
+      </div>
+      <div class="kanban-item">
+        <h5>PO-2024-0058</h5>
+        <p>PT. Digital Nusa — Lampu LED 18W</p>
+        <p style="color:var(--teal);margin-top:6px;font-weight:600;">Rp 1.200.000</p>
+      </div>
+    </div>
+    <div class="kanban-col">
+      <h4><span style="width:8px;height:8px;border-radius:50%;background:var(--blue);display:inline-block"></span> Dikirim ke Supplier (5)</h4>
+      <div class="kanban-item">
+        <h5>PO-2024-0050</h5>
+        <p>PT. Maju Bersama — SSD 512GB × 50</p>
+        <p style="color:var(--teal);margin-top:6px;font-weight:600;">Rp 34.000.000</p>
+      </div>
+      <div class="kanban-item">
+        <h5>PO-2024-0051</h5>
+        <p>CV. Surya Abadi — Kabel Power 3m × 300</p>
+        <p style="color:var(--teal);margin-top:6px;font-weight:600;">Rp 7.500.000</p>
+      </div>
+      <div class="kanban-item">
+        <h5>PO-2024-0052</h5>
+        <p>PT. Digital Nusa — Toner Canon × 60</p>
+        <p style="color:var(--teal);margin-top:6px;font-weight:600;">Rp 9.600.000</p>
+      </div>
+    </div>
+    <div class="kanban-col">
+      <h4><span style="width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block"></span> Diterima / Selesai (4)</h4>
+      <div class="kanban-item">
+        <h5>PO-2024-0045</h5>
+        <p>PT. Jaya Teknik — Monitor LED 24" × 200</p>
+        <p style="color:var(--green);margin-top:6px;font-weight:600;">Rp 360.000.000 ✅</p>
+      </div>
+      <div class="kanban-item">
+        <h5>PO-2024-0046</h5>
+        <p>CV. Indo Supply — Kertas HVS × 100 rim</p>
+        <p style="color:var(--green);margin-top:6px;font-weight:600;">Rp 5.800.000 ✅</p>
+      </div>
+      <div class="kanban-item">
+        <h5>PO-2024-0047</h5>
+        <p>PT. Maju Bersama — RAM DDR4 × 60</p>
+        <p style="color:var(--green);margin-top:6px;font-weight:600;">Rp 28.000.000 ✅</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="section-head"><h3>Riwayat Semua PO</h3><div style="display:flex;gap:8px;"><button class="btn-sm btn-teal">Export</button></div></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>No. PO</th><th>Tanggal</th><th>Supplier</th><th>Produk</th><th>Qty</th><th>Total</th><th>Status</th><th>Aksi</th></tr></thead>
+        <tbody>
+          <tr><td class="primary-text">PO-2024-0058</td><td>12/06/2026</td><td>PT. Digital Nusa</td><td>Lampu LED 18W</td><td>100 pcs</td><td>Rp 3.500.000</td><td><span class="badge badge-amber">Draft</span></td><td><div style="display:flex;gap:6px;"><button class="btn-sm btn-teal">Edit</button><button class="btn-sm btn-primary">Kirim</button></div></td></tr>
+          <tr><td class="primary-text">PO-2024-0057</td><td>12/06/2026</td><td>CV. Indo Supply</td><td>Kertas HVS A4</td><td>100 rim</td><td>Rp 4.800.000</td><td><span class="badge badge-amber">Draft</span></td><td><div style="display:flex;gap:6px;"><button class="btn-sm btn-teal">Edit</button><button class="btn-sm btn-primary">Kirim</button></div></td></tr>
+          <tr><td class="primary-text">PO-2024-0052</td><td>10/06/2026</td><td>PT. Digital Nusa</td><td>Toner Canon</td><td>60 pcs</td><td>Rp 9.600.000</td><td><span class="badge badge-blue">Dikirim</span></td><td><button class="btn-sm btn-blue">Detail</button></td></tr>
+          <tr><td class="primary-text">PO-2024-0045</td><td>05/06/2026</td><td>PT. Jaya Teknik</td><td>Monitor LED 24"</td><td>200 unit</td><td>Rp 360.000.000</td><td><span class="badge badge-green">Selesai</span></td><td><button class="btn-sm btn-blue">Detail</button></td></tr>
+          <tr><td class="primary-text">PO-2024-0046</td><td>04/06/2026</td><td>CV. Indo Supply</td><td>Kertas HVS A4</td><td>100 rim</td><td>Rp 5.800.000</td><td><span class="badge badge-green">Selesai</span></td><td><button class="btn-sm btn-blue">Detail</button></td></tr>
+          <tr><td class="primary-text">PO-2024-0047</td><td>03/06/2026</td><td>PT. Maju Bersama</td><td>RAM DDR4 8GB</td><td>60 unit</td><td>Rp 28.000.000</td><td><span class="badge badge-green">Selesai</span></td><td><button class="btn-sm btn-blue">Detail</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- ===== MODALS ===== -->
+
+<!-- Modal Tambah Produk -->
+<div class="modal-overlay" id="modalTambahProduk">
+  <div class="modal">
+    <div class="modal-header"><h3>+ Tambah Produk Baru</h3><button class="modal-close" onclick="closeModal('modalTambahProduk')">✕</button></div>
+    <div class="form-grid">
+      <div class="form-group"><label>SKU / Kode Produk</label><input type="text" placeholder="Cth: EL-009"></div>
+      <div class="form-group"><label>Kategori</label><select><option>Elektronik</option><option>ATK</option><option>Hardware</option><option>Networking</option></select></div>
+      <div class="form-group form-group-full"><label>Nama Produk</label><input type="text" placeholder="Nama lengkap produk"></div>
+      <div class="form-group form-group-full"><label>Merek / Brand</label><input type="text" placeholder="Merek produk"></div>
+      <div class="form-group"><label>Satuan</label><select><option>Unit</option><option>Pcs</option><option>Rim</option><option>Meter</option><option>Kg</option></select></div>
+      <div class="form-group"><label>Stok Awal</label><input type="number" placeholder="0"></div>
+      <div class="form-group"><label>Stok Minimum</label><input type="number" placeholder="0"></div>
+      <div class="form-group"><label>Stok Maksimum</label><input type="number" placeholder="0"></div>
+      <div class="form-group"><label>Harga Beli (Rp)</label><input type="number" placeholder="0"></div>
+      <div class="form-group"><label>Harga Jual (Rp)</label><input type="number" placeholder="0"></div>
+      <div class="form-group"><label>Lokasi Rak</label><input type="text" placeholder="Cth: Gudang A - Rak B3"></div>
+      <div class="form-group"><label>Supplier Utama</label><select><option>PT. Jaya Teknik</option><option>CV. Indo Supply</option><option>PT. Maju Bersama</option></select></div>
+      <div class="form-group form-group-full"><label>Deskripsi</label><textarea placeholder="Deskripsi dan keterangan produk..."></textarea></div>
+    </div>
+    <div class="form-footer"><button class="btn-sm btn-teal" onclick="closeModal('modalTambahProduk')">Batal</button><button class="btn-sm btn-primary">💾 Simpan Produk</button></div>
+  </div>
+</div>
+
+<!-- Modal Barang Masuk -->
+<div class="modal-overlay" id="modalBMasuk">
+  <div class="modal">
+    <div class="modal-header"><h3>📥 Catat Barang Masuk</h3><button class="modal-close" onclick="closeModal('modalBMasuk')">✕</button></div>
+    <div class="form-grid">
+      <div class="form-group"><label>No. Penerimaan</label><input type="text" value="BM-2024-0893" readonly style="opacity:0.6"></div>
+      <div class="form-group"><label>Tanggal Terima</label><input type="date" value="2026-06-12"></div>
+      <div class="form-group form-group-full"><label>Supplier</label><select><option>PT. Jaya Teknik</option><option>CV. Indo Supply</option><option>PT. Maju Bersama</option><option>CV. Surya Abadi</option></select></div>
+      <div class="form-group"><label>No. Surat Jalan</label><input type="text" placeholder="Nomor surat jalan supplier"></div>
+      <div class="form-group"><label>No. PO (jika ada)</label><input type="text" placeholder="Nomor Purchase Order"></div>
+      <div class="form-group form-group-full"><label>Produk</label><select><option>Monitor LED 24" (EL-001)</option><option>Keyboard Mechanical (EL-002)</option><option>Kabel UTP Cat6 (NW-003)</option><option>Kertas HVS A4 (ATK-004)</option></select></div>
+      <div class="form-group"><label>Jumlah</label><input type="number" placeholder="0"></div>
+      <div class="form-group"><label>Satuan</label><input type="text" value="Unit" readonly style="opacity:0.6"></div>
+      <div class="form-group"><label>Lokasi Tujuan</label><select><option>Gudang A</option><option>Gudang B</option><option>Gudang C</option></select></div>
+      <div class="form-group"><label>Harga Satuan (Rp)</label><input type="number" placeholder="0"></div>
+      <div class="form-group form-group-full"><label>Catatan</label><textarea placeholder="Catatan tambahan..."></textarea></div>
+    </div>
+    <div class="form-footer"><button class="btn-sm btn-teal" onclick="closeModal('modalBMasuk')">Batal</button><button class="btn-sm btn-primary">💾 Simpan</button></div>
+  </div>
+</div>
+
+<!-- Modal Barang Keluar -->
+<div class="modal-overlay" id="modalBKeluar">
+  <div class="modal">
+    <div class="modal-header"><h3>📤 Catat Barang Keluar</h3><button class="modal-close" onclick="closeModal('modalBKeluar')">✕</button></div>
+    <div class="form-grid">
+      <div class="form-group"><label>No. Pengeluaran</label><input type="text" value="BK-2024-0542" readonly style="opacity:0.6"></div>
+      <div class="form-group"><label>Tanggal Keluar</label><input type="date" value="2026-06-12"></div>
+      <div class="form-group form-group-full"><label>Tujuan / Departemen</label><input type="text" placeholder="Cth: Dept. IT, Proyek A"></div>
+      <div class="form-group form-group-full"><label>Penerima</label><input type="text" placeholder="Nama penerima barang"></div>
+      <div class="form-group form-group-full"><label>Produk</label><select><option>Monitor LED 24" (EL-001) — Stok: 248</option><option>Keyboard Mechanical (EL-002) — Stok: 135</option><option>Mouse Wireless (EL-007) — Stok: 204</option></select></div>
+      <div class="form-group"><label>Jumlah</label><input type="number" placeholder="0"></div>
+      <div class="form-group"><label>Dari Gudang</label><select><option>Gudang A</option><option>Gudang B</option><option>Gudang C</option></select></div>
+      <div class="form-group form-group-full"><label>Keperluan / Keterangan</label><textarea placeholder="Untuk keperluan apa barang ini dikeluarkan..."></textarea></div>
+    </div>
+    <div class="form-footer"><button class="btn-sm btn-teal" onclick="closeModal('modalBKeluar')">Batal</button><button class="btn-sm btn-primary">💾 Simpan</button></div>
+  </div>
+</div>
+
+<!-- Modal Retur -->
+<div class="modal-overlay" id="modalRetur">
+  <div class="modal">
+    <div class="modal-header"><h3>🔄 Buat Retur Barang</h3><button class="modal-close" onclick="closeModal('modalRetur')">✕</button></div>
+    <div class="form-grid">
+      <div class="form-group"><label>No. Retur</label><input type="text" value="RT-2024-0024" readonly style="opacity:0.6"></div>
+      <div class="form-group"><label>Tanggal</label><input type="date" value="2026-06-12"></div>
+      <div class="form-group form-group-full"><label>Jenis Retur</label><select><option>Ke Supplier</option><option>Dari Departemen</option></select></div>
+      <div class="form-group form-group-full"><label>Produk</label><select><option>Monitor LED 24" (EL-001)</option><option>Keyboard Mechanical (EL-002)</option><option>Mouse Wireless (EL-007)</option></select></div>
+      <div class="form-group"><label>Jumlah</label><input type="number" placeholder="0"></div>
+      <div class="form-group"><label>Kondisi Barang</label><select><option>Rusak / Cacat</option><option>Salah Kirim</option><option>Tidak Sesuai Spek</option><option>Tidak Dipakai</option><option>Lainnya</option></select></div>
+      <div class="form-group form-group-full"><label>Keterangan</label><textarea placeholder="Detail alasan retur..."></textarea></div>
+    </div>
+    <div class="form-footer"><button class="btn-sm btn-teal" onclick="closeModal('modalRetur')">Batal</button><button class="btn-sm btn-primary">💾 Ajukan Retur</button></div>
+  </div>
+</div>
+
+<!-- Modal Supplier -->
+<div class="modal-overlay" id="modalSupplier">
+  <div class="modal">
+    <div class="modal-header"><h3>🏭 Tambah Supplier</h3><button class="modal-close" onclick="closeModal('modalSupplier')">✕</button></div>
+    <div class="form-grid">
+      <div class="form-group form-group-full"><label>Nama Perusahaan</label><input type="text" placeholder="Nama supplier"></div>
+      <div class="form-group"><label>Jenis Usaha</label><select><option>PT</option><option>CV</option><option>UD</option><option>Perorangan</option></select></div>
+      <div class="form-group"><label>Kategori Produk</label><select><option>Elektronik</option><option>ATK</option><option>Hardware</option><option>Networking</option></select></div>
+      <div class="form-group"><label>Nama PIC</label><input type="text" placeholder="Nama penanggung jawab"></div>
+      <div class="form-group"><label>Telepon / WA</label><input type="text" placeholder="021-xxxxxxx"></div>
+      <div class="form-group"><label>Email</label><input type="text" placeholder="email@supplier.com"></div>
+      <div class="form-group"><label>Kota</label><input type="text" placeholder="Jakarta"></div>
+      <div class="form-group"><label>Termin Pembayaran</label><select><option>COD</option><option>Net 7</option><option>Net 14</option><option>Net 30</option></select></div>
+      <div class="form-group form-group-full"><label>Alamat Lengkap</label><textarea placeholder="Alamat supplier..."></textarea></div>
+    </div>
+    <div class="form-footer"><button class="btn-sm btn-teal" onclick="closeModal('modalSupplier')">Batal</button><button class="btn-sm btn-primary">💾 Simpan Supplier</button></div>
+  </div>
+</div>
+
+<!-- Modal Stok Opname -->
+<div class="modal-overlay" id="modalOpname">
+  <div class="modal">
+    <div class="modal-header"><h3>📋 Mulai Stok Opname</h3><button class="modal-close" onclick="closeModal('modalOpname')">✕</button></div>
+    <div class="form-grid">
+      <div class="form-group"><label>Tanggal Opname</label><input type="date" value="2026-06-12"></div>
+      <div class="form-group"><label>Gudang</label><select><option>Gudang A</option><option>Gudang B</option><option>Gudang C</option><option>Semua Gudang</option></select></div>
+      <div class="form-group form-group-full"><label>Petugas Opname</label><input type="text" value="Dewi Rahayu, Agus Firmansyah"></div>
+      <div class="form-group form-group-full"><label>Catatan</label><textarea placeholder="Catatan stok opname..."></textarea></div>
+    </div>
+    <div class="form-footer"><button class="btn-sm btn-teal" onclick="closeModal('modalOpname')">Batal</button><button class="btn-sm btn-primary">▶ Mulai Opname</button></div>
+  </div>
+</div>
+
+<!-- Modal Ganti Password -->
+<div class="modal-overlay" id="modalGantiPass">
+  <div class="modal">
+    <div class="modal-header"><h3>🔒 Ganti Password</h3><button class="modal-close" onclick="closeModal('modalGantiPass')">✕</button></div>
+    <div class="form-grid">
+      <div class="form-group form-group-full"><label>Password Saat Ini</label><input type="password" placeholder="Masukkan password lama"></div>
+      <div class="form-group form-group-full"><label>Password Baru</label><input type="password" placeholder="Min. 8 karakter, kombinasi huruf & angka"></div>
+      <div class="form-group form-group-full"><label>Konfirmasi Password Baru</label><input type="password" placeholder="Ulangi password baru"></div>
+    </div>
+    <div class="form-footer"><button class="btn-sm btn-teal" onclick="closeModal('modalGantiPass')">Batal</button><button class="btn-sm btn-primary" onclick="showToast('Password berhasil diubah!','teal');closeModal('modalGantiPass')">💾 Simpan Password</button></div>
+  </div>
+</div>
+
+<!-- Modal Edit Profil -->
+<div class="modal-overlay" id="modalEditProfil">
+  <div class="modal">
+    <div class="modal-header"><h3>✏️ Edit Profil</h3><button class="modal-close" onclick="closeModal('modalEditProfil')">✕</button></div>
+    <div class="form-grid">
+      <div class="form-group form-group-full"><label>Nama Lengkap</label><input type="text" id="editNama" value="Budi Santoso"></div>
+      <div class="form-group"><label>Email</label><input type="text" value="budi@warehouse.co.id"></div>
+      <div class="form-group"><label>No. Telepon</label><input type="text" value="0812-3456-7890"></div>
+      <div class="form-group form-group-full"><label>Alamat</label><textarea>Jl. Mayjend Sungkono No. 45, Malang, Jawa Timur</textarea></div>
+    </div>
+    <div class="form-footer"><button class="btn-sm btn-teal" onclick="closeModal('modalEditProfil')">Batal</button><button class="btn-sm btn-primary" onclick="showToast('Profil berhasil diperbarui!','teal');closeModal('modalEditProfil')">💾 Simpan</button></div>
+  </div>
+</div>
+
+<!-- Modal Purchase Order -->
+<div class="modal-overlay" id="modalPO">
+  <div class="modal">
+    <div class="modal-header"><h3>📋 Buat Purchase Order</h3><button class="modal-close" onclick="closeModal('modalPO')">✕</button></div>
+    <div class="form-grid">
+      <div class="form-group"><label>No. PO</label><input type="text" value="PO-2024-0059" readonly style="opacity:0.6"></div>
+      <div class="form-group"><label>Tanggal PO</label><input type="date" value="2026-06-12"></div>
+      <div class="form-group form-group-full"><label>Supplier</label><select><option>PT. Jaya Teknik</option><option>CV. Indo Supply</option><option>PT. Maju Bersama</option><option>CV. Surya Abadi</option><option>PT. Digital Nusa</option></select></div>
+      <div class="form-group form-group-full"><label>Produk</label><select><option>Kabel UTP Cat6 (NW-003) — Stok: 8</option><option>Lampu LED 18W (EL-008) — Stok: 5</option><option>Tinta Printer HP (ATK-005) — Stok: 15</option><option>Kertas HVS A4 (ATK-004) — Stok: 12</option></select></div>
+      <div class="form-group"><label>Jumlah Pesan</label><input type="number" placeholder="0"></div>
+      <div class="form-group"><label>Harga Satuan (Rp)</label><input type="number" placeholder="0"></div>
+      <div class="form-group"><label>Estimasi Tiba</label><input type="date"></div>
+      <div class="form-group"><label>Termin Pembayaran</label><select><option>COD</option><option>Net 7</option><option>Net 14</option><option>Net 30</option></select></div>
+      <div class="form-group form-group-full"><label>Catatan untuk Supplier</label><textarea placeholder="Instruksi khusus, spesifikasi tambahan..."></textarea></div>
+    </div>
+    <div class="form-footer"><button class="btn-sm btn-teal" onclick="closeModal('modalPO')">Batal</button><button class="btn-sm btn-amber" onclick="showToast('PO disimpan sebagai Draft','amber');closeModal('modalPO')">📄 Simpan Draft</button><button class="btn-sm btn-primary" onclick="showToast('PO berhasil dikirim ke supplier!','teal');closeModal('modalPO')">📤 Kirim ke Supplier</button></div>
+  </div>
+</div>
+
+<!-- Modal Tambah Pengguna -->
+<div class="modal-overlay" id="modalPengguna">
+  <div class="modal">
+    <div class="modal-header"><h3>👤 Tambah Pengguna Baru</h3><button class="modal-close" onclick="closeModal('modalPengguna')">✕</button></div>
+    <div class="form-grid">
+      <div class="form-group form-group-full"><label>Nama Lengkap</label><input type="text" placeholder="Nama lengkap pengguna"></div>
+      <div class="form-group"><label>Username</label><input type="text" placeholder="username_unik"></div>
+      <div class="form-group"><label>Role</label><select><option>Administrator</option><option>Manager</option><option>Staff</option></select></div>
+      <div class="form-group form-group-full"><label>Email</label><input type="text" placeholder="email@warehouse.co.id"></div>
+      <div class="form-group"><label>Password</label><input type="password" placeholder="Min. 8 karakter"></div>
+      <div class="form-group"><label>Konfirmasi Password</label><input type="password" placeholder="Ulangi password"></div>
+      <div class="form-group"><label>No. Telepon</label><input type="text" placeholder="08xxxxxxxxxx"></div>
+      <div class="form-group"><label>Gudang Tugas</label><select><option>Gudang A</option><option>Gudang B</option><option>Gudang C</option><option>Semua</option></select></div>
+    </div>
+    <div class="form-footer"><button class="btn-sm btn-teal" onclick="closeModal('modalPengguna')">Batal</button><button class="btn-sm btn-primary">💾 Buat Pengguna</button></div>
+  </div>
+</div>
+
+<script>
+// ---- AUTH CHECK ----
+const user = JSON.parse(localStorage.getItem('wos_user') || 'null');
+if (!user) window.location.href = 'login.html';
+
+// ---- SET USER INFO ----
+const roleLabels  = { admin:'Administrator', manager:'Manager Gudang', staff:'Staff Gudang' };
+const roleClasses = { admin:'role-admin',    manager:'role-manager',   staff:'role-staff'  };
+const roleAccessAdmin   = ['✅','✅','✅','✅','✅','✅','✅','✅','✅','✅'];
+const roleAccessManager = ['✅','✅','✅','✅','✅','✅','✅','✅','❌','❌'];
+const roleAccessStaff   = ['✅','👁','✅','✅','✅','✅','❌','👁','❌','❌'];
+
+if (user) {
+  // Sidebar
+  document.getElementById('sidebarName').textContent = user.name;
+  document.getElementById('sidebarAvatar').textContent = user.name[0];
+  const rb = document.getElementById('sidebarRoleBadge');
+  rb.textContent = roleLabels[user.role];
+  rb.className = 'user-role-badge ' + roleClasses[user.role];
+
+  // Topbar avatar button
+  const tabBtn = document.getElementById('topbarAvatarBtn');
+  if (tabBtn) tabBtn.textContent = user.name[0];
+
+  // Profil page
+  document.getElementById('profilAvatar').textContent = user.name[0];
+  document.getElementById('profilName').textContent   = user.name;
+  document.getElementById('profilEmail').textContent  = user.username + '@warehouse.co.id | Bergabung: 03 Januari 2024';
+  document.getElementById('piNama').textContent       = user.name;
+  document.getElementById('piUsername').textContent   = user.username;
+  document.getElementById('piRole').textContent       = roleLabels[user.role];
+  document.getElementById('profilRoleBadge').textContent = roleLabels[user.role];
+  document.getElementById('aksesRoleLabel').textContent  = 'Role: ' + roleLabels[user.role];
+
+  // Update akses table by role
+  const accessMap = { admin: roleAccessAdmin, manager: roleAccessManager, staff: roleAccessStaff };
+  const rows = document.querySelectorAll('#aksesTable tr');
+  const access = accessMap[user.role] || roleAccessAdmin;
+  rows.forEach((row, i) => {
+    const cells = row.querySelectorAll('td');
+    if (cells.length >= 2 && access[i]) {
+      const isYes = access[i] === '✅';
+      for (let c = 1; c <= 5; c++) {
+        if (cells[c]) {
+          cells[c].textContent = isYes ? '✅' : (access[i] === '👁' && c===1 ? '👁' : (c===1 ? access[i] : '❌'));
+          cells[c].className = isYes ? 'access-yes' : 'access-no';
+        }
+      }
+    }
+  });
+
+  // Admin-only menu
+  if (user.role === 'admin') {
+    document.getElementById('adminMenu').style.display = 'block';
+    document.getElementById('navPengguna').style.display = 'flex';
+    document.getElementById('navSetting').style.display = 'flex';
+  }
+  if (user.role === 'staff') {
+    document.getElementById('navLaporan').style.display = 'none';
+  }
+}
+
+// ---- NAVIGATION ----
+const pageTitles = {
+  dashboard:'Dashboard', produk:'Data Produk', kategori:'Kategori Produk',
+  stok:'Kelola Stok', masuk:'Barang Masuk', keluar:'Barang Keluar',
+  retur:'Retur Barang', supplier:'Manajemen Supplier', lokasi:'Lokasi Gudang',
+  laporan:'Laporan', pengguna:'Manajemen Pengguna', setting:'Pengaturan Sistem',
+  notifikasi:'Notifikasi', profil:'Profil Saya', po:'Purchase Order'
+};
+
+function goPage(name, navEl) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+  const pg = document.getElementById('page-' + name);
+  if (pg) pg.classList.add('active');
+  if (navEl) navEl.classList.add('active');
+
+  // Role-based access control
+  if ((name === 'pengguna' || name === 'setting') && user && user.role !== 'admin') {
+    pg.innerHTML = `<div class="page-header"><div><h2>⛔ Akses Ditolak</h2><p>Halaman ini hanya untuk Administrator.</p></div></div><div class="alert alert-red">🚫 Anda tidak memiliki hak akses ke halaman <strong>${pageTitles[name]}</strong>. Silakan hubungi Administrator sistem.</div>`;
+  }
+  if (name === 'laporan' && user && user.role === 'staff') {
+    pg.innerHTML = `<div class="page-header"><div><h2>⛔ Akses Ditolak</h2></div></div><div class="alert alert-red">🚫 Staff Gudang tidak memiliki akses ke halaman Laporan.</div>`;
+  }
+
+  document.getElementById('topbarTitle').textContent = pageTitles[name] || name;
+  closeSidebar();
+  window.scrollTo(0, 0);
+}
+
+// ---- TABS ----
+function switchTab(pageId, tabId, btn) {
+  const panels = document.querySelectorAll('#page-' + pageId + ' .tab-panel');
+  const btns   = document.querySelectorAll('#page-' + pageId + ' .tab-btn');
+  panels.forEach(p => p.classList.remove('active'));
+  btns.forEach(b => b.classList.remove('active'));
+  const target = document.getElementById(pageId + '-tab-' + tabId);
+  if (target) target.classList.add('active');
+  if (btn) btn.classList.add('active');
+}
+
+// ---- MODALS ----
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+
+// ---- TOAST NOTIFICATIONS ----
+function showToast(msg, type = 'teal') {
+  const colors = { teal:'var(--teal)', amber:'var(--amber)', red:'var(--red)', green:'var(--green)' };
+  const toast = document.createElement('div');
+  toast.style.cssText = `
+    position:fixed;bottom:28px;right:24px;z-index:9999;
+    background:var(--navy-mid);border:1.5px solid ${colors[type]||colors.teal};
+    color:var(--text-primary);padding:13px 20px;border-radius:10px;
+    font-size:13px;font-weight:500;box-shadow:0 8px 32px rgba(0,0,0,0.4);
+    display:flex;align-items:center;gap:10px;max-width:340px;
+    animation:slideInToast 0.3s ease;
+  `;
+  const icon = { teal:'✅', amber:'⚠️', red:'❌', green:'✅' };
+  toast.innerHTML = `<span style="font-size:16px">${icon[type]||'✅'}</span><span>${msg}</span>`;
+  document.body.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(10px)';
+    toast.style.transition = 'all 0.3s';
+    setTimeout(() => toast.remove(), 300);
+  }, 2800);
+}
+// Toast animation
+const toastStyle = document.createElement('style');
+toastStyle.textContent = `@keyframes slideInToast { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }`;
+document.head.appendChild(toastStyle);
+
+// ---- TOPBAR SEARCH HINT ----
+function showSearchHint() {}
+function hideSearchHint() {}
+document.getElementById('topbarSearch').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && this.value.trim()) {
+    showToast(`Mencari: "${this.value.trim()}" — fitur pencarian aktif di database`, 'teal');
+    this.value = '';
+  }
+});
+
+// ---- SIDEBAR (mobile) ----
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('backdrop').classList.toggle('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('backdrop').classList.remove('open');
+}
+
+// ---- LOGOUT ----
+function logout() {
+  showToast('Sampai jumpa, ' + (user ? user.name : '') + '!', 'teal');
+  setTimeout(() => {
+    localStorage.removeItem('wos_user');
+    window.location.href = 'login.html';
+  }, 1200);
+}
+
+// ---- KEYBOARD SHORTCUTS ----
+document.addEventListener('keydown', function(e) {
+  if (e.altKey) {
+    const shortcuts = { '1':'dashboard','2':'produk','3':'stok','4':'masuk','5':'keluar','6':'supplier','7':'laporan' };
+    if (shortcuts[e.key]) { e.preventDefault(); goPage(shortcuts[e.key], null); }
+  }
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+    closeSidebar();
+  }
+});
+
+// ---- BUTTON FEEDBACK (demo) ----
+document.addEventListener('click', function(e) {
+  const btn = e.target.closest('.btn-sm');
+  if (!btn) return;
+  const txt = btn.textContent.trim();
+  if (txt === 'Export' || txt === '📤 Export') showToast('File berhasil diunduh!', 'teal');
+  if (txt === 'Import' || txt === '📥 Import') showToast('Template import tersedia. Silakan unggah file.', 'amber');
+  if (txt === 'Filter') showToast('Filter diterapkan.', 'teal');
+  if (txt === 'Reorder') showToast('Silakan buat Purchase Order untuk produk ini.', 'amber');
+  if (txt === 'Adjust') openModal('modalOpname');
+  if (txt === '📄 Export PDF') { showToast('Membuat PDF laporan...', 'teal'); setTimeout(() => window.print(), 800); }
+  if (txt === '📊 Export Excel') showToast('File Excel berhasil diunduh!', 'teal');
+  if (txt === '▶ Mulai Opname') { showToast('Stok opname dimulai!', 'teal'); closeModal('modalOpname'); }
+  if (txt === '💾 Simpan Produk') { showToast('Produk berhasil ditambahkan!', 'teal'); closeModal('modalTambahProduk'); }
+  if (txt === '💾 Simpan' && document.getElementById('modalBMasuk').classList.contains('open')) {
+    showToast('Barang masuk berhasil dicatat!', 'teal'); closeModal('modalBMasuk');
+  }
+  if (txt === '💾 Simpan' && document.getElementById('modalBKeluar').classList.contains('open')) {
+    showToast('Barang keluar berhasil dicatat!', 'teal'); closeModal('modalBKeluar');
+  }
+  if (txt === '💾 Ajukan Retur') { showToast('Retur berhasil diajukan, menunggu approval.', 'amber'); closeModal('modalRetur'); }
+  if (txt === '💾 Simpan Supplier') { showToast('Supplier berhasil ditambahkan!', 'teal'); closeModal('modalSupplier'); }
+  if (txt === '💾 Buat Pengguna') { showToast('Pengguna baru berhasil dibuat!', 'teal'); closeModal('modalPengguna'); }
+  if (txt === '💾 Simpan Pengaturan') showToast('Pengaturan berhasil disimpan!', 'teal');
+  if (txt === 'Simpan Perubahan') showToast('Pengaturan berhasil disimpan!', 'teal');
+});
+
+// Purchase Order nav item is now in static HTML
+</script>
+</body>
+</html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login — WarehouseOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0F1B2D;
+    --navy-mid: #162236;
+    --navy-light: #1E3050;
+    --teal: #00C9A7;
+    --teal-dim: #00A88A;
+    --amber: #F59E0B;
+    --red: #EF4444;
+    --text-primary: #F0F4F8;
+    --text-muted: #8BA0B8;
+    --border: rgba(255,255,255,0.08);
+    --card: rgba(255,255,255,0.04);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--navy);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 20px;
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  body::before {
+    content:'';
+    position:absolute;
+    top:-200px; right:-200px;
+    width:600px; height:600px;
+    background: radial-gradient(circle, rgba(0,201,167,0.12) 0%, transparent 70%);
+    pointer-events:none;
+  }
+  body::after {
+    content:'';
+    position:absolute;
+    bottom:-200px; left:-200px;
+    width:500px; height:500px;
+    background: radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%);
+    pointer-events:none;
+  }
+
+  .login-container {
+    width: 100%;
+    max-width: 440px;
+    z-index: 1;
+    margin: auto;
+  }
+
+  .brand {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+  .brand-icon {
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, var(--teal), var(--teal-dim));
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    margin-bottom: 16px;
+    font-size: 26px;
+  }
+  .brand h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+  }
+  .brand p {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-top: 4px;
+  }
+
+  .card {
+    background: var(--navy-mid);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 36px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 8px;
+  }
+  input[type="text"], input[type="password"], select {
+    width: 100%;
+    background: var(--navy-light);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    transition: border-color 0.2s;
+    outline: none;
+    appearance: none;
+  }
+  input:focus, select:focus {
+    border-color: var(--teal);
+  }
+  select option { background: var(--navy-mid); }
+
+  .btn-login {
+    width: 100%;
+    background: linear-gradient(135deg, var(--teal), var(--teal-dim));
+    border: none;
+    border-radius: 10px;
+    padding: 13px;
+    color: var(--navy);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: opacity 0.2s, transform 0.1s;
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: 0.2px;
+  }
+  .btn-login:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-login:active { transform: translateY(0); }
+
+  .demo-accounts {
+    margin-top: 28px;
+    background: rgba(0,201,167,0.05);
+    border: 1px solid rgba(0,201,167,0.15);
+    border-radius: 12px;
+    padding: 18px;
+  }
+  .demo-accounts h3 {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--teal);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 12px;
+  }
+  .demo-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    cursor: pointer;
+    transition: background 0.15s;
+    border-radius: 6px;
+    padding: 8px 6px;
+  }
+  .demo-item:last-child { border-bottom: none; }
+  .demo-item:hover { background: rgba(0,201,167,0.08); }
+  .demo-info { display:flex; flex-direction:column; gap:2px; }
+  .demo-role {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .demo-cred {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: monospace;
+  }
+  .demo-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .badge-admin { background: rgba(239,68,68,0.15); color: #EF4444; }
+  .badge-manager { background: rgba(245,158,11,0.15); color: #F59E0B; }
+  .badge-staff { background: rgba(0,201,167,0.15); color: var(--teal); }
+
+  .error-msg {
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.3);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: #FC8181;
+    font-size: 13px;
+    margin-bottom: 16px;
+    display: none;
+  }
+
+  @media (max-width: 480px) {
+    .card { padding: 24px 20px; }
+    .brand h1 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="login-container">
+  <div class="brand">
+    <div class="brand-icon">📦</div>
+    <h1>WarehouseOS</h1>
+    <p>Sistem Manajemen Inventori & Gudang</p>
+  </div>
+
+  <div class="card">
+    <div class="error-msg" id="errorMsg">Username atau password salah. Silakan coba lagi.</div>
+
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" id="username" placeholder="Masukkan username" autocomplete="off">
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="password" placeholder="Masukkan password">
+    </div>
+    <div class="form-group">
+      <label>Role</label>
+      <select id="role">
+        <option value="">— Pilih Role —</option>
+        <option value="admin">Administrator</option>
+        <option value="manager">Manager Gudang</option>
+        <option value="staff">Staff Gudang</option>
+      </select>
+    </div>
+
+    <button class="btn-login" onclick="doLogin()">Masuk ke Sistem</button>
+
+    <div class="demo-accounts">
+      <h3>Akun Demo — Klik untuk isi otomatis</h3>
+      <div class="demo-item" onclick="fillDemo('admin','admin123','admin')">
+        <div class="demo-info">
+          <span class="demo-role">Budi Santoso</span>
+          <span class="demo-cred">admin / admin123</span>
+        </div>
+        <span class="demo-badge badge-admin">Admin</span>
+      </div>
+      <div class="demo-item" onclick="fillDemo('manager','mgr2024','manager')">
+        <div class="demo-info">
+          <span class="demo-role">Dewi Rahayu</span>
+          <span class="demo-cred">manager / mgr2024</span>
+        </div>
+        <span class="demo-badge badge-manager">Manager</span>
+      </div>
+      <div class="demo-item" onclick="fillDemo('staff','staff123','staff')">
+        <div class="demo-info">
+          <span class="demo-role">Agus Firmansyah</span>
+          <span class="demo-cred">staff / staff123</span>
+        </div>
+        <span class="demo-badge badge-staff">Staff</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const accounts = {
+    admin:   { pass:'admin123',   role:'admin',   name:'Budi Santoso',     page:'dashboard.html' },
+    manager: { pass:'mgr2024',    role:'manager', name:'Dewi Rahayu',      page:'dashboard.html' },
+    staff:   { pass:'staff123',   role:'staff',   name:'Agus Firmansyah',  page:'dashboard.html' }
+  };
+
+  function fillDemo(u, p, r) {
+    document.getElementById('username').value = u;
+    document.getElementById('password').value = p;
+    document.getElementById('role').value = r;
+    document.getElementById('errorMsg').style.display = 'none';
+  }
+
+  function doLogin() {
+    const u = document.getElementById('username').value.trim();
+    const p = document.getElementById('password').value;
+    const r = document.getElementById('role').value;
+    const acc = accounts[u];
+    if (acc && acc.pass === p && acc.role === r) {
+      localStorage.setItem('wos_user', JSON.stringify({ username:u, role:r, name:acc.name }));
+      window.location.href = acc.page;
+    } else {
+      document.getElementById('errorMsg').style.display = 'block';
+    }
+  }
+  document.addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+</script>
+</body>
+</html>
